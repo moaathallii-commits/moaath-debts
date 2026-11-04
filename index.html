@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ط<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ديون متجر معاذ - النسخة المطورة</title>
+    <title>ديون متجر معاذ - النسخة الذكية المتطورة</title>
     <link rel="manifest" href="manifest.json">
     <!-- Tailwind CSS لتصميم الواجهات -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -156,13 +156,82 @@
 
     </div>
 
-    <!-- كود الجافاسكريبت للتحكم بالمنطق والتحسينات المتقدمة -->
+    <!-- نافذة منبثقة مخصصة (Modal) لتسجيل الدين بخيارات متقدمة -->
+    <div id="debtModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 max-w-md w-full space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 id="modalTitle" class="font-bold text-amber-400 text-lg">تسجيل دين جديد</h3>
+                <button onclick="closeDebtModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+            
+            <div class="space-y-3">
+                <!-- اختيار طريقة الإدخال (دولار أو ليرة سورية) -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">عملة الإدخال:</label>
+                    <select id="inputCurrencyType" onchange="toggleInputCurrency()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400">
+                        <option value="USD">دولار أمريكي ($)</option>
+                        <option value="SYP_NEW">ليرة سورية جديدة</option>
+                        <option value="SYP_OLD">ليرة سورية قديمة</option>
+                    </select>
+                </div>
+
+                <!-- حقل المبلغ -->
+                <div>
+                    <label id="amountLabel" class="block text-xs text-slate-300 mb-1">المبلغ بالدولار ($):</label>
+                    <input type="number" step="any" id="inputAmount" placeholder="أدخل المبلغ..." oninput="calculatePreviewUSD()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400 font-bold text-amber-300">
+                    <p id="conversionPreview" class="text-xs text-emerald-400 mt-1 hidden"></p>
+                </div>
+
+                <!-- حساب السعر تلقائياً (الكمية × سعر المفرد) -->
+                <div class="bg-slate-700/40 p-2.5 rounded-lg border border-slate-700 space-y-2">
+                    <p class="text-xs font-bold text-amber-300">🧮 حاسبة سريعة (اختياري):</p>
+                    <div class="flex gap-2">
+                        <input type="number" step="any" id="calcQty" placeholder="الكمية" oninput="calculateCalcTotal()" class="w-1/2 p-2 rounded bg-slate-700 border border-slate-600 text-white text-xs">
+                        <input type="number" step="any" id="calcPrice" placeholder="سعر المفرد" oninput="calculateCalcTotal()" class="w-1/2 p-2 rounded bg-slate-700 border border-slate-600 text-white text-xs">
+                    </div>
+                </div>
+
+                <!-- أصناف سريعة (أزرار جاهزة) -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">أصناف متكررة سريعة:</label>
+                    <div class="flex flex-wrap gap-1.5" id="quickItemsContainer">
+                        <button type="button" onclick="appendQuickItem('سكر')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">سكر</button>
+                        <button type="button" onclick="appendQuickItem('رز')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">رز</button>
+                        <button type="button" onclick="appendQuickItem('زيت')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">زيت</button>
+                        <button type="button" onclick="appendQuickItem('متة')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">متة</button>
+                        <button type="button" onclick="appendQuickItem('شاي')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">شاي</button>
+                        <button type="button" onclick="appendQuickItem('سمنة')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">سمنة</button>
+                    </div>
+                </div>
+
+                <!-- ملاحظات أو أصناف الدين -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">تفاصيل الأصناف والملاحظات:</label>
+                    <textarea id="inputNotes" rows="2" placeholder="اكتب الأصناف أو تفاصيل الدين هنا..." class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400"></textarea>
+                </div>
+
+                <!-- تاريخ الاستحقاق المتوقع -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">تاريخ الاستحقاق المتوقع (اختياري):</label>
+                    <input type="date" id="inputDueDate" class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-xs">
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="submitAdvancedDebt()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-2.5 rounded-xl flex-1 text-sm transition">حفظ وتسجيل الدين</button>
+                <button onclick="closeDebtModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- كود الجافاسكريبت للتحكم بالمنطق والخيارات الجديدة -->
     <script>
         let currentCurrency = 'USD';
-        let currentRate = 15000; // قيمة افتراضية حتى يتم جلبها من القاعدة
-        let allCustomersData = {}; // تخزين مؤقت للزبائن للبحث السريع
+        let currentRate = 15000; // قيمة افتراضية
+        let allCustomersData = {};
+        let activeModalPhone = null;
+        let activeModalLimit = 0;
 
-        // التحقق من الجلسة عند الفتح
         window.onload = function() {
             const role = localStorage.getItem("userRole");
             const phone = localStorage.getItem("userPhone");
@@ -173,13 +242,11 @@
             }
         };
 
-        // تسجيل الدخول
         async function handleLogin(e) {
             e.preventDefault();
             const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
-            // حساب الإدارة الجديد
             if (phone === "0965461504" && password === "MHA@1997//MOAATHS") {
                 localStorage.setItem("userRole", "admin");
                 localStorage.setItem("userPhone", phone);
@@ -221,7 +288,6 @@
             loadCustomerData(phone);
         }
 
-        // حفظ سعر الصرف
         function saveExchangeRate() {
             const rate = document.getElementById('exchangeRateInput').value;
             if(!rate || isNaN(rate)) return alert("أدخل سعر صرف صالح");
@@ -230,7 +296,6 @@
             });
         }
 
-        // تصدير نسخة احتياطية بصيغة JSON
         async function exportDataJSON() {
             try {
                 const snap = await window.get(window.dbRef(window.db));
@@ -250,7 +315,6 @@
             }
         }
 
-        // إضافة زبون جديد
         function addCustomer(e) {
             e.preventDefault();
             const name = document.getElementById('newCustName').value.trim();
@@ -267,16 +331,100 @@
             });
         }
 
-        // إضافة دين جديد مع فحص سقف الحساب
-        async function addDebt(phone, creditLimit) {
-            const amountUsd = prompt("أدخل قيمة الدين الجديد (بالدولار الأمريكي USD):");
-            if(!amountUsd || isNaN(amountUsd) || Number(amountUsd) <= 0) return;
-            
-            const notes = prompt("أدخل تفاصيل البضاعة أو سبب الدين:") || "دين متجر معاذ";
+        // فتح نافذة تسجيل الدين المتقدمة
+        function openAdvancedDebtModal(phone, limit) {
+            activeModalPhone = phone;
+            activeModalLimit = limit;
+            document.getElementById('inputAmount').value = '';
+            document.getElementById('inputNotes').value = '';
+            document.getElementById('calcQty').value = '';
+            document.getElementById('calcPrice').value = '';
+            document.getElementById('inputDueDate').value = '';
+            document.getElementById('inputCurrencyType').value = 'USD';
+            document.getElementById('conversionPreview').classList.add('hidden');
+            document.getElementById('amountLabel').innerText = "المبلغ بالدولار ($):";
+            document.getElementById('debtModal').classList.remove('hidden');
+        }
 
-            // حساب المجموع الحالي للتحقق من السقف
+        function closeDebtModal() {
+            document.getElementById('debtModal').classList.add('hidden');
+        }
+
+        function toggleInputCurrency() {
+            const type = document.getElementById('inputCurrencyType').value;
+            const label = document.getElementById('amountLabel');
+            if(type === 'USD') label.innerText = "المبلغ بالدولار ($):";
+            else if(type === 'SYP_NEW') label.innerText = "المبلغ بالليرة السورية الجديدة (ل.س):";
+            else if(type === 'SYP_OLD') label.innerText = "المبلغ بالليرة السورية القديمة (ل.س):";
+            calculatePreviewUSD();
+        }
+
+        function calculatePreviewUSD() {
+            const rawVal = Number(document.getElementById('inputAmount').value) || 0;
+            const type = document.getElementById('inputCurrencyType').value;
+            const preview = document.getElementById('conversionPreview');
+
+            if(rawVal <= 0) {
+                preview.classList.add('hidden');
+                return;
+            }
+
+            let usdVal = rawVal;
+            if(type === 'SYP_NEW') {
+                usdVal = rawVal / currentRate;
+                preview.innerText = `💱 يعادل بالدولار: $${usdVal.toFixed(2)}`;
+                preview.classList.remove('hidden');
+            } else if(type === 'SYP_OLD') {
+                usdVal = rawVal / (currentRate * 100);
+                preview.innerText = `💱 يعادل بالدولار: $${usdVal.toFixed(2)}`;
+                preview.classList.remove('hidden');
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+
+        function calculateCalcTotal() {
+            const qty = Number(document.getElementById('calcQty').value) || 0;
+            const price = Number(document.getElementById('calcPrice').value) || 0;
+            if(qty > 0 && price > 0) {
+                const total = qty * price;
+                document.getElementById('inputAmount').value = total;
+                calculatePreviewUSD();
+            }
+        }
+
+        function appendQuickItem(itemText) {
+            const notesField = document.getElementById('inputNotes');
+            if(notesField.value) {
+                notesField.value += "، " + itemText;
+            } else {
+                notesField.value = itemText;
+            }
+        }
+
+        // إرسال وتسجيل الدين من النافذة المنبثقة
+        async function submitAdvancedDebt() {
+            const rawVal = Number(document.getElementById('inputAmount').value);
+            if(!rawVal || isNaN(rawVal) || rawVal <= 0) {
+                alert("يرجى إدخال مبلغ صالح");
+                return;
+            }
+
+            const type = document.getElementById('inputCurrencyType').value;
+            let finalUsdAmount = rawVal;
+
+            if(type === 'SYP_NEW') {
+                finalUsdAmount = rawVal / currentRate;
+            } else if(type === 'SYP_OLD') {
+                finalUsdAmount = rawVal / (currentRate * 100);
+            }
+
+            const notes = document.getElementById('inputNotes').value.trim() || "دين متجر معاذ";
+            const dueDate = document.getElementById('inputDueDate').value;
+
             try {
-                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
+                // فحص سقف الحساب
+                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + activeModalPhone));
                 let currentTotal = 0;
                 if(txSnap.exists()) {
                     txSnap.forEach(ch => {
@@ -286,31 +434,32 @@
                     });
                 }
 
-                const newTotal = currentTotal + Number(amountUsd);
-                if(newTotal > creditLimit) {
-                    const confirmExceed = confirm(`⚠️ تنبيه: هذا الدين سيجعل إجمالي رصيد الزبون ($${newTotal}) يتجاوز سقف الحساب المعتمد ($${creditLimit}). هل تريد المتابعة على هر مسؤوليتك؟`);
+                const newTotal = currentTotal + finalUsdAmount;
+                if(newTotal > activeModalLimit) {
+                    const confirmExceed = confirm(`⚠️ تنبيه: إجمالي رصيد الزبون سيصبح ($${newTotal.toFixed(2)}) متجاوزاً سقف الحساب ($${activeModalLimit}). هل تريد المتابعة؟`);
                     if(!confirmExceed) return;
                 }
 
                 const debtData = {
                     type: 'debt',
-                    amount_usd: Number(amountUsd),
+                    amount_usd: Number(finalUsdAmount.toFixed(2)),
                     notes: notes,
+                    due_date: dueDate || '',
                     date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
                 };
 
-                await window.push(window.dbRef(window.db, 'transactions/' + phone), debtData);
-                alert("تم تسجيل الدين بنجاح");
+                await window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone), debtData);
+                alert("تم تسجيل الدين بنجاح وتحويله تلقائياً إلى الدولار ($)");
+                closeDebtModal();
             } catch(err) {
                 alert("حدث خطأ أثناء حفظ الدين");
             }
         }
 
-        // إضافة دفعة نقدية (تسديد)
         function addPayment(phone) {
             const amountUsd = prompt("أدخل قيمة الدفعة المسددة (بالدولار الأمريكي USD):");
             if(!amountUsd || isNaN(amountUsd) || Number(amountUsd) <= 0) return;
-            const notes = prompt("ملاحظات الدفعة (مثلاً: دفعة نقدية / تسديد):") || "دفعة نقدية";
+            const notes = prompt("ملاحظات الدفعة (مثلاً: دفعة نقدية):") || "دفعة نقدية";
 
             const paymentData = {
                 type: 'payment',
@@ -324,7 +473,6 @@
             });
         }
 
-        // مشاركة كشف الحساب عبر WhatsApp
         async function sendWhatsAppNotice(phone, custName) {
             try {
                 const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
@@ -336,14 +484,13 @@
                         else total += Number(t.amount_usd);
                     });
                 }
-                const msg = `مرحباً بالزبون الكريم ${custName}، تفاصيل حسابك الحالي لدى متجر معاذ هي: إجمالي الرصيد المستحق: $${total} USD. شكراً لتعاملكم معنا.`;
+                const msg = `مرحباً بالزبون الكريم ${custName}، تفاصيل حسابك الحالي لدى متجر معاذ هي: إجمالي الرصيد المستحق: $${total.toFixed(2)} USD. شكراً لتعاملكم معنا.`;
                 window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
             } catch(e) {
                 alert("تعذر إنشاء رسالة الواتساب");
             }
         }
 
-        // تحميل بيانات الإدارة
         function loadAdminData() {
             window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
                 if(snapshot.exists()) currentRate = Number(snapshot.val());
@@ -373,7 +520,6 @@
             });
         }
 
-        // عرض قائمة الزبائن في الإدارة
         function renderCustomersList(customersObj) {
             const list = document.getElementById('adminCustomersList');
             list.innerHTML = "";
@@ -396,7 +542,7 @@
                             <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">حذف</button>
                         </div>
                         <div class="flex flex-wrap gap-2 pt-1 border-t border-slate-600/60">
-                            <button onclick="addDebt('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">➕ إضافة دين</button>
+                            <button onclick="openAdvancedDebtModal('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">➕ تسجيل دين متقدم</button>
                             <button onclick="addPayment('${cust.phone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">💵 تسجيل دفعة</button>
                             <button onclick="sendWhatsAppNotice('${cust.phone}', '${cust.name}')" class="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">💬 واتساب</button>
                         </div>
@@ -405,7 +551,6 @@
             });
         }
 
-        // البحث المباشر للزبائن
         function filterCustomers() {
             const query = document.getElementById('searchCustomerInput').value.toLowerCase().trim();
             const filtered = {};
@@ -427,7 +572,6 @@
             }
         }
 
-        // تحميل بيانات الزبون
         let currentCustLimitUSD = 0;
         function loadCustomerData(phone) {
             window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
@@ -443,7 +587,6 @@
                 }
             });
 
-            // جلب الديون والدفعات وعرضها
             window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snapshot) => {
                 const list = document.getElementById('custTransactionsList');
                 list.innerHTML = "";
@@ -470,7 +613,10 @@
                                     <span class="text-xs px-2 py-0.5 rounded font-bold ${isPayment ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${isPayment ? 'دفعة مسددة' : 'دين'}</span>
                                     <span class="font-medium">${tx.notes || 'متجر معاذ'}</span>
                                 </div>
-                                <span class="text-xs text-slate-400 block mt-1">${tx.date || ''}</span>
+                                <div class="text-xs text-slate-400 mt-1 flex gap-2">
+                                    <span>${tx.date || ''}</span>
+                                    ${tx.due_date ? '<span class="text-amber-300">⏳ استحقاق: ' + tx.due_date + '</span>' : ''}
+                                </div>
                             </div>
                             <span class="font-extrabold ${isPayment ? 'text-emerald-400' : 'text-amber-400'}">${isPayment ? '-' : '+'}$${amount}</span>
                         </div>
@@ -504,7 +650,6 @@
             }
             document.getElementById('custTotalDisplay').innerText = `${val.toLocaleString()} ${symbol}`;
 
-            // تحديث شريط سقف الحساب البصري
             if(limit > 0) {
                 let percentage = (Math.max(0, usd) / limit) * 100;
                 if(percentage > 100) percentage = 100;
