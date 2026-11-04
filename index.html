@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ديون متجر معاذ</title>
+    <link rel="manifest" href="manifest.json">
+    <!-- Tailwind CSS لتصميم الواجهات -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة Firebase v10 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ==================== إعدادات Firebase الخاصة بك ====================
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "moaath-store.firebaseapp.com",
+            databaseURL: "https://moaath-store-default-rtdb.firebaseio.com",
+            projectId: "moaath-store",
+            storageBucket: "moaath-store.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // جعل الأدوات متاحة عالمياً داخل الملف
+        window.db = db;
+        window.dbRef = ref;
+        window.set = set;
+        window.get = get;
+        window.update = update;
+        window.remove = remove;
+        window.onValue = onValue;
+    </script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen font-sans">
+
+    <!-- حاوية التطبيق المتغيرة -->
+    <div id="app" class="container mx-auto p-4 max-w-2xl">
+        
+        <!-- 1. شاشة تسجيل الدخول -->
+        <div id="loginScreen" class="bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700 mt-16">
+            <h2 class="text-2xl font-bold text-center mb-6 text-amber-400">ديون متجر معاذ</h2>
+            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
+                <div>
+                    <label class="block text-sm mb-1 text-slate-300">رقم الهاتف</label>
+                    <input type="text" id="loginPhone" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-amber-400 text-white" placeholder="09xxxxxxxx">
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-slate-300">كلمة المرور</label>
+                    <input type="password" id="loginPassword" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-amber-400 text-white" placeholder="********">
+                </div>
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3 rounded-xl transition shadow-lg">دخول</button>
+            </form>
+            <p id="loginError" class="text-red-400 text-sm mt-3 text-center hidden">رقم الهاتف أو كلمة المرور غير صحيحة</p>
+        </div>
+
+        <!-- 2. لوحة تحكم الإدارة -->
+        <div id="adminPanel" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h1 class="text-xl font-bold text-amber-400">لوحة الإدارة الرئيسية</h1>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-bold">خروج</button>
+            </div>
+
+            <!-- إعدادات سعر الصرف -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="font-bold text-amber-300">ضبط سعر الصرف</h2>
+                <div class="flex gap-2">
+                    <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار مقابل الليرة الجديدة" class="flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded">حفظ السعر</button>
+                </div>
+                <p class="text-xs text-slate-400">ملاحظة: 1 ليرة سورية جديدة = 100 ليرة سورية قديمة تلقائياً.</p>
+            </div>
+
+            <!-- إضافة زبون جديد -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="font-bold text-amber-300">إضافة زبون جديد</h2>
+                <form onsubmit="addCustomer(event)" class="space-y-3">
+                    <input type="text" id="newCustName" placeholder="اسم الزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <input type="text" id="newCustPhone" placeholder="رقم الهاتف (مثل 09...)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <input type="password" id="newCustPass" placeholder="كلمة المرور الخاصة بالزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <input type="number" id="newCustLimit" placeholder="سقف الحساب (بالدولار الأمريكي)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold p-2 rounded">إضافة الزبون</button>
+                </form>
+            </div>
+
+            <!-- قائمة الزبائن وإدارة الديون -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="font-bold text-amber-300">الزبائن والديون</h2>
+                <div id="adminCustomersList" class="space-y-2">
+                    <!-- سيتم تعبئتها برمجياً -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. صفحة الزبون (للقراءة فقط مع تبديل العملات) -->
+        <div id="customerPanel" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h1 id="custWelcomeTitle" class="text-xl font-bold text-amber-400">حسابي</h1>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-bold">خروج</button>
+            </div>
+
+            <!-- تبديل العملات -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center space-y-3">
+                <p class="text-sm text-slate-300">إجمالي الدين الحالي:</p>
+                <h2 id="custTotalDisplay" class="text-3xl font-extrabold text-amber-400">0.00 $</h2>
+                <div class="flex justify-center gap-2 pt-2">
+                    <button onclick="changeCurrency('USD')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold border border-amber-500">دولار ($)</button>
+                    <button onclick="changeCurrency('SYP_NEW')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة جديدة</button>
+                    <button onclick="changeCurrency('SYP_OLD')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة قديمة</button>
+                </div>
+            </div>
+
+            <!-- تفاصيل الديون -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h3 class="font-bold text-amber-300">سجل العمليات والديون</h3>
+                <div id="custTransactionsList" class="space-y-2">
+                    <!-- تفاصيل العمليات -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- كود الجافاسكريبت للتحكم بالمنطق -->
+    <script>
+        let currentCurrency = 'USD';
+        let currentRate = 15000; // قيمة افتراضية مؤقتة حتى يتم جلبها من القاعدة
+
+        // التحقق من الجلسة عند الفتح
+        window.onload = function() {
+            const role = localStorage.getItem("userRole");
+            const phone = localStorage.getItem("userPhone");
+            if (role === "admin") {
+                showAdminPanel();
+            } else if (role === "customer" && phone) {
+                showCustomerPanel(phone);
+            }
+        };
+
+        // تسجيل الدخول
+        async function handleLogin(e) {
+            e.preventDefault();
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (phone === "0965421505" && password === "MYA@1997//MOAATHS") {
+                localStorage.setItem("userRole", "admin");
+                localStorage.setItem("userPhone", phone);
+                showAdminPanel();
+                return;
+            }
+
+            try {
+                const snapshot = await window.get(window.dbRef(window.db, 'customers/' + phone));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.password === password) {
+                        localStorage.setItem("userRole", "customer");
+                        localStorage.setItem("userPhone", phone);
+                        showCustomerPanel(phone);
+                        return;
+                    }
+                }
+                document.getElementById('loginError').classList.remove('hidden');
+            } catch (err) {
+                alert("خطأ في الاتصال بالقاعدة");
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadAdminData();
+        }
+
+        function showCustomerPanel(phone) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('customerPanel').classList.remove('hidden');
+            loadCustomerData(phone);
+        }
+
+        // حفظ سعر الصرف
+        function saveExchangeRate() {
+            const rate = document.getElementById('exchangeRateInput').value;
+            if(!rate) return alert("أدخل سعر صالِح");
+            window.set(window.dbRef(window.db, 'settings/exchangeRate'), rate).then(() => {
+                alert("تم تحديث سعر الصرف بنجاح");
+            });
+        }
+
+        // إضافة زبون
+        function addCustomer(e) {
+            e.preventDefault();
+            const name = document.getElementById('newCustName').value;
+            const phone = document.getElementById('newCustPhone').value;
+            const password = document.getElementById('newCustPass').value;
+            const limit = document.getElementById('newCustLimit').value;
+
+            window.set(window.dbRef(window.db, 'customers/' + phone), {
+                name, phone, password, credit_limit: Number(limit)
+            }).then(() => {
+                alert("تمت إضافة الزبون بنجاح");
+                e.target.reset();
+                loadAdminData();
+            });
+        }
+
+        // تحميل بيانات الإدارة
+        function loadAdminData() {
+            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
+                if(snapshot.exists()) currentRate = Number(snapshot.val());
+                document.getElementById('exchangeRateInput').value = currentRate;
+            });
+
+            window.onValue(window.dbRef(window.db, 'customers'), (snapshot) => {
+                const list = document.getElementById('adminCustomersList');
+                list.innerHTML = "";
+                if(!snapshot.exists()) { list.innerHTML = "<p class='text-sm text-slate-400'>لا يوجد زبائن مضافين</p>"; return; }
+                
+                snapshot.forEach((child) => {
+                    const cust = child.val();
+                    list.innerHTML += `
+                        <div class="bg-slate-700 p-3 rounded-lg flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold text-amber-300">${cust.name}</h3>
+                                <p class="text-xs text-slate-300">الهاتف: ${cust.phone} | السقف: $${cust.credit_limit}</p>
+                            </div>
+                            <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-bold">حذف الحساب</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function deleteCustomer(phone) {
+            if(confirm("هل أنت متأكد من حذف الحساب نهائياً؟")) {
+                window.remove(window.dbRef(window.db, 'customers/' + phone)).then(() => alert("تم الحذف"));
+            }
+        }
+
+        // تحميل بيانات الزبون
+        function loadCustomerData(phone) {
+            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
+                if(snapshot.exists()) currentRate = Number(snapshot.val());
+            });
+
+            window.onValue(window.dbRef(window.db, 'customers/' + phone), (snapshot) => {
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('custWelcomeTitle').innerText = `أهلاً بك، ${data.name}`;
+                }
+            });
+
+            // جلب الديون وعرضها
+            window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snapshot) => {
+                const list = document.getElementById('custTransactionsList');
+                list.innerHTML = "";
+                let totalUSD = 0;
+
+                if(!snapshot.exists()) {
+                    list.innerHTML = "<p class='text-sm text-slate-400'>لا توجد ديون مسجلة</p>";
+                    updateDisplayTotal(0);
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const tx = child.val();
+                    totalUSD += Number(tx.amount_usd);
+                    list.innerHTML += `
+                        <div class="bg-slate-700 p-2 rounded text-sm flex justify-between">
+                            <span>${tx.notes || 'دين متجر'}</span>
+                            <span class="font-bold text-amber-400">$${tx.amount_usd}</span>
+                        </div>
+                    `;
+                });
+                window.lastTotalUSD = totalUSD;
+                updateDisplayTotal(totalUSD);
+            });
+        }
+
+        function changeCurrency(type) {
+            currentCurrency = type;
+            if(window.lastTotalUSD !== undefined) {
+                updateDisplayTotal(window.lastTotalUSD);
+            }
+        }
+
+        function updateDisplayTotal(usd) {
+            let val = usd;
+            let symbol = "$";
+            if(currentCurrency === 'SYP_NEW') {
+                val = usd * currentRate;
+                symbol = "ل.س جديدة";
+            } else if(currentCurrency === 'SYP_OLD') {
+                val = usd * currentRate * 100;
+                symbol = "ل.س قديمة";
+            }
+            document.getElementById('custTotalDisplay').innerText = `${val.toLocaleString()} ${symbol}`;
+        }
+    </script>
+</body>
+</html>
