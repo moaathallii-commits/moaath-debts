@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ديون متجر معاذ</title>
+    <title>ديون متجر معاذ - النسخة المطورة</title>
     <link rel="manifest" href="manifest.json">
     <!-- Tailwind CSS لتصميم الواجهات -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,7 +44,8 @@
         
         <!-- 1. شاشة تسجيل الدخول -->
         <div id="loginScreen" class="bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700 mt-16">
-            <h2 class="text-2xl font-bold text-center mb-6 text-amber-400">ديون متجر معاذ</h2>
+            <h2 class="text-2xl font-bold text-center mb-2 text-amber-400">ديون متجر معاذ</h2>
+            <p class="text-xs text-center text-slate-400 mb-6">النظام الذكي لإدارة الحسابات والديون</p>
             <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
                 <div>
                     <label class="block text-sm mb-1 text-slate-300">رقم الهاتف</label>
@@ -62,16 +63,22 @@
         <!-- 2. لوحة تحكم الإدارة -->
         <div id="adminPanel" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h1 class="text-xl font-bold text-amber-400">لوحة الإدارة الرئيسية</h1>
+                <div>
+                    <h1 class="text-xl font-bold text-amber-400">لوحة الإدارة الرئيسية</h1>
+                    <p class="text-xs text-slate-400">متجر معاذ - العوينة</p>
+                </div>
                 <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-bold">خروج</button>
             </div>
 
-            <!-- إعدادات سعر الصرف -->
+            <!-- إعدادات سعر الصرف والنسخ الاحتياطي -->
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-                <h2 class="font-bold text-amber-300">ضبط سعر الصرف</h2>
+                <h2 class="font-bold text-amber-300">ضبط سعر الصرف والبيانات</h2>
                 <div class="flex gap-2">
-                    <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار مقابل الليرة الجديدة" class="flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-white">
-                    <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded">حفظ السعر</button>
+                    <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار مقابل الليرة الجديدة" class="flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                    <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded text-sm">حفظ</button>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="exportDataJSON()" class="bg-slate-700 hover:bg-slate-600 text-amber-400 border border-amber-500/50 px-3 py-1.5 rounded text-xs font-bold flex-1">📥 تصدير نسخة احتياطية (JSON)</button>
                 </div>
                 <p class="text-xs text-slate-400">ملاحظة: 1 ليرة سورية جديدة = 100 ليرة سورية قديمة تلقائياً.</p>
             </div>
@@ -80,45 +87,68 @@
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="font-bold text-amber-300">إضافة زبون جديد</h2>
                 <form onsubmit="addCustomer(event)" class="space-y-3">
-                    <input type="text" id="newCustName" placeholder="اسم الزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
-                    <input type="text" id="newCustPhone" placeholder="رقم الهاتف (مثل 09...)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
-                    <input type="password" id="newCustPass" placeholder="كلمة المرور الخاصة بالزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
-                    <input type="number" id="newCustLimit" placeholder="سقف الحساب (بالدولار الأمريكي)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white">
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold p-2 rounded">إضافة الزبون</button>
+                    <input type="text" id="newCustName" placeholder="اسم الزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                    <input type="text" id="newCustPhone" placeholder="رقم الهاتف (مثل 09...)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                    <input type="password" id="newCustPass" placeholder="كلمة المرور الخاصة بالزبون" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                    <input type="number" id="newCustLimit" placeholder="سقف الحساب (بالدولار الأمريكي USD)" required class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold p-2 rounded text-sm">إضافة الزبون</button>
                 </form>
             </div>
 
-            <!-- قائمة الزبائن وإضافة الديون -->
+            <!-- قائمة الزبائن والديون مع البحث المباشر -->
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-                <h2 class="font-bold text-amber-300">الزبائن وإدارة الديون</h2>
-                <div id="adminCustomersList" class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-amber-300">الزبائن وإدارة الديون</h2>
+                    <span id="customerCountBadge" class="text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">0 زبون</span>
+                </div>
+                <!-- حقل البحث السريع -->
+                <div>
+                    <input type="text" id="searchCustomerInput" oninput="filterCustomers()" placeholder="🔍 بحث سريع عن زبون (بالاسم أو الرقم)..." class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400">
+                </div>
+                <div id="adminCustomersList" class="space-y-3 pt-2">
                     <!-- سيتم تعبئتها برمجياً -->
                 </div>
             </div>
         </div>
 
-        <!-- 3. صفحة الزبون (للقراءة فقط مع تبديل العملات) -->
+        <!-- 3. صفحة الزبون (للقراءة وتفاصيل الحساب مع تبديل العملات) -->
         <div id="customerPanel" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h1 id="custWelcomeTitle" class="text-xl font-bold text-amber-400">حسابي</h1>
+                <div>
+                    <h1 id="custWelcomeTitle" class="text-xl font-bold text-amber-400">حسابي</h1>
+                    <p class="text-xs text-slate-400">ديون متجر معاذ</p>
+                </div>
                 <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-bold">خروج</button>
             </div>
 
-            <!-- تبديل العملات -->
+            <!-- تبديل العملات وسقف الحساب -->
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center space-y-3">
-                <p class="text-sm text-slate-300">إجمالي الدين الحالي:</p>
+                <p class="text-sm text-slate-300">إجمالي صافي الدين الحالي:</p>
                 <h2 id="custTotalDisplay" class="text-3xl font-extrabold text-amber-400">0.00 $</h2>
-                <div class="flex justify-center gap-2 pt-2">
-                    <button onclick="changeCurrency('USD')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold border border-amber-500">دولار ($)</button>
-                    <button onclick="changeCurrency('SYP_NEW')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة جديدة</button>
-                    <button onclick="changeCurrency('SYP_OLD')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة قديمة</button>
+                
+                <!-- شريط سقف الحساب البصري -->
+                <div class="w-full bg-slate-700 rounded-full h-3 mt-2 overflow-hidden border border-slate-600">
+                    <div id="custLimitProgressBar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-slate-400 px-1">
+                    <span id="custLimitText">سقف الحساب: $0</span>
+                    <span id="custLimitPercentage">0%</span>
+                </div>
+
+                <div class="flex justify-center gap-2 pt-3">
+                    <button onclick="changeCurrency('USD')" id="btnCurrUSD" class="px-3 py-1 bg-amber-500 text-slate-900 rounded text-sm font-bold shadow">دولار ($)</button>
+                    <button onclick="changeCurrency('SYP_NEW')" id="btnCurrNew" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة جديدة</button>
+                    <button onclick="changeCurrency('SYP_OLD')" id="btnCurrOld" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm font-bold">ليرة قديمة</button>
                 </div>
             </div>
 
-            <!-- تفاصيل الديون -->
+            <!-- تفاصيل وسجل العمليات -->
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-                <h3 class="font-bold text-amber-300">سجل العمليات والديون</h3>
-                <div id="custTransactionsList" class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-amber-300">سجل العمليات والديون والدفعات</h3>
+                    <button onclick="downloadCustomerStatement()" class="bg-slate-700 hover:bg-slate-600 text-amber-400 px-3 py-1 rounded text-xs font-bold border border-amber-500/40">📥 طباعة / حفظ كشف الحساب</button>
+                </div>
+                <div id="custTransactionsList" class="space-y-2 pt-1">
                     <!-- تفاصيل العمليات -->
                 </div>
             </div>
@@ -126,10 +156,11 @@
 
     </div>
 
-    <!-- كود الجافاسكريبت للتحكم بالمنطق -->
+    <!-- كود الجافاسكريبت للتحكم بالمنطق والتحسينات المتقدمة -->
     <script>
         let currentCurrency = 'USD';
-        let currentRate = 15000; // قيمة افتراضية مؤقتة حتى يتم جلبها من القاعدة
+        let currentRate = 15000; // قيمة افتراضية حتى يتم جلبها من القاعدة
+        let allCustomersData = {}; // تخزين مؤقت للزبائن للبحث السريع
 
         // التحقق من الجلسة عند الفتح
         window.onload = function() {
@@ -148,7 +179,7 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
-            // بيانات الإدارة الجديدة
+            // حساب الإدارة الجديد
             if (phone === "0965461504" && password === "MHA@1997//MOAATHS") {
                 localStorage.setItem("userRole", "admin");
                 localStorage.setItem("userPhone", phone);
@@ -169,7 +200,7 @@
                 }
                 document.getElementById('loginError').classList.remove('hidden');
             } catch (err) {
-                alert("خطأ في الاتصال بالقاعدة");
+                alert("خطأ في الاتصال بقاعدة البيانات");
             }
         }
 
@@ -193,18 +224,38 @@
         // حفظ سعر الصرف
         function saveExchangeRate() {
             const rate = document.getElementById('exchangeRateInput').value;
-            if(!rate) return alert("أدخل سعر صالِح");
-            window.set(window.dbRef(window.db, 'settings/exchangeRate'), rate).then(() => {
+            if(!rate || isNaN(rate)) return alert("أدخل سعر صرف صالح");
+            window.set(window.dbRef(window.db, 'settings/exchangeRate'), Number(rate)).then(() => {
                 alert("تم تحديث سعر الصرف بنجاح");
             });
         }
 
-        // إضافة زبون
+        // تصدير نسخة احتياطية بصيغة JSON
+        async function exportDataJSON() {
+            try {
+                const snap = await window.get(window.dbRef(window.db));
+                if(snap.exists()) {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(snap.val(), null, 2));
+                    const downloadAnchor = document.createElement('a');
+                    downloadAnchor.setAttribute("href", dataStr);
+                    downloadAnchor.setAttribute("download", "moaath_store_backup_" + new Date().toISOString().slice(0,10) + ".json");
+                    document.body.appendChild(downloadAnchor);
+                    downloadAnchor.click();
+                    downloadAnchor.remove();
+                } else {
+                    alert("لا توجد بيانات للتصدير");
+                }
+            } catch(e) {
+                alert("حدث خطأ أثناء التصدير");
+            }
+        }
+
+        // إضافة زبون جديد
         function addCustomer(e) {
             e.preventDefault();
-            const name = document.getElementById('newCustName').value;
-            const phone = document.getElementById('newCustPhone').value;
-            const password = document.getElementById('newCustPass').value;
+            const name = document.getElementById('newCustName').value.trim();
+            const phone = document.getElementById('newCustPhone').value.trim();
+            const password = document.getElementById('newCustPass').value.trim();
             const limit = document.getElementById('newCustLimit').value;
 
             window.set(window.dbRef(window.db, 'customers/' + phone), {
@@ -216,23 +267,80 @@
             });
         }
 
-        // إضافة دين لزبون معين
-        function addDebt(phone, creditLimit) {
-            const amountUsd = prompt("أدخل قيمة الدين (بالدولار الأمريكي USD):");
-            if(!amountUsd || isNaN(amountUsd)) return;
-            const notes = prompt("أدخل تفاصيل أو بيان البضاعة (اختياري):") || "دين متجر معاذ";
+        // إضافة دين جديد مع فحص سقف الحساب
+        async function addDebt(phone, creditLimit) {
+            const amountUsd = prompt("أدخل قيمة الدين الجديد (بالدولار الأمريكي USD):");
+            if(!amountUsd || isNaN(amountUsd) || Number(amountUsd) <= 0) return;
+            
+            const notes = prompt("أدخل تفاصيل البضاعة أو سبب الدين:") || "دين متجر معاذ";
 
-            const debtData = {
+            // حساب المجموع الحالي للتحقق من السقف
+            try {
+                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
+                let currentTotal = 0;
+                if(txSnap.exists()) {
+                    txSnap.forEach(ch => {
+                        const t = ch.val();
+                        if(t.type === 'payment') currentTotal -= Number(t.amount_usd);
+                        else currentTotal += Number(t.amount_usd);
+                    });
+                }
+
+                const newTotal = currentTotal + Number(amountUsd);
+                if(newTotal > creditLimit) {
+                    const confirmExceed = confirm(`⚠️ تنبيه: هذا الدين سيجعل إجمالي رصيد الزبون ($${newTotal}) يتجاوز سقف الحساب المعتمد ($${creditLimit}). هل تريد المتابعة على هر مسؤوليتك؟`);
+                    if(!confirmExceed) return;
+                }
+
+                const debtData = {
+                    type: 'debt',
+                    amount_usd: Number(amountUsd),
+                    notes: notes,
+                    date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
+                };
+
+                await window.push(window.dbRef(window.db, 'transactions/' + phone), debtData);
+                alert("تم تسجيل الدين بنجاح");
+            } catch(err) {
+                alert("حدث خطأ أثناء حفظ الدين");
+            }
+        }
+
+        // إضافة دفعة نقدية (تسديد)
+        function addPayment(phone) {
+            const amountUsd = prompt("أدخل قيمة الدفعة المسددة (بالدولار الأمريكي USD):");
+            if(!amountUsd || isNaN(amountUsd) || Number(amountUsd) <= 0) return;
+            const notes = prompt("ملاحظات الدفعة (مثلاً: دفعة نقدية / تسديد):") || "دفعة نقدية";
+
+            const paymentData = {
+                type: 'payment',
                 amount_usd: Number(amountUsd),
                 notes: notes,
-                date: new Date().toLocaleDateString('ar-SY')
+                date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
             };
 
-            window.push(window.dbRef(window.db, 'transactions/' + phone), debtData).then(() => {
-                alert("تم تسجيل الدين بنجاح وإضافته لصفحة الزبون");
-            }).catch((err) => {
-                alert("حدث خطأ أثناء حفظ الدين");
+            window.push(window.dbRef(window.db, 'transactions/' + phone), paymentData).then(() => {
+                alert("تم تسجيل الدفعة وخصمها من الرصيد بنجاح");
             });
+        }
+
+        // مشاركة كشف الحساب عبر WhatsApp
+        async function sendWhatsAppNotice(phone, custName) {
+            try {
+                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
+                let total = 0;
+                if(txSnap.exists()) {
+                    txSnap.forEach(ch => {
+                        const t = ch.val();
+                        if(t.type === 'payment') total -= Number(t.amount_usd);
+                        else total += Number(t.amount_usd);
+                    });
+                }
+                const msg = `مرحباً بالزبون الكريم ${custName}، تفاصيل حسابك الحالي لدى متجر معاذ هي: إجمالي الرصيد المستحق: $${total} USD. شكراً لتعاملكم معنا.`;
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            } catch(e) {
+                alert("تعذر إنشاء رسالة الواتساب");
+            }
         }
 
         // تحميل بيانات الإدارة
@@ -245,35 +353,82 @@
             window.onValue(window.dbRef(window.db, 'customers'), (snapshot) => {
                 const list = document.getElementById('adminCustomersList');
                 list.innerHTML = "";
-                if(!snapshot.exists()) { list.innerHTML = "<p class='text-sm text-slate-400'>لا يوجد زبائن مضافين</p>"; return; }
+                allCustomersData = {};
+
+                if(!snapshot.exists()) { 
+                    list.innerHTML = "<p class='text-sm text-slate-400 text-center py-4'>لا يوجد زبائن مضافين حالياً</p>"; 
+                    document.getElementById('customerCountBadge').innerText = "0 زبون";
+                    return; 
+                }
                 
+                let count = 0;
                 snapshot.forEach((child) => {
                     const cust = child.val();
-                    list.innerHTML += `
-                        <div class="bg-slate-700 p-3 rounded-lg space-y-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-amber-300">${cust.name}</h3>
-                                    <p class="text-xs text-slate-300">الهاتف: ${cust.phone} | السقف: $${cust.credit_limit}</p>
-                                </div>
-                                <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-bold">حذف الحساب</button>
-                            </div>
-                            <div class="flex gap-2 pt-2 border-t border-slate-600">
-                                <button onclick="addDebt('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1 rounded text-xs flex-1">➕ إضافة دين جديد</button>
-                            </div>
-                        </div>
-                    `;
+                    allCustomersData[cust.phone] = cust;
+                    count++;
                 });
+
+                document.getElementById('customerCountBadge').innerText = count + " زبون";
+                renderCustomersList(allCustomersData);
             });
         }
 
+        // عرض قائمة الزبائن في الإدارة
+        function renderCustomersList(customersObj) {
+            const list = document.getElementById('adminCustomersList');
+            list.innerHTML = "";
+
+            const keys = Object.keys(customersObj);
+            if(keys.length === 0) {
+                list.innerHTML = "<p class='text-sm text-slate-400 text-center py-4'>لا توجد نتائج مطابقة للبحث</p>";
+                return;
+            }
+
+            keys.forEach((phone) => {
+                const cust = customersObj[phone];
+                list.innerHTML += `
+                    <div class="bg-slate-700/80 p-3.5 rounded-xl space-y-3 border border-slate-600">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-amber-300 text-base">${cust.name}</h3>
+                                <p class="text-xs text-slate-300">الهاتف: ${cust.phone} | السقف: <span class="text-emerald-400 font-bold">$${cust.credit_limit}</span></p>
+                            </div>
+                            <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">حذف</button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1 border-t border-slate-600/60">
+                            <button onclick="addDebt('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">➕ إضافة دين</button>
+                            <button onclick="addPayment('${cust.phone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">💵 تسجيل دفعة</button>
+                            <button onclick="sendWhatsAppNotice('${cust.phone}', '${cust.name}')" class="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">💬 واتساب</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // البحث المباشر للزبائن
+        function filterCustomers() {
+            const query = document.getElementById('searchCustomerInput').value.toLowerCase().trim();
+            const filtered = {};
+            for(let phone in allCustomersData) {
+                const c = allCustomersData[phone];
+                if(c.name.toLowerCase().includes(query) || c.phone.includes(query)) {
+                    filtered[phone] = c;
+                }
+            }
+            renderCustomersList(filtered);
+        }
+
         function deleteCustomer(phone) {
-            if(confirm("هل أنت متأكد من حذف الحساب نهائياً؟")) {
-                window.remove(window.dbRef(window.db, 'customers/' + phone)).then(() => alert("تم الحذف"));
+            if(confirm("هل أنت متأكد من حذف هذا الزبون وسجل ديونه نهائياً؟")) {
+                window.remove(window.dbRef(window.db, 'customers/' + phone)).then(() => {
+                    window.remove(window.dbRef(window.db, 'transactions/' + phone));
+                    alert("تم الحذف بنجاح");
+                });
             }
         }
 
         // تحميل بيانات الزبون
+        let currentCustLimitUSD = 0;
         function loadCustomerData(phone) {
             window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
                 if(snapshot.exists()) currentRate = Number(snapshot.val());
@@ -283,47 +438,61 @@
                 if(snapshot.exists()) {
                     const data = snapshot.val();
                     document.getElementById('custWelcomeTitle').innerText = `أهلاً بك، ${data.name}`;
+                    currentCustLimitUSD = Number(data.credit_limit || 0);
+                    document.getElementById('custLimitText').innerText = `سقف الحساب: $${currentCustLimitUSD}`;
                 }
             });
 
-            // جلب الديون وعرضها
+            // جلب الديون والدفعات وعرضها
             window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snapshot) => {
                 const list = document.getElementById('custTransactionsList');
                 list.innerHTML = "";
-                let totalUSD = 0;
+                let netTotalUSD = 0;
 
                 if(!snapshot.exists()) {
-                    list.innerHTML = "<p class='text-sm text-slate-400'>لا توجد ديون مسجلة</p>";
-                    updateDisplayTotal(0);
+                    list.innerHTML = "<p class='text-sm text-slate-400 text-center py-4'>لا توجد عمليات مسجلة</p>";
+                    updateDisplayTotal(0, currentCustLimitUSD);
                     return;
                 }
 
                 snapshot.forEach((child) => {
                     const tx = child.val();
-                    totalUSD += Number(tx.amount_usd);
+                    const isPayment = tx.type === 'payment';
+                    const amount = Number(tx.amount_usd);
+
+                    if(isPayment) netTotalUSD -= amount;
+                    else netTotalUSD += amount;
+
                     list.innerHTML += `
-                        <div class="bg-slate-700 p-2 rounded text-sm flex justify-between">
+                        <div class="bg-slate-700/80 p-3 rounded-lg text-sm flex justify-between items-center border ${isPayment ? 'border-emerald-500/40' : 'border-slate-600'}">
                             <div>
-                                <span>${tx.notes || 'دين متجر'}</span>
-                                <span class="text-xs text-slate-400 block">${tx.date || ''}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs px-2 py-0.5 rounded font-bold ${isPayment ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${isPayment ? 'دفعة مسددة' : 'دين'}</span>
+                                    <span class="font-medium">${tx.notes || 'متجر معاذ'}</span>
+                                </div>
+                                <span class="text-xs text-slate-400 block mt-1">${tx.date || ''}</span>
                             </div>
-                            <span class="font-bold text-amber-400">$${tx.amount_usd}</span>
+                            <span class="font-extrabold ${isPayment ? 'text-emerald-400' : 'text-amber-400'}">${isPayment ? '-' : '+'}$${amount}</span>
                         </div>
                     `;
                 });
-                window.lastTotalUSD = totalUSD;
-                updateDisplayTotal(totalUSD);
+                window.lastNetTotalUSD = netTotalUSD;
+                updateDisplayTotal(netTotalUSD, currentCustLimitUSD);
             });
         }
 
         function changeCurrency(type) {
             currentCurrency = type;
-            if(window.lastTotalUSD !== undefined) {
-                updateDisplayTotal(window.lastTotalUSD);
+            document.getElementById('btnCurrUSD').className = "px-3 py-1 rounded text-sm font-bold " + (type === 'USD' ? "bg-amber-500 text-slate-900 shadow" : "bg-slate-700 hover:bg-slate-600");
+            document.getElementById('btnCurrNew').className = "px-3 py-1 rounded text-sm font-bold " + (type === 'SYP_NEW' ? "bg-amber-500 text-slate-900 shadow" : "bg-slate-700 hover:bg-slate-600");
+            document.getElementById('btnCurrOld').className = "px-3 py-1 rounded text-sm font-bold " + (type === 'SYP_OLD' ? "bg-amber-500 text-slate-900 shadow" : "bg-slate-700 hover:bg-slate-600");
+
+            if(window.lastNetTotalUSD !== undefined) {
+                updateDisplayTotal(window.lastNetTotalUSD, currentCustLimitUSD);
             }
         }
 
-        function updateDisplayTotal(usd) {
+        function updateDisplayTotal(usd, limit) {
             let val = usd;
             let symbol = "$";
             if(currentCurrency === 'SYP_NEW') {
@@ -334,6 +503,23 @@
                 symbol = "ل.س قديمة";
             }
             document.getElementById('custTotalDisplay').innerText = `${val.toLocaleString()} ${symbol}`;
+
+            // تحديث شريط سقف الحساب البصري
+            if(limit > 0) {
+                let percentage = (Math.max(0, usd) / limit) * 100;
+                if(percentage > 100) percentage = 100;
+                const bar = document.getElementById('custLimitProgressBar');
+                bar.style.width = percentage + "%";
+                document.getElementById('custLimitPercentage').innerText = Math.round(percentage) + "% من السقف";
+                
+                if(percentage > 85) bar.className = "bg-red-500 h-full transition-all duration-500";
+                else if(percentage > 60) bar.className = "bg-amber-500 h-full transition-all duration-500";
+                else bar.className = "bg-emerald-500 h-full transition-all duration-500";
+            }
+        }
+
+        function downloadCustomerStatement() {
+            window.print();
         }
     </script>
 </body>
