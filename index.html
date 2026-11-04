@@ -10,7 +10,7 @@
     <!-- مكتبة Firebase v10 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, update, remove, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // ==================== إعدادات Firebase الخاصة بك ====================
         const firebaseConfig = {
@@ -34,6 +34,7 @@
         window.update = update;
         window.remove = remove;
         window.onValue = onValue;
+        window.push = push;
     </script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans">
@@ -87,10 +88,10 @@
                 </form>
             </div>
 
-            <!-- قائمة الزبائن وإدارة الديون -->
+            <!-- قائمة الزبائن وإضافة الديون -->
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="font-bold text-amber-300">الزبائن وإدارة الديون</h2>
-                <div id="adminCustomersList" class="space-y-2">
+                <div id="adminCustomersList" class="space-y-4">
                     <!-- سيتم تعبئتها برمجياً -->
                 </div>
             </div>
@@ -147,7 +148,8 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
-            if (phone === "0965421505" && password === "MYA@1997//MOAATHS") {
+            // بيانات الإدارة الجديدة
+            if (phone === "0965461504" && password === "MHA@1997//MOAATHS") {
                 localStorage.setItem("userRole", "admin");
                 localStorage.setItem("userPhone", phone);
                 showAdminPanel();
@@ -214,6 +216,25 @@
             });
         }
 
+        // إضافة دين لزبون معين
+        function addDebt(phone, creditLimit) {
+            const amountUsd = prompt("أدخل قيمة الدين (بالدولار الأمريكي USD):");
+            if(!amountUsd || isNaN(amountUsd)) return;
+            const notes = prompt("أدخل تفاصيل أو بيان البضاعة (اختياري):") || "دين متجر معاذ";
+
+            const debtData = {
+                amount_usd: Number(amountUsd),
+                notes: notes,
+                date: new Date().toLocaleDateString('ar-SY')
+            };
+
+            window.push(window.dbRef(window.db, 'transactions/' + phone), debtData).then(() => {
+                alert("تم تسجيل الدين بنجاح وإضافته لصفحة الزبون");
+            }).catch((err) => {
+                alert("حدث خطأ أثناء حفظ الدين");
+            });
+        }
+
         // تحميل بيانات الإدارة
         function loadAdminData() {
             window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
@@ -229,12 +250,17 @@
                 snapshot.forEach((child) => {
                     const cust = child.val();
                     list.innerHTML += `
-                        <div class="bg-slate-700 p-3 rounded-lg flex justify-between items-center">
-                            <div>
-                                <h3 class="font-bold text-amber-300">${cust.name}</h3>
-                                <p class="text-xs text-slate-300">الهاتف: ${cust.phone} | السقف: $${cust.credit_limit}</p>
+                        <div class="bg-slate-700 p-3 rounded-lg space-y-2">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-amber-300">${cust.name}</h3>
+                                    <p class="text-xs text-slate-300">الهاتف: ${cust.phone} | السقف: $${cust.credit_limit}</p>
+                                </div>
+                                <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-bold">حذف الحساب</button>
                             </div>
-                            <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-bold">حذف الحساب</button>
+                            <div class="flex gap-2 pt-2 border-t border-slate-600">
+                                <button onclick="addDebt('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1 rounded text-xs flex-1">➕ إضافة دين جديد</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -277,7 +303,10 @@
                     totalUSD += Number(tx.amount_usd);
                     list.innerHTML += `
                         <div class="bg-slate-700 p-2 rounded text-sm flex justify-between">
-                            <span>${tx.notes || 'دين متجر'}</span>
+                            <div>
+                                <span>${tx.notes || 'دين متجر'}</span>
+                                <span class="text-xs text-slate-400 block">${tx.date || ''}</span>
+                            </div>
                             <span class="font-bold text-amber-400">$${tx.amount_usd}</span>
                         </div>
                     `;
