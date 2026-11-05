@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ديون متجر معاذ - النظام المالي المتكامل</title>
+    <title>ديون متجر معاذ - النظام المالي الشامل</title>
     <link rel="manifest" href="manifest.json">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة Firebase v10 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, remove, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -37,7 +35,6 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans pb-20">
 
-    <!-- حاوية الإشعارات (التراجع السريع) -->
     <div id="undoToast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 shadow-2xl rounded-2xl p-4 z-[60] flex items-center justify-between w-11/12 max-w-sm transition-all">
         <div class="flex items-center gap-3">
             <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-full">
@@ -52,14 +49,14 @@
     </div>
 
     <!-- حاوية التطبيق -->
-    <div id="app" class="container mx-auto p-4 max-w-2xl">
+    <div id="app" class="container mx-auto p-4 max-w-3xl">
         
         <!-- 1. شاشة تسجيل الدخول -->
-        <div id="loginScreen" class="bg-slate-800 p-6 rounded-3xl shadow-2xl border border-slate-700 mt-16">
+        <div id="loginScreen" class="bg-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-700 mt-16 max-w-md mx-auto">
             <div class="text-center mb-8">
                 <div class="bg-amber-500 text-slate-900 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center font-black text-3xl shadow-lg shadow-amber-500/30 mb-4">M</div>
                 <h2 class="text-2xl font-bold text-amber-400">ديون متجر معاذ</h2>
-                <p class="text-xs text-slate-400 mt-1">النظام المالي المتكامل للزبائن</p>
+                <p class="text-xs text-slate-400 mt-1">نظام إدارة الديون والالتزامات الذكي</p>
             </div>
             <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
                 <div>
@@ -77,61 +74,111 @@
 
         <!-- 2. لوحة تحكم الإدارة -->
         <div id="adminPanel" class="hidden space-y-6">
-            <div class="flex justify-between items-center bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-lg">
-                <div>
-                    <h1 class="text-xl font-bold text-amber-400">لوحة الإدارة</h1>
-                    <p class="text-xs text-slate-400 mt-1">متجر معاذ - العوينة</p>
-                </div>
-                <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition">تسجيل خروج</button>
-            </div>
-
-            <!-- لوحة الإحصائيات المصغرة -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                    <p class="text-xs text-slate-400 mb-1">إجمالي الديون في السوق</p>
-                    <h3 id="globalDebtTotal" class="text-xl font-black text-amber-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                    <p class="text-xs text-slate-400 mb-1">عدد الزبائن المسجلين</p>
-                    <h3 id="globalCustCount" class="text-xl font-black text-emerald-400">0</h3>
-                </div>
-            </div>
-
-            <!-- إعدادات سعر الصرف والنسخ الاحتياطي -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
-                <h2 class="font-bold text-amber-300 text-sm">الإعدادات العامة والنسخ الاحتياطي</h2>
-                <div class="flex gap-2">
-                    <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار (ل.س جديدة)" class="flex-1 p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-amber-400 focus:outline-none">
-                    <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-3 rounded-xl text-sm transition shadow-lg">تحديث السعر</button>
-                </div>
-                <button onclick="exportDataJSON()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 border border-slate-600 px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    تصدير قاعدة البيانات (JSON)
-                </button>
-            </div>
-
-            <!-- إضافة زبون جديد -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
-                <h2 class="font-bold text-amber-300 text-sm">إضافة زبون جديد</h2>
-                <form onsubmit="addCustomer(event)" class="space-y-3">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="newCustName" placeholder="الاسم الكامل" required class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-emerald-400 outline-none">
-                        <input type="text" id="newCustPhone" placeholder="رقم الهاتف (09...)" required class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-emerald-400 outline-none">
-                        <input type="password" id="newCustPass" placeholder="كلمة المرور للزبون" required class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-emerald-400 outline-none">
-                        <input type="number" id="newCustLimit" placeholder="سقف الدين ($)" required class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-emerald-400 outline-none">
+            <!-- الهيدر -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-xl gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="bg-amber-500 text-slate-900 w-12 h-12 rounded-xl flex items-center justify-center font-black text-2xl shadow-lg">M</div>
+                    <div>
+                        <h1 class="text-xl font-black text-amber-400 tracking-wide">لوحة الإدارة المركزية</h1>
+                        <p class="text-xs text-slate-400 mt-0.5">متجر معاذ - العوينة</p>
                     </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">إضافة إلى السجل</button>
-                </form>
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button onclick="openNotificationDashboard()" class="flex-1 md:flex-none bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition border border-blue-500/30 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        مركز الإشعارات
+                    </button>
+                    <button onclick="logout()" class="flex-1 md:flex-none bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-4 py-2.5 rounded-xl text-sm font-bold transition">خروج</button>
+                </div>
             </div>
 
-            <!-- قائمة الزبائن -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-amber-300 text-sm">سجل الزبائن والعمليات</h2>
+            <!-- لوحة الإحصائيات الشاملة (المدين والدائن) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-emerald-500/30 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <p class="text-xs text-slate-400 mb-1 font-medium">الديون التي لي (في السوق)</p>
+                    <h3 id="globalDebtForMe" class="text-xl font-black text-emerald-400">$0.00</h3>
                 </div>
-                <div>
-                    <input type="text" id="searchCustomerInput" oninput="filterCustomers()" placeholder="🔍 ابحث عن زبون بالاسم أو الرقم..." class="w-full p-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 transition">
+                <div class="bg-slate-800/80 p-4 rounded-2xl border border-red-500/30 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <p class="text-xs text-slate-400 mb-1 font-medium">الديون التي علي (للموردين)</p>
+                    <h3 id="globalDebtOnMe" class="text-xl font-black text-red-400">$0.00</h3>
                 </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-amber-500/50 shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <p class="text-xs text-slate-400 mb-1 font-medium">الصافي المالي (الرصيد)</p>
+                    <h3 id="globalNetBalance" class="text-2xl font-black text-amber-400">$0.00</h3>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden hidden md:block">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <p class="text-xs text-slate-400 mb-1 font-medium">عدد الحسابات الكلي</p>
+                    <h3 id="globalCustCount" class="text-xl font-black text-blue-400">0</h3>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <!-- إعدادات سعر الصرف والنسخ الاحتياطي -->
+                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-lg">
+                    <h2 class="font-bold text-amber-300 text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        الإعدادات والنسخ الاحتياطي
+                    </h2>
+                    <div class="flex gap-2">
+                        <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار (ل.س جديدة)" class="flex-1 p-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-sm focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 transition">
+                        <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-3 rounded-xl text-sm transition shadow-lg">تحديث</button>
+                    </div>
+                    <button onclick="exportDataJSON()" class="w-full bg-slate-700/50 hover:bg-slate-700 text-amber-400 border border-slate-600/50 px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        تصدير قاعدة البيانات كاملة (JSON)
+                    </button>
+                </div>
+
+                <!-- إضافة حساب جديد (زبون أو مورد) -->
+                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-lg">
+                    <div class="flex justify-between items-center">
+                        <h2 class="font-bold text-emerald-400 text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            إضافة حساب جديد
+                        </h2>
+                    </div>
+                    <form onsubmit="addCustomer(event)" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" id="newCustName" placeholder="الاسم الكامل" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs focus:border-emerald-400 outline-none transition">
+                            <input type="text" id="newCustPhone" placeholder="رقم الهاتف (09...)" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs focus:border-emerald-400 outline-none transition">
+                            <select id="newCustType" class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs focus:border-emerald-400 outline-none transition">
+                                <option value="customer">زبون (له سقف حساب)</option>
+                                <option value="supplier">مورد / شركة (أنا مدين له)</option>
+                            </select>
+                            <input type="number" id="newCustLimit" placeholder="سقف الدين / حد الائتمان ($)" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs focus:border-emerald-400 outline-none transition">
+                            <input type="password" id="newCustPass" placeholder="كلمة المرور الافتراضية" required class="col-span-2 w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs focus:border-emerald-400 outline-none transition">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">➕ إضافة الحساب</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- قائمة الحسابات والبحث المتقدم -->
+            <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <h2 class="font-bold text-amber-300 text-sm flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        إدارة حسابات الزبائن والموردين
+                    </h2>
+                    <!-- فلاتر سريعة -->
+                    <div class="flex gap-2 w-full md:w-auto bg-slate-900/50 p-1 rounded-lg border border-slate-700">
+                        <button onclick="filterType('all')" id="btnFilterAll" class="flex-1 px-3 py-1 rounded text-xs font-bold bg-slate-700 text-white transition">الكل</button>
+                        <button onclick="filterType('debtor')" id="btnFilterDebtor" class="flex-1 px-3 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition">مدينون (لي)</button>
+                        <button onclick="filterType('creditor')" id="btnFilterCreditor" class="flex-1 px-3 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition">دائنون (علي)</button>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="searchCustomerInput" oninput="applyFilters()" placeholder="ابحث عن حساب بالاسم، الرقم، أو العنوان..." class="w-full p-3.5 pr-10 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
+                </div>
+                
                 <div id="adminCustomersList" class="space-y-4 pt-2">
                     <!-- Customers injected here -->
                 </div>
@@ -140,204 +187,235 @@
 
         <!-- 3. صفحة الزبون -->
         <div id="customerPanel" class="hidden space-y-6">
-            <div class="flex justify-between items-center bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-lg">
-                <div>
-                    <h1 id="custWelcomeTitle" class="text-xl font-bold text-amber-400">حسابي</h1>
-                    <p class="text-xs text-slate-400 mt-1">ديون متجر معاذ</p>
+            <div class="flex justify-between items-center bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-xl">
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-500/20 text-amber-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border border-amber-500/30">👤</div>
+                    <div>
+                        <h1 id="custWelcomeTitle" class="text-lg font-black text-amber-400">حسابي</h1>
+                        <p class="text-xs text-slate-400 mt-0.5">الرصيد المباشر</p>
+                    </div>
                 </div>
-                <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition">خروج</button>
+                <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition border border-slate-600">تسجيل الخروج</button>
             </div>
 
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center space-y-4 shadow-lg relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-300"></div>
-                <p class="text-sm text-slate-400 font-medium">إجمالي الرصيد المستحق الدفع:</p>
-                <h2 id="custTotalDisplay" class="text-5xl font-black text-amber-400 tracking-tight">0.00 $</h2>
+            <!-- إشعارات الزبون (إن وجدت) -->
+            <div id="custNotificationBox" class="hidden bg-blue-900/40 border border-blue-500/50 p-4 rounded-2xl flex items-start gap-3 shadow-lg">
+                <div class="text-blue-400 mt-0.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-blue-300">إشعار من الإدارة</h4>
+                    <p id="custNotificationText" class="text-xs text-blue-100 mt-1 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center space-y-5 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400"></div>
+                <p id="custBalanceDesc" class="text-sm text-slate-400 font-medium">الرصيد النهائي المستحق:</p>
+                <h2 id="custTotalDisplay" class="text-5xl md:text-6xl font-black text-amber-400 tracking-tight drop-shadow-md">0.00 $</h2>
                 
-                <div class="w-full bg-slate-900/50 rounded-full h-3 mt-4 overflow-hidden border border-slate-700">
+                <div id="custLimitContainer" class="w-full bg-slate-900/60 rounded-full h-3.5 mt-6 overflow-hidden border border-slate-700 shadow-inner">
                     <div id="custLimitProgressBar" class="bg-emerald-500 h-full transition-all duration-700 ease-out" style="width: 0%"></div>
                 </div>
-                <div class="flex justify-between text-xs font-medium text-slate-400 px-2 mt-1">
+                <div id="custLimitLabels" class="flex justify-between text-xs font-medium text-slate-400 px-2 mt-1.5">
                     <span id="custLimitText">سقف الحساب: $0</span>
                     <span id="custLimitPercentage">0%</span>
                 </div>
 
-                <div class="flex justify-center gap-2 pt-4 border-t border-slate-700/50">
-                    <button onclick="changeCurrency('USD')" id="btnCurrUSD" class="px-4 py-2 bg-amber-500 text-slate-900 rounded-lg text-sm font-bold shadow-lg transition">دولار ($)</button>
-                    <button onclick="changeCurrency('SYP_NEW')" id="btnCurrNew" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-bold transition">ليرة جديدة</button>
-                    <button onclick="changeCurrency('SYP_OLD')" id="btnCurrOld" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-bold transition">ليرة قديمة</button>
+                <div class="flex justify-center gap-2 pt-6 border-t border-slate-700/50">
+                    <button onclick="changeCurrency('USD')" id="btnCurrUSD" class="px-5 py-2.5 bg-amber-500 text-slate-900 rounded-xl text-sm font-bold shadow-lg transition transform hover:scale-105">دولار ($)</button>
+                    <button onclick="changeCurrency('SYP_NEW')" id="btnCurrNew" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold transition">ليرة جديدة</button>
+                    <button onclick="changeCurrency('SYP_OLD')" id="btnCurrOld" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold transition">ليرة قديمة</button>
                 </div>
             </div>
 
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4 shadow-lg">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-amber-300 text-sm">سجل كشف الحساب التفصيلي</h3>
-                    <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-amber-400 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        طباعة
+            <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700 space-y-5 shadow-xl">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h3 class="font-black text-amber-300 text-base flex items-center gap-2">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        كشف الحساب التفصيلي
+                    </h3>
+                    <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow border border-slate-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        حفظ كملف / طباعة
                     </button>
                 </div>
-                <div id="custTransactionsList" class="space-y-2 pt-2">
+                <div id="custTransactionsList" class="space-y-3 pt-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- Transactions -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal: إضافة دين (تم تحسينه مسبقاً) -->
-    <div id="debtModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
-        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
-                <h3 class="font-black text-amber-400 text-xl flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    تسجيل دين جديد
-                </h3>
-                <button onclick="closeDebtModal()" class="text-slate-400 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-full p-1.5 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+    <!-- النافذة الجانبية: مركز الإشعارات (للإدارة) -->
+    <div id="notificationDashboard" class="hidden fixed inset-0 z-50 flex justify-start bg-black/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-slate-800 w-full md:w-96 h-full border-l border-slate-700 shadow-2xl flex flex-col transform transition-transform">
+            <div class="p-5 border-b border-slate-700 flex justify-between items-center bg-slate-900/30">
+                <h2 class="font-black text-blue-400 text-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    مركز الإشعارات والرسائل
+                </h2>
+                <button onclick="closeNotificationDashboard()" class="text-slate-400 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-full p-2 transition">✕</button>
             </div>
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">عملة الإدخال:</label>
-                    <select id="inputCurrencyType" onchange="toggleInputCurrency()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400">
-                        <option value="USD">دولار أمريكي ($)</option>
-                        <option value="SYP_NEW">ليرة سورية جديدة (ل.س)</option>
-                        <option value="SYP_OLD">ليرة سورية قديمة (ل.س)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label id="amountLabel" class="block text-xs text-slate-400 mb-1.5">المبلغ بالدولار ($):</label>
-                    <input type="number" step="any" id="inputAmount" placeholder="0.00" oninput="calculatePreviewUSD()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-lg font-black focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
-                    <p id="conversionPreview" class="text-xs text-emerald-400 font-bold mt-2 hidden bg-emerald-500/10 p-2 rounded-lg"></p>
-                </div>
-
-                <!-- حاسبة الأصناف -->
-                <div class="bg-slate-700/30 p-3 rounded-xl border border-slate-700 space-y-2">
-                    <p class="text-xs font-bold text-amber-300">🧮 حاسبة الكمية × السعر (اختياري):</p>
+            <div class="p-5 flex-1 overflow-y-auto space-y-6">
+                <!-- إرسال إشعار عام -->
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700 space-y-3">
+                    <h3 class="font-bold text-sm text-amber-300">إرسال إشعار للجميع</h3>
+                    <p class="text-[11px] text-slate-400">سيظهر هذا الإشعار أعلى شاشة جميع الزبائن عند فتح حساباتهم.</p>
+                    <textarea id="globalNotifText" rows="3" placeholder="اكتب الإشعار هنا (مثلاً: نعتذر، المتجر مغلق غداً...)" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm focus:outline-none focus:border-blue-400 transition"></textarea>
                     <div class="flex gap-2">
-                        <input type="number" step="any" id="calcQty" placeholder="الكمية" oninput="calculateCalcTotal()" class="w-1/2 p-2.5 rounded-lg bg-slate-800 border border-slate-600 text-white text-sm">
-                        <input type="number" step="any" id="calcPrice" placeholder="سعر المفرد" oninput="calculateCalcTotal()" class="w-1/2 p-2.5 rounded-lg bg-slate-800 border border-slate-600 text-white text-sm">
+                        <button onclick="setGlobalNotification()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex-1 transition">نشر الإشعار</button>
+                        <button onclick="clearGlobalNotification()" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition">مسح</button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">أصناف سريعة بنقرة واحدة:</label>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" onclick="appendQuickItem('سكر')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">سكر</button>
-                        <button type="button" onclick="appendQuickItem('رز')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">رز</button>
-                        <button type="button" onclick="appendQuickItem('زيت')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">زيت</button>
-                        <button type="button" onclick="appendQuickItem('متة')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">متة</button>
-                        <button type="button" onclick="appendQuickItem('شاي')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">شاي</button>
-                        <button type="button" onclick="appendQuickItem('سمنة')" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-900 text-xs px-3 py-1.5 rounded-lg font-medium transition">سمنة</button>
-                    </div>
+                <!-- إرسال إشعار لزبون محدد -->
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700 space-y-3">
+                    <h3 class="font-bold text-sm text-amber-300">إشعار خاص لزبون محدد</h3>
+                    <select id="notifTargetPhone" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm focus:outline-none focus:border-blue-400">
+                        <option value="">-- اختر الزبون --</option>
+                        <!-- Options injected here -->
+                    </select>
+                    <textarea id="privateNotifText" rows="2" placeholder="رسالة تذكيرية، مطالبة بالسداد..." class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm focus:outline-none focus:border-blue-400 transition"></textarea>
+                    <button onclick="sendPrivateNotification()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">إرسال كإشعار ضمن التطبيق</button>
+                    <button onclick="sendPrivateWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        💬 إرسال كرسالة واتساب
+                    </button>
                 </div>
-
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">بيان البضاعة التفصيلي:</label>
-                    <textarea id="inputNotes" rows="2" placeholder="اكتب التفاصيل والملاحظات..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 transition"></textarea>
-                </div>
-            </div>
-
-            <div class="flex gap-3 pt-2">
-                <button onclick="submitAdvancedDebt()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3 rounded-xl flex-1 text-sm transition shadow-lg shadow-amber-500/20">تأكيد وحفظ الدين</button>
-                <button onclick="closeDebtModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-5 py-3 rounded-xl text-sm transition font-bold">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: نافذة تسجيل الدفعة المتطورة (الجديدة) -->
-    <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+    <!-- Modal: إعدادات الزبون (التعديل والاستعادة) -->
+    <div id="custSettingsModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
         <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-700 pb-4">
-                <h3 class="font-black text-emerald-400 text-xl flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6z"></path></svg>
-                    تسجيل دفعة (قبض)
+                <h3 class="font-black text-slate-200 text-xl flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    إعدادات الحساب
                 </h3>
-                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-full p-1.5 transition">
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-full p-1.5 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
             <div class="space-y-4">
-                <!-- شريط الرصيد الحالي -->
-                <div class="bg-slate-900/50 p-3 rounded-xl flex justify-between items-center border border-slate-700">
-                    <span class="text-xs font-medium text-slate-400">الرصيد المستحق حالياً:</span>
-                    <span id="modalCurrentBalanceVal" class="text-lg font-black text-amber-400">$0.00</span>
-                </div>
-
+                <input type="hidden" id="editCustPhoneHidden">
+                
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">عملة السداد المقدمة من الزبون:</label>
-                    <select id="payCurrencyType" onchange="togglePayCurrency()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:outline-none focus:border-emerald-400 transition">
-                        <option value="SYP_NEW">ليرة سورية جديدة (ل.س)</option>
-                        <option value="SYP_OLD">ليرة سورية قديمة (ل.س)</option>
-                        <option value="USD">دولار أمريكي ($)</option>
-                    </select>
+                    <label class="block text-xs text-slate-400 mb-1.5">الاسم الكامل:</label>
+                    <input type="text" id="editCustName" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-amber-400 outline-none">
                 </div>
-
-                <div>
-                    <label id="payAmountLabel" class="block text-xs text-slate-400 mb-1.5">المبلغ المدفوع بالليرة الجديدة (ل.س):</label>
-                    <input type="number" step="any" id="payInputAmount" placeholder="0.00" oninput="calculatePayPreviewUSD()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-emerald-300 text-lg font-black focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
-                    <p id="payConversionPreview" class="text-xs text-emerald-400 font-bold mt-2 hidden bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20"></p>
-                </div>
-
-                <!-- حاسبة الفئات النقدية السريعة -->
-                <div class="bg-slate-700/30 p-3 rounded-xl border border-slate-700 space-y-2">
-                    <p class="text-xs font-bold text-emerald-400">💵 حاسبة الفئات النقدية (اختياري):</p>
-                    <div class="flex gap-2">
-                        <input type="number" step="any" id="payCalcCount" placeholder="العدد (مثلاً 5)" oninput="calculatePayDenomination()" class="w-1/2 p-2.5 rounded-lg bg-slate-800 border border-slate-600 text-white text-sm focus:border-emerald-400 outline-none">
-                        <input type="number" step="any" id="payCalcBill" placeholder="الفئة (مثلاً 50000)" oninput="calculatePayDenomination()" class="w-1/2 p-2.5 rounded-lg bg-slate-800 border border-slate-600 text-white text-sm focus:border-emerald-400 outline-none">
-                    </div>
-                </div>
-
-                <!-- أزرار النسب السريعة -->
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">تحديد نسبة السداد السريعة:</label>
-                    <div class="flex gap-2">
-                        <button type="button" onclick="setPayPercentage(1)" class="bg-slate-700 hover:bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-medium transition flex-1">تصفير كامل الدين (100%)</button>
-                        <button type="button" onclick="setPayPercentage(0.5)" class="bg-slate-700 hover:bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-medium transition flex-1">سداد نصف الدين (50%)</button>
-                    </div>
-                </div>
-
+                
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1.5">طريقة القبض:</label>
-                        <select id="payMethod" class="w-full p-2.5 rounded-lg bg-slate-900/50 border border-slate-700 text-white text-sm focus:outline-none focus:border-emerald-400">
-                            <option value="نقداً (كاش)">نقداً (كاش)</option>
-                            <option value="شام كاش (QR)">شام كاش (QR)</option>
-                            <option value="حوالة / أخرى">حوالة / أخرى</option>
+                        <label class="block text-xs text-slate-400 mb-1.5">نوع الحساب:</label>
+                        <select id="editCustType" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-amber-400 outline-none">
+                            <option value="customer">زبون (لي عنده)</option>
+                            <option value="supplier">مورد (له عندي)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1.5">تاريخ ووقت مخصص (اختياري):</label>
-                        <input type="datetime-local" id="payCustomDate" class="w-full p-2.5 rounded-lg bg-slate-900/50 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400">
+                        <label class="block text-xs text-slate-400 mb-1.5">سقف الدين / الائتمان ($):</label>
+                        <input type="number" id="editCustLimit" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-amber-400 outline-none">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1.5">ملاحظات إضافية على الدفعة:</label>
-                    <input type="text" id="payNotes" placeholder="مثلاً: دفعة الحصاد، تسديد جزء من الحساب..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:outline-none focus:border-emerald-400 transition">
+                    <label class="block text-xs text-slate-400 mb-1.5">كلمة المرور الحالية (لاستعادتها للزبون):</label>
+                    <div class="relative">
+                        <input type="text" id="editCustPass" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-amber-300 font-mono text-sm focus:border-amber-400 outline-none">
+                        <button type="button" onclick="copyPassword()" class="absolute inset-y-0 left-2 flex items-center text-xs bg-slate-700 hover:bg-slate-600 px-2 my-1.5 rounded-lg text-slate-300 transition">نسخ</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5">تفاصيل السكن / العنوان (اختياري):</label>
+                    <textarea id="editCustAddress" rows="2" placeholder="القرية، الحارة، أقرب علامة..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm focus:border-amber-400 outline-none"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5">ملاحظات إدارية خاصة:</label>
+                    <textarea id="editCustNotes" rows="2" placeholder="معلومات خاصة بالإدارة لا يراها الزبون..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-300 text-sm focus:border-amber-400 outline-none"></textarea>
                 </div>
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button onclick="submitAdvancedPayment()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl flex-1 text-sm transition shadow-lg shadow-emerald-600/20">تأكيد خصم الدفعة</button>
-                <button onclick="closePaymentModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-5 py-3 rounded-xl text-sm transition font-bold">إلغاء</button>
+                <button onclick="saveCustSettings()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3 rounded-xl flex-1 text-sm transition shadow-lg">حفظ التعديلات</button>
             </div>
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت -->
+    <!-- نافذة تسجيل الدين (اختصاراً كما في السابق) -->
+    <!-- Modal: إضافة دين -->
+    <div id="debtModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                <h3 class="font-black text-amber-400 text-xl">تسجيل دين جديد</h3>
+                <button onclick="closeDebtModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <select id="inputCurrencyType" onchange="toggleInputCurrency()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none focus:border-amber-400">
+                    <option value="USD">دولار أمريكي ($)</option>
+                    <option value="SYP_NEW">ليرة سورية جديدة (ل.س)</option>
+                    <option value="SYP_OLD">ليرة سورية قديمة (ل.س)</option>
+                </select>
+                <div>
+                    <label id="amountLabel" class="block text-xs text-slate-400 mb-1">المبلغ ($):</label>
+                    <input type="number" step="any" id="inputAmount" oninput="calculatePreviewUSD()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-lg font-black outline-none focus:border-amber-400">
+                    <p id="conversionPreview" class="text-xs text-emerald-400 mt-2 hidden bg-emerald-500/10 p-2 rounded-lg"></p>
+                </div>
+                <textarea id="inputNotes" rows="2" placeholder="البيان والأصناف..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none focus:border-amber-400"></textarea>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="submitAdvancedDebt()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3 rounded-xl flex-1 text-sm">تسجيل</button>
+                <button onclick="closeDebtModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-5 py-3 rounded-xl text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدفعة -->
+    <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                <h3 class="font-black text-emerald-400 text-xl">تسجيل دفعة / قبض</h3>
+                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <select id="payCurrencyType" onchange="togglePayCurrency()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none focus:border-emerald-400">
+                    <option value="SYP_NEW">ليرة سورية جديدة (ل.س)</option>
+                    <option value="SYP_OLD">ليرة سورية قديمة (ل.س)</option>
+                    <option value="USD">دولار أمريكي ($)</option>
+                </select>
+                <div>
+                    <input type="number" step="any" id="payInputAmount" placeholder="المبلغ..." oninput="calculatePayPreviewUSD()" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-emerald-300 text-lg font-black outline-none focus:border-emerald-400">
+                    <p id="payConversionPreview" class="text-xs text-emerald-400 mt-2 hidden bg-emerald-500/10 p-2 rounded-lg"></p>
+                </div>
+                <input type="text" id="payNotes" placeholder="ملاحظات (مثال: دفعة نقدية)..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none focus:border-emerald-400">
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="submitAdvancedPayment()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl flex-1 text-sm shadow">تأكيد الخصم</button>
+                <button onclick="closePaymentModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-5 py-3 rounded-xl text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- سكريبت التحكم -->
     <script>
         let currentCurrency = 'USD';
         let currentRate = 15000;
         let allCustomersData = {};
+        let allTxData = {};
         let activeModalPhone = null;
         let activeModalLimit = 0;
+        let activeModalType = 'customer';
         let activeCustomerNetUSD = 0;
-        let activeCustomerName = "";
+        let currentFilter = 'all';
 
-        // إدارة التراجع (Undo)
         window.undoTimer = null;
         window.lastTxPath = null;
 
@@ -400,13 +478,7 @@
         function saveExchangeRate() {
             const rate = document.getElementById('exchangeRateInput').value;
             if(!rate || isNaN(rate)) return alert("أدخل سعر صرف صالح");
-            window.set(window.dbRef(window.db, 'settings/exchangeRate'), Number(rate)).then(() => {
-                showSimpleToast("تم تحديث السعر بنجاح!");
-            });
-        }
-
-        function showSimpleToast(msg) {
-            alert(msg); // يمكن استبداله بـ Toast أنيق لاحقاً
+            window.set(window.dbRef(window.db, 'settings/exchangeRate'), Number(rate)).then(() => alert("تم التحديث!"));
         }
 
         async function exportDataJSON() {
@@ -420,371 +492,212 @@
                     document.body.appendChild(downloadAnchor);
                     downloadAnchor.click();
                     downloadAnchor.remove();
-                } else {
-                    alert("لا توجد بيانات للتصدير");
                 }
-            } catch(e) {
-                alert("حدث خطأ أثناء التصدير");
-            }
+            } catch(e) {}
         }
 
         function addCustomer(e) {
             e.preventDefault();
             const name = document.getElementById('newCustName').value.trim();
             const phone = document.getElementById('newCustPhone').value.trim();
+            const type = document.getElementById('newCustType').value;
             const password = document.getElementById('newCustPass').value.trim();
             const limit = document.getElementById('newCustLimit').value;
 
             window.set(window.dbRef(window.db, 'customers/' + phone), {
-                name, phone, password, credit_limit: Number(limit)
+                name, phone, type, password, credit_limit: Number(limit), address: "", notes: ""
             }).then(() => {
-                alert("تمت إضافة الزبون بنجاح");
                 e.target.reset();
             });
         }
 
-        // --- وظائف نافذة الدين ---
-        function openAdvancedDebtModal(phone, limit) {
-            activeModalPhone = phone;
-            activeModalLimit = limit;
-            document.getElementById('inputAmount').value = '';
-            document.getElementById('inputNotes').value = '';
-            document.getElementById('calcQty').value = '';
-            document.getElementById('calcPrice').value = '';
-            document.getElementById('inputCurrencyType').value = 'USD';
-            document.getElementById('conversionPreview').classList.add('hidden');
-            document.getElementById('amountLabel').innerText = "المبلغ بالدولار ($):";
-            document.getElementById('debtModal').classList.remove('hidden');
-        }
-
-        function closeDebtModal() {
-            document.getElementById('debtModal').classList.add('hidden');
-        }
-
-        function toggleInputCurrency() {
-            const type = document.getElementById('inputCurrencyType').value;
-            const label = document.getElementById('amountLabel');
-            if(type === 'USD') label.innerText = "المبلغ بالدولار ($):";
-            else if(type === 'SYP_NEW') label.innerText = "المبلغ بالليرة السورية الجديدة (ل.س):";
-            else if(type === 'SYP_OLD') label.innerText = "المبلغ بالليرة السورية القديمة (ل.س):";
-            calculatePreviewUSD();
-        }
-
-        function calculatePreviewUSD() {
-            const rawVal = Number(document.getElementById('inputAmount').value) || 0;
-            const type = document.getElementById('inputCurrencyType').value;
-            const preview = document.getElementById('conversionPreview');
-
-            if(rawVal <= 0) {
-                preview.classList.add('hidden');
-                return;
-            }
-
-            let usdVal = rawVal;
-            if(type === 'SYP_NEW') usdVal = rawVal / currentRate;
-            else if(type === 'SYP_OLD') usdVal = rawVal / (currentRate * 100);
-
-            if(type !== 'USD') {
-                preview.innerText = `💱 يعادل بالدولار: $${usdVal.toFixed(2)}`;
-                preview.classList.remove('hidden');
-            } else {
-                preview.classList.add('hidden');
+        // --- وظائف لوحة الإشعارات ---
+        function openNotificationDashboard() {
+            document.getElementById('notificationDashboard').classList.remove('hidden');
+            const select = document.getElementById('notifTargetPhone');
+            select.innerHTML = '<option value="">-- اختر الزبون --</option>';
+            for(let p in allCustomersData) {
+                select.innerHTML += `<option value="${p}">${allCustomersData[p].name} (${p})</option>`;
             }
         }
-
-        function calculateCalcTotal() {
-            const qty = Number(document.getElementById('calcQty').value) || 0;
-            const price = Number(document.getElementById('calcPrice').value) || 0;
-            if(qty > 0 && price > 0) {
-                document.getElementById('inputAmount').value = qty * price;
-                calculatePreviewUSD();
-            }
+        function closeNotificationDashboard() {
+            document.getElementById('notificationDashboard').classList.add('hidden');
+        }
+        function setGlobalNotification() {
+            const text = document.getElementById('globalNotifText').value.trim();
+            if(!text) return;
+            window.set(window.dbRef(window.db, 'settings/globalNotification'), text).then(() => {
+                alert("تم نشر الإشعار للجميع");
+                document.getElementById('globalNotifText').value = '';
+            });
+        }
+        function clearGlobalNotification() {
+            window.set(window.dbRef(window.db, 'settings/globalNotification'), "").then(() => alert("تم مسح الإشعار العام"));
+        }
+        function sendPrivateNotification() {
+            const phone = document.getElementById('notifTargetPhone').value;
+            const text = document.getElementById('privateNotifText').value.trim();
+            if(!phone || !text) return alert("اختر زبوناً واكتب الرسالة");
+            window.set(window.dbRef(window.db, 'customers/' + phone + '/private_notification'), text).then(() => {
+                alert("تم الإرسال لصفحة الزبون بنجاح");
+                document.getElementById('privateNotifText').value = '';
+            });
+        }
+        function sendPrivateWhatsApp() {
+            const phone = document.getElementById('notifTargetPhone').value;
+            const text = document.getElementById('privateNotifText').value.trim();
+            if(!phone || !text) return;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
         }
 
-        function appendQuickItem(itemText) {
-            const notesField = document.getElementById('inputNotes');
-            notesField.value = notesField.value ? notesField.value + "، " + itemText : itemText;
+        // --- وظائف إعدادات الزبون (Modal) ---
+        function openSettingsModal(phone) {
+            const c = allCustomersData[phone];
+            if(!c) return;
+            document.getElementById('editCustPhoneHidden').value = phone;
+            document.getElementById('editCustName').value = c.name || "";
+            document.getElementById('editCustType').value = c.type || "customer";
+            document.getElementById('editCustLimit').value = c.credit_limit || 0;
+            document.getElementById('editCustPass').value = c.password || "";
+            document.getElementById('editCustAddress').value = c.address || "";
+            document.getElementById('editCustNotes').value = c.notes || "";
+            document.getElementById('custSettingsModal').classList.remove('hidden');
         }
-
-        async function submitAdvancedDebt() {
-            const rawVal = Number(document.getElementById('inputAmount').value);
-            if(!rawVal || isNaN(rawVal) || rawVal <= 0) return alert("يرجى إدخال مبلغ صالح");
-
-            const type = document.getElementById('inputCurrencyType').value;
-            let finalUsdAmount = rawVal;
-            if(type === 'SYP_NEW') finalUsdAmount = rawVal / currentRate;
-            else if(type === 'SYP_OLD') finalUsdAmount = rawVal / (currentRate * 100);
-
-            const notes = document.getElementById('inputNotes').value.trim() || "دين متجر معاذ";
-
-            try {
-                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + activeModalPhone));
-                let currentTotal = 0;
-                if(txSnap.exists()) {
-                    txSnap.forEach(ch => {
-                        const t = ch.val();
-                        if(t.type === 'payment') currentTotal -= Number(t.amount_usd);
-                        else currentTotal += Number(t.amount_usd);
-                    });
-                }
-
-                const newTotal = currentTotal + finalUsdAmount;
-                if(newTotal > activeModalLimit) {
-                    if(!confirm(`⚠️ تنبيه: إجمالي الرصيد سيصبح ($${newTotal.toFixed(2)}) ويتجاوز سقف الحساب ($${activeModalLimit}). هل تود المتابعة؟`)) return;
-                }
-
-                const debtData = {
-                    type: 'debt',
-                    amount_usd: Number(finalUsdAmount.toFixed(2)),
-                    notes: notes,
-                    date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
-                };
-
-                const newRef = window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone));
-                await window.set(newRef, debtData);
-                closeDebtModal();
-                triggerUndoToast('transactions/' + activeModalPhone + '/' + newRef.key);
-                
-            } catch(err) {
-                alert("حدث خطأ أثناء حفظ الدين");
-            }
+        function closeSettingsModal() {
+            document.getElementById('custSettingsModal').classList.add('hidden');
         }
-
-        // --- وظائف نافذة الدفعة الجديدة المتطورة ---
-        async function openAdvancedPaymentModal(phone, custName) {
-            activeModalPhone = phone;
-            activeCustomerName = custName;
-            
-            // تصفير الحقول
-            document.getElementById('payInputAmount').value = '';
-            document.getElementById('payNotes').value = '';
-            document.getElementById('payCalcCount').value = '';
-            document.getElementById('payCalcBill').value = '';
-            document.getElementById('payCustomDate').value = '';
-            document.getElementById('payCurrencyType').value = 'SYP_NEW';
-            document.getElementById('payMethod').value = 'نقداً (كاش)';
-            document.getElementById('payConversionPreview').classList.add('hidden');
-            document.getElementById('payAmountLabel').innerText = "المبلغ المدفوع بالليرة الجديدة (ل.س):";
-
-            // جلب الرصيد
-            try {
-                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
-                let netUSD = 0;
-                if(txSnap.exists()) {
-                    txSnap.forEach(ch => {
-                        const t = ch.val();
-                        if(t.type === 'payment') netUSD -= Number(t.amount_usd);
-                        else netUSD += Number(t.amount_usd);
-                    });
-                }
-                activeCustomerNetUSD = Math.max(0, netUSD);
-                document.getElementById('modalCurrentBalanceVal').innerText = `$${activeCustomerNetUSD.toFixed(2)}`;
-            } catch(e) {
-                activeCustomerNetUSD = 0;
-                document.getElementById('modalCurrentBalanceVal').innerText = "$0.00";
-            }
-
-            document.getElementById('paymentModal').classList.remove('hidden');
+        function copyPassword() {
+            const pField = document.getElementById('editCustPass');
+            navigator.clipboard.writeText(pField.value).then(()=> alert("تم نسخ كلمة المرور"));
         }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-        }
-
-        function togglePayCurrency() {
-            const type = document.getElementById('payCurrencyType').value;
-            const label = document.getElementById('payAmountLabel');
-            if(type === 'USD') label.innerText = "المبلغ بالدولار ($):";
-            else if(type === 'SYP_NEW') label.innerText = "المبلغ المدفوع بالليرة الجديدة (ل.س):";
-            else if(type === 'SYP_OLD') label.innerText = "المبلغ المدفوع بالليرة القديمة (ل.س):";
-            calculatePayPreviewUSD();
-        }
-
-        function calculatePayPreviewUSD() {
-            const rawVal = Number(document.getElementById('payInputAmount').value) || 0;
-            const type = document.getElementById('payCurrencyType').value;
-            const preview = document.getElementById('payConversionPreview');
-
-            if(rawVal <= 0) {
-                preview.classList.add('hidden');
-                return;
-            }
-
-            let usdVal = rawVal;
-            if(type === 'SYP_NEW') usdVal = rawVal / currentRate;
-            else if(type === 'SYP_OLD') usdVal = rawVal / (currentRate * 100);
-
-            if(type !== 'USD') {
-                preview.innerText = `💱 يعادل بالدولار وينزل من الحساب: $${usdVal.toFixed(2)}`;
-                preview.classList.remove('hidden');
-            } else {
-                preview.classList.add('hidden');
-            }
-        }
-
-        function calculatePayDenomination() {
-            const count = Number(document.getElementById('payCalcCount').value) || 0;
-            const bill = Number(document.getElementById('payCalcBill').value) || 0;
-            if(count > 0 && bill > 0) {
-                document.getElementById('payInputAmount').value = count * bill;
-                calculatePayPreviewUSD();
-            }
-        }
-
-        function setPayPercentage(ratio) {
-            if(activeCustomerNetUSD <= 0) return alert("لا يوجد دين مستحق على هذا الزبون ليتم سداده!");
-            const type = document.getElementById('payCurrencyType').value;
-            let targetUSD = activeCustomerNetUSD * ratio;
-            let valToInput = targetUSD;
-
-            if(type === 'SYP_NEW') valToInput = targetUSD * currentRate;
-            else if(type === 'SYP_OLD') valToInput = targetUSD * currentRate * 100;
-
-            document.getElementById('payInputAmount').value = Math.round(valToInput);
-            calculatePayPreviewUSD();
-        }
-
-        async function submitAdvancedPayment() {
-            const rawVal = Number(document.getElementById('payInputAmount').value);
-            if(!rawVal || isNaN(rawVal) || rawVal <= 0) return alert("يرجى إدخال مبلغ دفعة صالح");
-
-            const type = document.getElementById('payCurrencyType').value;
-            let finalUsdAmount = rawVal;
-            if(type === 'SYP_NEW') finalUsdAmount = rawVal / currentRate;
-            else if(type === 'SYP_OLD') finalUsdAmount = rawVal / (currentRate * 100);
-
-            const method = document.getElementById('payMethod').value;
-            let notes = document.getElementById('payNotes').value.trim();
-            if(!notes) notes = `دفعة نقدية (${method})`;
-            else notes = notes + ` (${method})`;
-
-            // معالجة التاريخ المخصص إن وجد
-            let finalDateStr = "";
-            const customDateInput = document.getElementById('payCustomDate').value;
-            if(customDateInput) {
-                const d = new Date(customDateInput);
-                finalDateStr = d.toLocaleDateString('ar-SY') + ' ' + d.toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'});
-            } else {
-                finalDateStr = new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'});
-            }
-
-            const paymentData = {
-                type: 'payment',
-                amount_usd: Number(finalUsdAmount.toFixed(2)),
-                notes: notes,
-                date: finalDateStr
+        function saveCustSettings() {
+            const phone = document.getElementById('editCustPhoneHidden').value;
+            if(!phone) return;
+            const updates = {
+                name: document.getElementById('editCustName').value.trim(),
+                type: document.getElementById('editCustType').value,
+                credit_limit: Number(document.getElementById('editCustLimit').value),
+                password: document.getElementById('editCustPass').value.trim(),
+                address: document.getElementById('editCustAddress').value.trim(),
+                notes: document.getElementById('editCustNotes').value.trim()
             };
-
-            try {
-                const newRef = window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone));
-                await window.set(newRef, paymentData);
-                closePaymentModal();
-                
-                triggerUndoToast('transactions/' + activeModalPhone + '/' + newRef.key);
-
-                // سؤال اختياري لإرسال واتساب
-                setTimeout(() => {
-                    if(confirm("تم خصم الدفعة بنجاح! هل تريد إرسال إيصال السداد للزبون عبر واتساب الآن؟")) {
-                        sendWhatsAppNotice(activeModalPhone, activeCustomerName);
-                    }
-                }, 500);
-
-            } catch(err) {
-                alert("حدث خطأ أثناء حفظ الدفعة");
-            }
+            window.update(window.dbRef(window.db, 'customers/' + phone), updates).then(() => {
+                alert("تم تحديث البيانات بنجاح");
+                closeSettingsModal();
+            });
         }
 
-        // وظيفة التراجع المتقدمة (Undo)
-        function triggerUndoToast(dbPath) {
-            window.lastTxPath = dbPath;
-            const toast = document.getElementById('undoToast');
-            toast.classList.remove('hidden');
-            toast.classList.remove('translate-y-24'); // انيميشن الدخول
-            
-            clearTimeout(window.undoTimer);
-            window.undoTimer = setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 6000); // يختفي بعد 6 ثواني
-        }
-
-        function performUndo() {
-            if(window.lastTxPath) {
-                window.remove(window.dbRef(window.db, window.lastTxPath)).then(() => {
-                    document.getElementById('undoToast').classList.add('hidden');
-                    clearTimeout(window.undoTimer);
-                    window.lastTxPath = null;
-                    alert("تم إرجاع العملية وإلغاؤها بنجاح!");
-                });
-            }
-        }
-
-        async function sendWhatsAppNotice(phone, custName) {
-            try {
-                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
-                let total = 0;
-                if(txSnap.exists()) {
-                    txSnap.forEach(ch => {
-                        const t = ch.val();
-                        if(t.type === 'payment') total -= Number(t.amount_usd);
-                        else total += Number(t.amount_usd);
-                    });
-                }
-                const msg = `🧾 *إيصال متجر معاذ*
-
-مرحباً ${custName} الكريم،
-تم تحديث حسابك. 
-إجمالي الرصيد المتبقي حالياً: *$${Math.max(0, total).toFixed(2)} USD*.
-
-شكراً لثقتكم وتعاملكم معنا 🌹`;
-                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-            } catch(e) {
-                alert("تعذر إنشاء رسالة الواتساب");
-            }
-        }
-
-        // --- وظائف الإدارة وتحميل البيانات المشتركة ---
+        // --- جلب بيانات الإدارة والإحصائيات ---
         function loadAdminData() {
-            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
-                if(snapshot.exists()) currentRate = Number(snapshot.val());
+            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snap) => {
+                if(snap.exists()) currentRate = Number(snap.val());
                 document.getElementById('exchangeRateInput').value = currentRate;
             });
 
-            // حساب الإحصائيات الشاملة
-            window.onValue(window.dbRef(window.db, 'transactions'), (txSnapshot) => {
-                let globalDebt = 0;
-                if(txSnapshot.exists()) {
-                    txSnapshot.forEach(custTx => {
-                        custTx.forEach(tx => {
-                            const data = tx.val();
-                            if(data.type === 'payment') globalDebt -= Number(data.amount_usd);
-                            else globalDebt += Number(data.amount_usd);
-                        });
-                    });
-                }
-                document.getElementById('globalDebtTotal').innerText = `$${Math.max(0, globalDebt).toFixed(2)}`;
+            // جلب المعاملات لحساب الرصيد الكلي
+            window.onValue(window.dbRef(window.db, 'transactions'), (txSnap) => {
+                allTxData = txSnap.exists() ? txSnap.val() : {};
+                calculateGlobalStats();
             });
 
-            window.onValue(window.dbRef(window.db, 'customers'), (snapshot) => {
-                const list = document.getElementById('adminCustomersList');
-                list.innerHTML = "";
-                allCustomersData = {};
+            window.onValue(window.dbRef(window.db, 'customers'), (snap) => {
+                allCustomersData = snap.exists() ? snap.val() : {};
+                document.getElementById('globalCustCount').innerText = Object.keys(allCustomersData).length;
+                applyFilters();
+                calculateGlobalStats();
+            });
+        }
 
-                if(!snapshot.exists()) { 
-                    list.innerHTML = "<p class='text-sm text-slate-400 text-center py-6'>لا يوجد زبائن مسجلين</p>"; 
-                    document.getElementById('globalCustCount').innerText = "0";
-                    return; 
+        function calculateGlobalStats() {
+            let debtForMe = 0; // الديون التي لي (زبائن)
+            let debtOnMe = 0;  // الديون التي علي (موردين)
+
+            for(let phone in allCustomersData) {
+                const c = allCustomersData[phone];
+                const cType = c.type || 'customer';
+                const txs = allTxData[phone] || {};
+                
+                let netUSD = 0;
+                for(let txId in txs) {
+                    const t = txs[txId];
+                    if(t.type === 'payment') netUSD -= Number(t.amount_usd);
+                    else netUSD += Number(t.amount_usd);
                 }
                 
-                let count = 0;
-                snapshot.forEach((child) => {
-                    const cust = child.val();
-                    allCustomersData[cust.phone] = cust;
-                    count++;
-                });
+                if(netUSD > 0) {
+                    if(cType === 'customer') debtForMe += netUSD;
+                    else if(cType === 'supplier') debtOnMe += netUSD;
+                } else if (netUSD < 0) {
+                     // لو كان رصيد الزبون سالب (دفع لنا أكثر مما سحب) فهو يعتبر دين علينا
+                     // ولو المورد رصيده سالب (أعطيناه دفعة أكبر من الفواتير) فهو دين لنا
+                     if(cType === 'customer') debtOnMe += Math.abs(netUSD);
+                     else if(cType === 'supplier') debtForMe += Math.abs(netUSD);
+                }
+            }
 
-                document.getElementById('globalCustCount').innerText = count;
-                renderCustomersList(allCustomersData);
-            });
+            document.getElementById('globalDebtForMe').innerText = `$${debtForMe.toFixed(2)}`;
+            document.getElementById('globalDebtOnMe').innerText = `$${debtOnMe.toFixed(2)}`;
+            const netBalance = debtForMe - debtOnMe;
+            document.getElementById('globalNetBalance').innerText = `$${netBalance.toFixed(2)}`;
+        }
+
+        function filterType(type) {
+            currentFilter = type;
+            document.getElementById('btnFilterAll').classList.replace('bg-slate-700', 'bg-transparent');
+            document.getElementById('btnFilterAll').classList.replace('text-white', 'text-slate-400');
+            document.getElementById('btnFilterDebtor').classList.replace('bg-slate-700', 'bg-transparent');
+            document.getElementById('btnFilterDebtor').classList.replace('text-white', 'text-slate-400');
+            document.getElementById('btnFilterCreditor').classList.replace('bg-slate-700', 'bg-transparent');
+            document.getElementById('btnFilterCreditor').classList.replace('text-white', 'text-slate-400');
+
+            if(type==='all') {
+                document.getElementById('btnFilterAll').classList.replace('bg-transparent', 'bg-slate-700');
+                document.getElementById('btnFilterAll').classList.replace('text-slate-400', 'text-white');
+            } else if (type==='debtor') {
+                document.getElementById('btnFilterDebtor').classList.replace('bg-transparent', 'bg-slate-700');
+                document.getElementById('btnFilterDebtor').classList.replace('text-slate-400', 'text-white');
+            } else {
+                document.getElementById('btnFilterCreditor').classList.replace('bg-transparent', 'bg-slate-700');
+                document.getElementById('btnFilterCreditor').classList.replace('text-slate-400', 'text-white');
+            }
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchCustomerInput').value.toLowerCase().trim();
+            const filtered = {};
+
+            for(let phone in allCustomersData) {
+                const c = allCustomersData[phone];
+                const cType = c.type || 'customer';
+                
+                // حساب الرصيد الحالي لهذا الشخص
+                const txs = allTxData[phone] || {};
+                let netUSD = 0;
+                for(let txId in txs) {
+                    if(txs[txId].type === 'payment') netUSD -= Number(txs[txId].amount_usd);
+                    else netUSD += Number(txs[txId].amount_usd);
+                }
+
+                // فلترة النوع
+                let isMatchFilter = false;
+                if(currentFilter === 'all') isMatchFilter = true;
+                else if(currentFilter === 'debtor' && ((cType === 'customer' && netUSD >= 0) || (cType === 'supplier' && netUSD < 0))) isMatchFilter = true;
+                else if(currentFilter === 'creditor' && ((cType === 'supplier' && netUSD >= 0) || (cType === 'customer' && netUSD < 0))) isMatchFilter = true;
+
+                // فلترة النص
+                let isMatchText = true;
+                if(query) {
+                    const searchStr = (c.name + " " + c.phone + " " + (c.address||"")).toLowerCase();
+                    if(!searchStr.includes(query)) isMatchText = false;
+                }
+
+                if(isMatchFilter && isMatchText) {
+                    c._tempNetUsd = netUSD; // لتسهيل العرض
+                    filtered[phone] = c;
+                }
+            }
+            renderCustomersList(filtered);
         }
 
         function renderCustomersList(customersObj) {
@@ -793,84 +706,207 @@
 
             const keys = Object.keys(customersObj);
             if(keys.length === 0) {
-                list.innerHTML = "<p class='text-sm text-slate-400 text-center py-4'>لا نتائج مطابقة</p>";
+                list.innerHTML = "<p class='text-sm text-slate-400 text-center py-8 bg-slate-900/30 rounded-2xl border border-dashed border-slate-700'>لا نتائج مطابقة</p>";
                 return;
             }
 
             keys.forEach((phone) => {
                 const cust = customersObj[phone];
+                const netUSD = cust._tempNetUsd || 0;
+                const cType = cust.type || 'customer';
+                
+                let balanceText = "";
+                let balanceColor = "";
+                if(cType === 'customer') {
+                    if(netUSD >= 0) { balanceText = `له دين: $${netUSD.toFixed(2)}`; balanceColor = "text-emerald-400"; }
+                    else { balanceText = `رصيد زائد: $${Math.abs(netUSD).toFixed(2)}`; balanceColor = "text-blue-400"; }
+                } else {
+                    if(netUSD >= 0) { balanceText = `علي دين: $${netUSD.toFixed(2)}`; balanceColor = "text-red-400"; }
+                    else { balanceText = `له دفعة زائدة: $${Math.abs(netUSD).toFixed(2)}`; balanceColor = "text-blue-400"; }
+                }
+
                 list.innerHTML += `
-                    <div class="bg-slate-900/40 p-4 rounded-2xl space-y-3 border border-slate-700/50 hover:border-slate-600 transition shadow-sm">
+                    <div class="bg-slate-900/60 p-4 rounded-2xl space-y-3 border border-slate-700 hover:border-slate-500 transition shadow">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="font-bold text-amber-300 text-base flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                    ${cust.name}
+                                    ${cType==='supplier' ? '🏭' : '👤'} ${cust.name}
                                 </h3>
-                                <p class="text-xs text-slate-400 mt-1">الهاتف: <span class="text-slate-300">${cust.phone}</span> | السقف: <span class="text-emerald-400 font-bold">$${cust.credit_limit}</span></p>
+                                <p class="text-[11px] text-slate-400 mt-1">
+                                    الهاتف: ${cust.phone} | <span class="font-bold ${balanceColor}">${balanceText}</span>
+                                </p>
                             </div>
-                            <button onclick="deleteCustomer('${cust.phone}')" class="text-red-400/60 hover:text-red-400 p-1 transition" title="حذف الزبون">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="openSettingsModal('${cust.phone}')" class="text-blue-400/80 hover:text-blue-400 p-1" title="إعدادات الحساب">⚙️</button>
+                                <button onclick="deleteCustomer('${cust.phone}')" class="text-red-400/80 hover:text-red-400 p-1" title="حذف الحساب">🗑️</button>
+                            </div>
                         </div>
                         <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-700/50">
-                            <button onclick="openAdvancedDebtModal('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500/10 hover:bg-amber-500 hover:text-slate-900 text-amber-400 font-bold px-3 py-2 rounded-xl text-xs flex-1 transition border border-amber-500/20">➕ إضافة دين</button>
-                            <button onclick="openAdvancedPaymentModal('${cust.phone}', '${cust.name}')" class="bg-emerald-500/10 hover:bg-emerald-600 hover:text-white text-emerald-400 font-bold px-3 py-2 rounded-xl text-xs flex-1 transition border border-emerald-500/20">💵 سداد دفعة</button>
-                            <button onclick="sendWhatsAppNotice('${cust.phone}', '${cust.name}')" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3 py-2 rounded-xl text-xs transition border border-slate-600">💬 واتساب</button>
+                            <button onclick="openAdvancedDebtModal('${cust.phone}', ${cust.credit_limit}, '${cType}')" class="bg-amber-500/10 hover:bg-amber-500 hover:text-slate-900 text-amber-400 font-bold px-3 py-2 rounded-xl text-[11px] flex-1 transition border border-amber-500/20">➕ إضافة ${cType==='supplier'?'فاتورة':'دين'}</button>
+                            <button onclick="openAdvancedPaymentModal('${cust.phone}', '${cType}')" class="bg-emerald-500/10 hover:bg-emerald-600 hover:text-white text-emerald-400 font-bold px-3 py-2 rounded-xl text-[11px] flex-1 transition border border-emerald-500/20">💵 ${cType==='supplier'?'تسديد فاتورة':'سداد دفعة'}</button>
+                            <button onclick="window.open('https://wa.me/${cust.phone}', '_blank')" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition">💬 واتساب</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function filterCustomers() {
-            const query = document.getElementById('searchCustomerInput').value.toLowerCase().trim();
-            const filtered = {};
-            for(let phone in allCustomersData) {
-                const c = allCustomersData[phone];
-                if(c.name.toLowerCase().includes(query) || c.phone.includes(query)) {
-                    filtered[phone] = c;
-                }
-            }
-            renderCustomersList(filtered);
-        }
-
         function deleteCustomer(phone) {
-            if(confirm("تحذير: هل أنت متأكد من حذف هذا الزبون ومسح كامل سجل ديونه نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.")) {
+            if(confirm("تحذير: هل أنت متأكد من مسح الحساب وسجل ديونه نهائياً؟")) {
                 window.remove(window.dbRef(window.db, 'customers/' + phone)).then(() => {
                     window.remove(window.dbRef(window.db, 'transactions/' + phone));
                 });
             }
         }
 
-        let currentCustLimitUSD = 0;
+        // وظائف النوافذ وتوليد العمليات كالسابق مع التراجع
+        function openAdvancedDebtModal(phone, limit, type) {
+            activeModalPhone = phone; activeModalLimit = limit; activeModalType = type;
+            document.getElementById('inputAmount').value = '';
+            document.getElementById('inputCurrencyType').value = 'USD';
+            document.getElementById('conversionPreview').classList.add('hidden');
+            document.getElementById('debtModal').classList.remove('hidden');
+        }
+        function closeDebtModal() { document.getElementById('debtModal').classList.add('hidden'); }
+        function toggleInputCurrency() {
+            calculatePreviewUSD();
+            const t = document.getElementById('inputCurrencyType').value;
+            document.getElementById('amountLabel').innerText = t==='USD' ? 'المبلغ ($):' : 'المبلغ (ل.س):';
+        }
+        function calculatePreviewUSD() {
+            const rawVal = Number(document.getElementById('inputAmount').value) || 0;
+            const type = document.getElementById('inputCurrencyType').value;
+            const preview = document.getElementById('conversionPreview');
+            if(rawVal <= 0) return preview.classList.add('hidden');
+            let usd = rawVal;
+            if(type === 'SYP_NEW') usd = rawVal / currentRate; else if(type === 'SYP_OLD') usd = rawVal / (currentRate * 100);
+            if(type !== 'USD') { preview.innerText = `يعادل $${usd.toFixed(2)}`; preview.classList.remove('hidden'); }
+            else preview.classList.add('hidden');
+        }
+        async function submitAdvancedDebt() {
+            const rawVal = Number(document.getElementById('inputAmount').value);
+            if(!rawVal || rawVal <= 0) return;
+            const type = document.getElementById('inputCurrencyType').value;
+            let usd = rawVal;
+            if(type === 'SYP_NEW') usd = rawVal / currentRate; else if(type === 'SYP_OLD') usd = rawVal / (currentRate * 100);
+            
+            const debtData = {
+                type: 'debt', amount_usd: Number(usd.toFixed(2)),
+                notes: document.getElementById('inputNotes').value || "تسجيل",
+                date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
+            };
+            const newRef = window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone));
+            await window.set(newRef, debtData);
+            closeDebtModal();
+            triggerUndoToast('transactions/' + activeModalPhone + '/' + newRef.key);
+        }
+
+        function openAdvancedPaymentModal(phone, type) {
+            activeModalPhone = phone; activeModalType = type;
+            document.getElementById('payInputAmount').value = '';
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+        function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
+        function togglePayCurrency() { calculatePayPreviewUSD(); }
+        function calculatePayPreviewUSD() {
+            const rawVal = Number(document.getElementById('payInputAmount').value) || 0;
+            const type = document.getElementById('payCurrencyType').value;
+            const preview = document.getElementById('payConversionPreview');
+            if(rawVal <= 0) return preview.classList.add('hidden');
+            let usd = rawVal;
+            if(type === 'SYP_NEW') usd = rawVal / currentRate; else if(type === 'SYP_OLD') usd = rawVal / (currentRate * 100);
+            if(type !== 'USD') { preview.innerText = `يعادل $${usd.toFixed(2)}`; preview.classList.remove('hidden'); }
+            else preview.classList.add('hidden');
+        }
+        async function submitAdvancedPayment() {
+            const rawVal = Number(document.getElementById('payInputAmount').value);
+            if(!rawVal || rawVal <= 0) return;
+            const type = document.getElementById('payCurrencyType').value;
+            let usd = rawVal;
+            if(type === 'SYP_NEW') usd = rawVal / currentRate; else if(type === 'SYP_OLD') usd = rawVal / (currentRate * 100);
+            
+            const pData = {
+                type: 'payment', amount_usd: Number(usd.toFixed(2)),
+                notes: document.getElementById('payNotes').value || "دفعة",
+                date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
+            };
+            const newRef = window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone));
+            await window.set(newRef, pData);
+            closePaymentModal();
+            triggerUndoToast('transactions/' + activeModalPhone + '/' + newRef.key);
+        }
+
+        function triggerUndoToast(dbPath) {
+            window.lastTxPath = dbPath;
+            const toast = document.getElementById('undoToast');
+            toast.classList.remove('hidden', 'translate-y-24');
+            clearTimeout(window.undoTimer);
+            window.undoTimer = setTimeout(() => { toast.classList.add('hidden'); }, 6000);
+        }
+        function performUndo() {
+            if(window.lastTxPath) {
+                window.remove(window.dbRef(window.db, window.lastTxPath)).then(() => {
+                    document.getElementById('undoToast').classList.add('hidden');
+                    window.lastTxPath = null;
+                });
+            }
+        }
+
+        // --- صفحة الزبون (المشاهدة) ---
         function loadCustomerData(phone) {
-            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snapshot) => {
-                if(snapshot.exists()) currentRate = Number(snapshot.val());
+            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snap) => {
+                if(snap.exists()) currentRate = Number(snap.val());
             });
 
-            window.onValue(window.dbRef(window.db, 'customers/' + phone), (snapshot) => {
-                if(snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('custWelcomeTitle').innerText = `مرحباً، ${data.name.split(' ')[0]}`;
-                    currentCustLimitUSD = Number(data.credit_limit || 0);
-                    document.getElementById('custLimitText').innerText = `الحد الأقصى للسقف: $${currentCustLimitUSD}`;
+            // فحص وعرض الإشعار العام
+            window.onValue(window.dbRef(window.db, 'settings/globalNotification'), (snap) => {
+                const box = document.getElementById('custNotificationBox');
+                const text = document.getElementById('custNotificationText');
+                if(snap.exists() && snap.val() !== "") {
+                    text.innerText = snap.val();
+                    box.classList.remove('hidden');
+                } else {
+                    // إذا لم يوجد إشعار عام، نفحص الإشعار الخاص
+                    window.get(window.dbRef(window.db, 'customers/' + phone + '/private_notification')).then((psnap)=>{
+                        if(psnap.exists() && psnap.val() !== "") {
+                            text.innerText = psnap.val();
+                            box.classList.remove('hidden');
+                        } else {
+                            box.classList.add('hidden');
+                        }
+                    });
                 }
             });
 
-            window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snapshot) => {
+            let cType = 'customer';
+            window.onValue(window.dbRef(window.db, 'customers/' + phone), (snap) => {
+                if(snap.exists()) {
+                    const data = snap.val();
+                    cType = data.type || 'customer';
+                    document.getElementById('custWelcomeTitle').innerText = `حساب: ${data.name}`;
+                    currentCustLimitUSD = Number(data.credit_limit || 0);
+                    
+                    if(cType === 'supplier') {
+                        document.getElementById('custLimitContainer').classList.add('hidden');
+                        document.getElementById('custLimitLabels').classList.add('hidden');
+                        document.getElementById('custBalanceDesc').innerText = "المبلغ المطلوب مني سداده للشركة:";
+                    } else {
+                        document.getElementById('custLimitText').innerText = `سقف الحساب: $${currentCustLimitUSD}`;
+                    }
+                }
+            });
+
+            window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snap) => {
                 const list = document.getElementById('custTransactionsList');
                 list.innerHTML = "";
                 let netTotalUSD = 0;
 
-                if(!snapshot.exists()) {
-                    list.innerHTML = "<div class='text-center py-10'><p class='text-sm text-slate-400'>لا توجد أي ديون أو دفعات مسجلة بعد.</p></div>";
-                    updateDisplayTotal(0, currentCustLimitUSD);
+                if(!snap.exists()) {
+                    updateDisplayTotal(0, currentCustLimitUSD, cType);
                     return;
                 }
 
-                // جلب الداتا و ترتيبها (أحدث شيء بالأسفل كالفاتورة)
-                snapshot.forEach((child) => {
+                snap.forEach((child) => {
                     const tx = child.val();
                     const isPayment = tx.type === 'payment';
                     const amount = Number(tx.amount_usd);
@@ -882,55 +918,48 @@
                         <div class="bg-slate-900/50 p-4 rounded-2xl flex justify-between items-center border-l-4 ${isPayment ? 'border-emerald-500' : 'border-amber-500'} shadow-sm">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider ${isPayment ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">${isPayment ? 'سداد نقد' : 'دين جديد'}</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider ${isPayment ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">${isPayment ? (cType==='supplier'?'سداد فاتورة':'سداد دفعة') : (cType==='supplier'?'فاتورة نزلت':'دين مسحوب')}</span>
                                 </div>
                                 <span class="font-bold text-sm text-white">${tx.notes || 'متجر معاذ'}</span>
                                 <span class="text-[10px] text-slate-400 block mt-1">${tx.date || ''}</span>
                             </div>
-                            <span class="font-black text-lg ${isPayment ? 'text-emerald-400' : 'text-amber-400'}">${isPayment ? '-' : '+'}$${amount}</span>
+                            <span class="font-black text-lg ${isPayment ? 'text-emerald-400' : 'text-amber-400'}">${isPayment ? '-' : '+'}$${amount.toFixed(2)}</span>
                         </div>
                     `;
                 });
                 window.lastNetTotalUSD = netTotalUSD;
-                updateDisplayTotal(netTotalUSD, currentCustLimitUSD);
+                window.lastCType = cType;
+                updateDisplayTotal(netTotalUSD, currentCustLimitUSD, cType);
             });
         }
 
         function changeCurrency(type) {
             currentCurrency = type;
-            document.getElementById('btnCurrUSD').className = "px-4 py-2 rounded-lg text-sm font-bold transition " + (type === 'USD' ? "bg-amber-500 text-slate-900 shadow-lg" : "bg-slate-700 hover:bg-slate-600");
-            document.getElementById('btnCurrNew').className = "px-4 py-2 rounded-lg text-sm font-bold transition " + (type === 'SYP_NEW' ? "bg-amber-500 text-slate-900 shadow-lg" : "bg-slate-700 hover:bg-slate-600");
-            document.getElementById('btnCurrOld').className = "px-4 py-2 rounded-lg text-sm font-bold transition " + (type === 'SYP_OLD' ? "bg-amber-500 text-slate-900 shadow-lg" : "bg-slate-700 hover:bg-slate-600");
-
+            document.getElementById('btnCurrUSD').className = "px-5 py-2.5 rounded-xl text-sm font-bold transition " + (type === 'USD' ? "bg-amber-500 text-slate-900 shadow-lg transform hover:scale-105" : "bg-slate-700 hover:bg-slate-600");
+            document.getElementById('btnCurrNew').className = "px-5 py-2.5 rounded-xl text-sm font-bold transition " + (type === 'SYP_NEW' ? "bg-amber-500 text-slate-900 shadow-lg transform hover:scale-105" : "bg-slate-700 hover:bg-slate-600");
+            document.getElementById('btnCurrOld').className = "px-5 py-2.5 rounded-xl text-sm font-bold transition " + (type === 'SYP_OLD' ? "bg-amber-500 text-slate-900 shadow-lg transform hover:scale-105" : "bg-slate-700 hover:bg-slate-600");
             if(window.lastNetTotalUSD !== undefined) {
-                updateDisplayTotal(window.lastNetTotalUSD, currentCustLimitUSD);
+                updateDisplayTotal(window.lastNetTotalUSD, currentCustLimitUSD, window.lastCType);
             }
         }
 
-        function updateDisplayTotal(usd, limit) {
-            let val = Math.max(0, usd); // لا نظهر رصيد سالب للزبون كدين
+        function updateDisplayTotal(usd, limit, cType) {
+            let val = Math.max(0, usd);
             let symbol = "$";
-            if(currentCurrency === 'SYP_NEW') {
-                val = val * currentRate;
-                symbol = "ل.س جديدة";
-            } else if(currentCurrency === 'SYP_OLD') {
-                val = val * currentRate * 100;
-                symbol = "ل.س قديمة";
-            }
+            if(currentCurrency === 'SYP_NEW') { val = val * currentRate; symbol = "ل.س جديدة"; }
+            else if(currentCurrency === 'SYP_OLD') { val = val * currentRate * 100; symbol = "ل.س قديمة"; }
             
-            // تنسيق الرقم بواصلات
             document.getElementById('custTotalDisplay').innerText = `${val.toLocaleString(undefined, {minimumFractionDigits: (currentCurrency==='USD'?2:0), maximumFractionDigits: 2})} ${symbol}`;
 
-            if(limit > 0) {
+            if(cType === 'customer' && limit > 0) {
                 let percentage = (Math.max(0, usd) / limit) * 100;
                 if(percentage > 100) percentage = 100;
                 const bar = document.getElementById('custLimitProgressBar');
                 bar.style.width = percentage + "%";
                 document.getElementById('custLimitPercentage').innerText = Math.round(percentage) + "% مستهلَك";
-                
-                if(percentage > 85) bar.className = "bg-red-500 h-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(239,68,68,0.5)]";
-                else if(percentage > 60) bar.className = "bg-amber-500 h-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(245,158,11,0.5)]";
-                else bar.className = "bg-emerald-500 h-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+                if(percentage > 85) bar.className = "bg-red-500 h-full transition-all duration-700 shadow-[0_0_10px_rgba(239,68,68,0.5)]";
+                else if(percentage > 60) bar.className = "bg-amber-500 h-full transition-all duration-700 shadow-[0_0_10px_rgba(245,158,11,0.5)]";
+                else bar.className = "bg-emerald-500 h-full transition-all duration-700 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
             }
         }
     </script>
