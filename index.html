@@ -1,4 +1,4 @@
-ط<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -156,16 +156,15 @@
 
     </div>
 
-    <!-- نافذة منبثقة مخصصة (Modal) لتسجيل الدين بخيارات متقدمة -->
+    <!-- نافذة منبثقة لتسجيل الدين المتقدم -->
     <div id="debtModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 max-w-md w-full space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <h3 id="modalTitle" class="font-bold text-amber-400 text-lg">تسجيل دين جديد</h3>
+                <h3 class="font-bold text-amber-400 text-lg">تسجيل دين جديد</h3>
                 <button onclick="closeDebtModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
             </div>
             
             <div class="space-y-3">
-                <!-- اختيار طريقة الإدخال (دولار أو ليرة سورية) -->
                 <div>
                     <label class="block text-xs text-slate-300 mb-1">عملة الإدخال:</label>
                     <select id="inputCurrencyType" onchange="toggleInputCurrency()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400">
@@ -175,14 +174,12 @@
                     </select>
                 </div>
 
-                <!-- حقل المبلغ -->
                 <div>
                     <label id="amountLabel" class="block text-xs text-slate-300 mb-1">المبلغ بالدولار ($):</label>
                     <input type="number" step="any" id="inputAmount" placeholder="أدخل المبلغ..." oninput="calculatePreviewUSD()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400 font-bold text-amber-300">
                     <p id="conversionPreview" class="text-xs text-emerald-400 mt-1 hidden"></p>
                 </div>
 
-                <!-- حساب السعر تلقائياً (الكمية × سعر المفرد) -->
                 <div class="bg-slate-700/40 p-2.5 rounded-lg border border-slate-700 space-y-2">
                     <p class="text-xs font-bold text-amber-300">🧮 حاسبة سريعة (اختياري):</p>
                     <div class="flex gap-2">
@@ -191,10 +188,9 @@
                     </div>
                 </div>
 
-                <!-- أصناف سريعة (أزرار جاهزة) -->
                 <div>
                     <label class="block text-xs text-slate-300 mb-1">أصناف متكررة سريعة:</label>
-                    <div class="flex flex-wrap gap-1.5" id="quickItemsContainer">
+                    <div class="flex flex-wrap gap-1.5">
                         <button type="button" onclick="appendQuickItem('سكر')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">سكر</button>
                         <button type="button" onclick="appendQuickItem('رز')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">رز</button>
                         <button type="button" onclick="appendQuickItem('زيت')" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded border border-slate-600">زيت</button>
@@ -204,13 +200,11 @@
                     </div>
                 </div>
 
-                <!-- ملاحظات أو أصناف الدين -->
                 <div>
                     <label class="block text-xs text-slate-300 mb-1">تفاصيل الأصناف والملاحظات:</label>
                     <textarea id="inputNotes" rows="2" placeholder="اكتب الأصناف أو تفاصيل الدين هنا..." class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-amber-400"></textarea>
                 </div>
 
-                <!-- تاريخ الاستحقاق المتوقع -->
                 <div>
                     <label class="block text-xs text-slate-300 mb-1">تاريخ الاستحقاق المتوقع (اختياري):</label>
                     <input type="date" id="inputDueDate" class="w-full p-2 rounded bg-slate-700 border border-slate-600 text-white text-xs">
@@ -224,13 +218,75 @@
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت للتحكم بالمنطق والخيارات الجديدة -->
+    <!-- نافذة منبثقة متقدمة لتسجيل الدفعة (القبض) بالليرة السورية أو الدولار -->
+    <div id="paymentModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 max-w-md w-full space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="font-bold text-emerald-400 text-lg">💵 تسجيل دفعة نقدية (قبض)</h3>
+                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+            
+            <div class="space-y-3">
+                <!-- عرض الرصيد الحالي للزبون للإرشاد -->
+                <div id="paymentCurrentBalanceBox" class="bg-slate-700/60 p-2.5 rounded-lg text-xs text-slate-300 flex justify-between">
+                    <span>رصيد الدين الحالي:</span>
+                    <span id="modalCurrentBalanceVal" class="font-bold text-amber-400">$0.00</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">عملة سداد الدفعة:</label>
+                    <select id="payCurrencyType" onchange="togglePayCurrency()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-emerald-400">
+                        <option value="SYP_NEW">ليرة سورية جديدة (ل.س)</option>
+                        <option value="SYP_OLD">ليرة سورية قديمة (ل.س)</option>
+                        <option value="USD">دولار أمريكي ($)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label id="payAmountLabel" class="block text-xs text-slate-300 mb-1">المبلغ بالليرة الجديدة (ل.س):</label>
+                    <input type="number" step="any" id="payInputAmount" placeholder="أدخل مبلغ الدفعة..." oninput="calculatePayPreviewUSD()" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-emerald-400 font-bold text-emerald-300">
+                    <p id="payConversionPreview" class="text-xs text-emerald-400 mt-1 hidden"></p>
+                </div>
+
+                <!-- خيارات سريعة لنسب السداد -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">خيارات سريعة للنسب:</label>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="setPayPercentage(1)" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1.5 rounded border border-slate-600 flex-1">كامل الدين (100%)</button>
+                        <button type="button" onclick="setPayPercentage(0.5)" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1.5 rounded border border-slate-600 flex-1">نصف الدين (50%)</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">طريقة الاستلام:</label>
+                    <select id="payMethod" class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm">
+                        <option value="نقداً (Cash)">نقداً (Cash)</option>
+                        <option value="شام كاش (Sham Cash)">شام كاش (Sham Cash)</option>
+                        <option value="تحويل خارجي">تحويل خارجي / أخرى</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">ملاحظات وبيان الدفعة:</label>
+                    <input type="text" id="payNotes" placeholder="مثلاً: دفعة على حساب الدين القديم..." class="w-full p-2.5 rounded bg-slate-700 border border-slate-600 text-white text-sm focus:outline-none focus:border-emerald-400">
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="submitAdvancedPayment()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-xl flex-1 text-sm transition shadow">تأكيد وتسجيل الدفعة</button>
+                <button onclick="closePaymentModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- كود الجافاسكريبت للتحكم بالمنطق -->
     <script>
         let currentCurrency = 'USD';
-        let currentRate = 15000; // قيمة افتراضية
+        let currentRate = 15000;
         let allCustomersData = {};
         let activeModalPhone = null;
         let activeModalLimit = 0;
+        let activeCustomerNetUSD = 0;
 
         window.onload = function() {
             const role = localStorage.getItem("userRole");
@@ -331,7 +387,6 @@
             });
         }
 
-        // فتح نافذة تسجيل الدين المتقدمة
         function openAdvancedDebtModal(phone, limit) {
             activeModalPhone = phone;
             activeModalLimit = limit;
@@ -402,7 +457,6 @@
             }
         }
 
-        // إرسال وتسجيل الدين من النافذة المنبثقة
         async function submitAdvancedDebt() {
             const rawVal = Number(document.getElementById('inputAmount').value);
             if(!rawVal || isNaN(rawVal) || rawVal <= 0) {
@@ -423,7 +477,6 @@
             const dueDate = document.getElementById('inputDueDate').value;
 
             try {
-                // فحص سقف الحساب
                 const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + activeModalPhone));
                 let currentTotal = 0;
                 if(txSnap.exists()) {
@@ -456,21 +509,122 @@
             }
         }
 
-        function addPayment(phone) {
-            const amountUsd = prompt("أدخل قيمة الدفعة المسددة (بالدولار الأمريكي USD):");
-            if(!amountUsd || isNaN(amountUsd) || Number(amountUsd) <= 0) return;
-            const notes = prompt("ملاحظات الدفعة (مثلاً: دفعة نقدية):") || "دفعة نقدية";
+        // نافذة تسجيل الدفعة المتقدمة بالليرة السورية أو الدولار
+        async function openAdvancedPaymentModal(phone) {
+            activeModalPhone = phone;
+            document.getElementById('payInputAmount').value = '';
+            document.getElementById('payNotes').value = '';
+            document.getElementById('payCurrencyType').value = 'SYP_NEW';
+            document.getElementById('payConversionPreview').classList.add('hidden');
+            document.getElementById('payAmountLabel').innerText = "المبلغ بالليرة السورية الجديدة (ل.س):";
+
+            // جلب ورصد الرصيد الحالي للزبون
+            try {
+                const txSnap = await window.get(window.dbRef(window.db, 'transactions/' + phone));
+                let netUSD = 0;
+                if(txSnap.exists()) {
+                    txSnap.forEach(ch => {
+                        const t = ch.val();
+                        if(t.type === 'payment') netUSD -= Number(t.amount_usd);
+                        else netUSD += Number(t.amount_usd);
+                    });
+                }
+                activeCustomerNetUSD = Math.max(0, netUSD);
+                document.getElementById('modalCurrentBalanceVal').innerText = `$${activeCustomerNetUSD.toFixed(2)}`;
+            } catch(e) {
+                activeCustomerNetUSD = 0;
+                document.getElementById('modalCurrentBalanceVal').innerText = "$0.00";
+            }
+
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function togglePayCurrency() {
+            const type = document.getElementById('payCurrencyType').value;
+            const label = document.getElementById('payAmountLabel');
+            if(type === 'USD') label.innerText = "المبلغ بالدولار ($):";
+            else if(type === 'SYP_NEW') label.innerText = "المبلغ بالليرة السورية الجديدة (ل.س):";
+            else if(type === 'SYP_OLD') label.innerText = "المبلغ بالليرة السورية القديمة (ل.س):";
+            calculatePayPreviewUSD();
+        }
+
+        function calculatePayPreviewUSD() {
+            const rawVal = Number(document.getElementById('payInputAmount').value) || 0;
+            const type = document.getElementById('payCurrencyType').value;
+            const preview = document.getElementById('payConversionPreview');
+
+            if(rawVal <= 0) {
+                preview.classList.add('hidden');
+                return;
+            }
+
+            let usdVal = rawVal;
+            if(type === 'SYP_NEW') {
+                usdVal = rawVal / currentRate;
+                preview.innerText = `💱 يعادل بالدولار: $${usdVal.toFixed(2)}`;
+                preview.classList.remove('hidden');
+            } else if(type === 'SYP_OLD') {
+                usdVal = rawVal / (currentRate * 100);
+                preview.innerText = `💱 يعادل بالدولار: $${usdVal.toFixed(2)}`;
+                preview.classList.remove('hidden');
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+
+        function setPayPercentage(ratio) {
+            if(activeCustomerNetUSD <= 0) return alert("لا يوجد دين مستحق على هذا الزبون");
+            const type = document.getElementById('payCurrencyType').value;
+            let targetUSD = activeCustomerNetUSD * ratio;
+            let valToInput = targetUSD;
+
+            if(type === 'SYP_NEW') {
+                valToInput = targetUSD * currentRate;
+            } else if(type === 'SYP_OLD') {
+                valToInput = targetUSD * currentRate * 100;
+            }
+
+            document.getElementById('payInputAmount').value = Math.round(valToInput);
+            calculatePayPreviewUSD();
+        }
+
+        async function submitAdvancedPayment() {
+            const rawVal = Number(document.getElementById('payInputAmount').value);
+            if(!rawVal || isNaN(rawVal) || rawVal <= 0) {
+                alert("يرجى إدخال مبلغ دفعة صالح");
+                return;
+            }
+
+            const type = document.getElementById('payCurrencyType').value;
+            let finalUsdAmount = rawVal;
+
+            if(type === 'SYP_NEW') {
+                finalUsdAmount = rawVal / currentRate;
+            } else if(type === 'SYP_OLD') {
+                finalUsdAmount = rawVal / (currentRate * 100);
+            }
+
+            const method = document.getElementById('payMethod').value;
+            const notes = document.getElementById('payNotes').value.trim() || `دفعة نقدية (${method})`;
 
             const paymentData = {
                 type: 'payment',
-                amount_usd: Number(amountUsd),
+                amount_usd: Number(finalUsdAmount.toFixed(2)),
                 notes: notes,
                 date: new Date().toLocaleDateString('ar-SY') + ' ' + new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})
             };
 
-            window.push(window.dbRef(window.db, 'transactions/' + phone), paymentData).then(() => {
-                alert("تم تسجيل الدفعة وخصمها من الرصيد بنجاح");
-            });
+            try {
+                await window.push(window.dbRef(window.db, 'transactions/' + activeModalPhone), paymentData);
+                alert("تم تسجيل الدفعة وتحويلها وخصمها من الرصيد بنجاح");
+                closePaymentModal();
+            } catch(err) {
+                alert("حدث خطأ أثناء حفظ الدفعة");
+            }
         }
 
         async function sendWhatsAppNotice(phone, custName) {
@@ -542,8 +696,8 @@
                             <button onclick="deleteCustomer('${cust.phone}')" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">حذف</button>
                         </div>
                         <div class="flex flex-wrap gap-2 pt-1 border-t border-slate-600/60">
-                            <button onclick="openAdvancedDebtModal('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">➕ تسجيل دين متقدم</button>
-                            <button onclick="addPayment('${cust.phone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">💵 تسجيل دفعة</button>
+                            <button onclick="openAdvancedDebtModal('${cust.phone}', ${cust.credit_limit})" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">➕ تسجيل دين</button>
+                            <button onclick="openAdvancedPaymentModal('${cust.phone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs flex-1 shadow">💵 تسجيل دفعة</button>
                             <button onclick="sendWhatsAppNotice('${cust.phone}', '${cust.name}')" class="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">💬 واتساب</button>
                         </div>
                     </div>
