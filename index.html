@@ -32,199 +32,89 @@
         window.onValue = onValue;
         window.push = push;
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans pb-20">
 
-    <div id="undoToast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 shadow-2xl rounded-2xl p-4 z-[60] flex items-center justify-between w-11/12 max-w-sm transition-all">
-        <div class="flex items-center gap-3">
-            <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-full">✓</div>
-            <div>
-                <p class="text-sm font-bold text-white">تم تنفيذ العملية</p>
-                <p class="text-xs text-slate-400">تم التحديث بنجاح</p>
-            </div>
-        </div>
-        <button onclick="performUndo()" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">تراجع ↺</button>
-    </div>
-
-    <!-- زر تثبيت التطبيق العام (يظهر عند توفر الإمكانية) -->
-    <div id="pwaInstallBanner" class="hidden fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-amber-500 text-slate-900 p-3 rounded-2xl shadow-2xl z-50 flex items-center justify-between border border-amber-400 animate-bounce">
+    <div id="pwaInstallBanner" class="hidden fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-amber-500 text-slate-900 p-3 rounded-2xl shadow-2xl z-50 flex items-center justify-between border border-amber-400">
         <div class="flex items-center gap-2">
             <span class="text-2xl">📱</span>
             <div>
                 <p class="text-xs font-black">تثبيت تطبيق متجر معاذ</p>
-                <p class="text-[10px] text-slate-800">لتسهيل الوصول والاستخدام بدون إنترنت</p>
+                <p class="text-[10px] text-slate-800">لتسهيل الوصول والشاشة الرئيسية</p>
             </div>
         </div>
-        <button onclick="installPWA()" class="bg-slate-900 text-amber-400 font-bold px-3 py-1.5 rounded-xl text-xs shadow hover:bg-slate-800 transition">تثبيت الآن</button>
+        <button onclick="installPWA()" class="bg-slate-900 text-amber-400 font-bold px-3 py-1.5 rounded-xl text-xs shadow">تثبيت</button>
     </div>
 
     <div id="app" class="container mx-auto p-4 max-w-3xl">
         
-        <!-- 1. شاشة تسجيل الدخول الآمنة -->
+        <!-- 1. شاشة تسجيل الدخول -->
         <div id="loginScreen" class="bg-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-700 mt-16 max-w-md mx-auto">
             <div class="text-center mb-8">
-                <div class="bg-amber-500 text-slate-900 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center font-black text-3xl shadow-lg shadow-amber-500/30 mb-4">M</div>
+                <div class="bg-amber-500 text-slate-900 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center font-black text-3xl shadow-lg mb-4">M</div>
                 <h2 class="text-2xl font-bold text-amber-400">ديون متجر معاذ</h2>
-                <p class="text-xs text-slate-400 mt-1">نظام إدارة الديون والالتزامات المؤمن</p>
+                <p class="text-xs text-slate-400 mt-1">نظام إدارة الديون المؤمن</p>
             </div>
             <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
                 <div>
                     <label class="block text-sm mb-1.5 text-slate-300 font-medium">رقم الهاتف</label>
-                    <input type="text" id="loginPhone" required class="w-full p-3.5 rounded-xl bg-slate-900/50 border border-slate-700 focus:outline-none focus:border-amber-400 text-white transition" placeholder="09xxxxxxxx">
+                    <input type="text" id="loginPhone" required class="w-full p-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white" placeholder="09xxxxxxxx">
                 </div>
                 <div>
                     <label class="block text-sm mb-1.5 text-slate-300 font-medium">كلمة المرور</label>
-                    <input type="password" id="loginPassword" required class="w-full p-3.5 rounded-xl bg-slate-900/50 border border-slate-700 focus:outline-none focus:border-amber-400 text-white transition" placeholder="••••••••">
+                    <input type="password" id="loginPassword" required class="w-full p-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3.5 rounded-xl transition shadow-lg text-lg">دخول آمن</button>
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3.5 rounded-xl transition text-lg">دخول آمن</button>
             </form>
-            <p id="loginError" class="text-red-400 text-sm mt-4 text-center hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20">رقم الهاتف أو كلمة المرور غير صحيحة</p>
+            <p id="loginError" class="text-red-400 text-sm mt-4 text-center hidden bg-red-500/10 p-2 rounded-lg">رقم الهاتف أو كلمة المرور غير صحيحة</p>
         </div>
 
         <!-- 2. لوحة تحكم الإدارة -->
         <div id="adminPanel" class="hidden space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-xl gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="bg-amber-500 text-slate-900 w-12 h-12 rounded-xl flex items-center justify-center font-black text-2xl shadow-lg">M</div>
-                    <div>
-                        <h1 class="text-xl font-black text-amber-400 tracking-wide">لوحة الإدارة المركزية</h1>
-                        <p class="text-xs text-slate-400 mt-0.5">متجر معاذ - العوينة</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 w-full md:w-auto flex-wrap">
-                    <button onclick="openNotificationDashboard()" class="bg-blue-600/25 hover:bg-blue-600 text-blue-300 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition border border-blue-500/30">الإشعارات</button>
-                    <button id="adminInstallBtn" onclick="installPWA()" class="hidden bg-amber-500/25 hover:bg-amber-500 text-amber-300 hover:text-slate-900 px-3 py-2 rounded-xl text-xs font-bold transition border border-amber-500/30">📱 تثبيت التطبيق</button>
-                    <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition">خروج</button>
-                </div>
+            <div class="flex justify-between items-center bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-xl">
+                <h1 class="text-xl font-black text-amber-400">لوحة الإدارة المركزية</h1>
+                <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-bold">خروج</button>
             </div>
 
-            <!-- لوحة الإحصائيات الشاملة -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-slate-800/80 p-4 rounded-2xl border border-emerald-500/30 shadow-lg">
-                    <p class="text-xs text-slate-400 mb-1 font-medium">الديون التي لي</p>
-                    <h3 id="globalDebtForMe" class="text-xl font-black text-emerald-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800/80 p-4 rounded-2xl border border-red-500/30 shadow-lg">
-                    <p class="text-xs text-slate-400 mb-1 font-medium">الديون التي علي</p>
-                    <h3 id="globalDebtOnMe" class="text-xl font-black text-red-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-2xl border border-amber-500/50 shadow-lg col-span-2 md:col-span-1">
-                    <p class="text-xs text-slate-400 mb-1 font-medium">الصافي المالي</p>
-                    <h3 id="globalNetBalance" class="text-2xl font-black text-amber-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 shadow-lg hidden md:block">
-                    <p class="text-xs text-slate-400 mb-1 font-medium">عدد الحسابات</p>
-                    <h3 id="globalCustCount" class="text-xl font-black text-blue-400">0</h3>
-                </div>
+            <!-- إضافة حساب جديد مع السقف -->
+            <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-lg">
+                <h2 class="font-bold text-emerald-400 text-sm">إضافة حساب جديد وتحديد سقف الدين</h2>
+                <form onsubmit="addCustomer(event)" class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="newCustName" placeholder="الاسم الكامل" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+                        <input type="text" id="newCustPhone" placeholder="رقم الهاتف (09...)" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+                        <select id="newCustType" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+                            <option value="customer">زبون (له سقف حساب)</option>
+                            <option value="supplier">مورد</option>
+                        </select>
+                        <input type="number" id="newCustLimit" placeholder="سقف الدين المسموح ($)" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+                        <input type="password" id="newCustPass" placeholder="كلمة المرور" required class="col-span-2 w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-xl text-sm">➕ إضافة الحساب</button>
+                </form>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-                <!-- الإعدادات والبانر وأدسنس -->
-                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-lg flex flex-col justify-between">
-                    <div>
-                        <h2 class="font-bold text-amber-300 text-sm mb-3">الإعدادات والبانر وأدسنس</h2>
-                        <div class="space-y-3">
-                            <div class="flex gap-2">
-                                <input type="number" id="exchangeRateInput" placeholder="سعر صرف الدولار (ل.س)" class="flex-1 p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                                <button onclick="saveExchangeRate()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 rounded-xl text-xs">تحديث</button>
-                            </div>
-                            <div class="bg-slate-700/30 p-3 rounded-xl border border-slate-600 space-y-2">
-                                <p class="text-xs font-bold text-emerald-400">رفع صورة البانر (700×250)</p>
-                                <input type="file" id="adminBannerFileInput" accept="image/*" class="w-full text-xs text-slate-400">
-                                <input type="text" id="adminBannerLinkInput" placeholder="رابط التوجيه عند الضغط" class="w-full p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                                <button onclick="saveBannerBase64()" class="w-full bg-emerald-600 text-white font-bold p-2 rounded-lg text-xs">حفظ البانر</button>
-                            </div>
-                            <div class="bg-slate-700/30 p-3 rounded-xl border border-slate-600 space-y-2">
-                                <p class="text-xs font-bold text-blue-400">إعلانات جوجل أدسنس</p>
-                                <input type="text" id="adminAdClientInput" placeholder="AdSense Client ID" class="w-full p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                                <input type="text" id="adminAdSlotInput" placeholder="AdSense Slot ID" class="w-full p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                                <button onclick="saveAdsenseSettings()" class="w-full bg-blue-600 text-white font-bold p-2 rounded-lg text-xs">تفعيل الإعلانات</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="exportDataJSON()" class="bg-slate-700 hover:bg-slate-600 text-amber-400 border border-slate-600 px-3 py-2.5 rounded-xl text-xs font-bold flex-1">📥 نسخة احتياطية (JSON)</button>
-                        <button onclick="exportDataExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-2.5 rounded-xl text-xs font-bold flex-1">📊 تصدير Excel/CSV</button>
-                    </div>
-                </div>
-
-                <!-- إضافة حساب جديد (الثقة المتدرجة) -->
-                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-lg">
-                    <h2 class="font-bold text-emerald-400 text-sm">إضافة حساب جديد (نظام الثقة)</h2>
-                    <form onsubmit="addCustomer(event)" class="space-y-3">
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="text" id="newCustName" placeholder="الاسم الكامل" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                            <input type="text" id="newCustPhone" placeholder="رقم الهاتف (09...)" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                            <select id="newCustType" class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                                <option value="customer">زبون (له سقف حساب)</option>
-                                <option value="supplier">مورد (أنا مدين له)</option>
-                            </select>
-                            <input type="number" id="newCustLimit" placeholder="سقف الدين ($)" required class="w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                            <input type="password" id="newCustPass" placeholder="كلمة المرور" required class="col-span-2 w-full p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                        </div>
-                        <div class="bg-slate-700/40 p-3 rounded-xl border border-slate-600 space-y-2">
-                            <p class="text-[10px] text-amber-300 font-bold">معلومات الهوية (اختياري لرفع السقف):</p>
-                            <input type="text" id="newCustNationalId" placeholder="الرقم الوطني..." class="w-full p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                            <input type="file" id="newCustIdPhoto" accept="image/*" class="w-full text-[10px] text-slate-400">
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-xl text-sm transition">➕ إضافة الحساب</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- قائمة الحسابات والبحث والمقابر (الأرشفة) -->
+            <!-- قائمة الحسابات -->
             <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 space-y-4 shadow-xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                    <h2 class="font-bold text-amber-300 text-sm">إدارة الحسابات والنشاط</h2>
-                    <div class="flex gap-2 w-full md:w-auto bg-slate-900/50 p-1 rounded-lg border border-slate-700">
-                        <button onclick="filterType('all')" id="btnFilterAll" class="flex-1 px-3 py-1 rounded text-xs font-bold bg-slate-700 text-white">الكل</button>
-                        <button onclick="filterType('debtor')" id="btnFilterDebtor" class="flex-1 px-3 py-1 rounded text-xs font-medium text-slate-400">مدينون</button>
-                        <button onclick="filterType('creditor')" id="btnFilterCreditor" class="flex-1 px-3 py-1 rounded text-xs font-medium text-slate-400">دائنون</button>
-                        <button onclick="filterType('archived')" id="btnFilterArchived" class="flex-1 px-3 py-1 rounded text-xs font-medium text-slate-400">الأرشيف</button>
-                    </div>
-                </div>
-                <input type="text" id="searchCustomerInput" oninput="applyFilters()" placeholder="ابحث عن حساب بالاسم أو الرقم..." class="w-full p-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-white text-sm outline-none">
+                <h2 class="font-bold text-amber-300 text-sm">إدارة الحسابات والديون</h2>
+                <input type="text" id="searchCustomerInput" oninput="applyFilters()" placeholder="ابحث عن حساب..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
                 <div id="adminCustomersList" class="space-y-4 pt-2"></div>
             </div>
         </div>
 
-        <!-- 3. صفحة الزبون -->
+        <!-- 3. صفحة الزبون (عرض السقف والعداد الملون) -->
         <div id="customerPanel" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-xl">
-                <div class="flex items-center gap-3">
-                    <div class="bg-amber-500/20 text-amber-400 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border border-amber-500/30">👤</div>
-                    <div>
-                        <h1 id="custWelcomeTitle" class="text-lg font-black text-amber-400">حسابي</h1>
-                        <p class="text-xs text-slate-400 mt-0.5">الرصيد المباشر</p>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button id="custInstallBtn" onclick="installPWA()" class="hidden bg-amber-500/25 hover:bg-amber-500 text-amber-300 hover:text-slate-900 px-3 py-2 rounded-xl text-xs font-bold transition border border-amber-500/30">📱 تثبيت</button>
-                    <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition">خروج</button>
-                </div>
-            </div>
-
-            <div id="custNotificationBox" class="hidden bg-blue-900/40 border border-blue-500/50 p-4 rounded-2xl flex items-start gap-3 shadow-lg">
-                <div class="text-blue-400 mt-0.5">ℹ️</div>
-                <div>
-                    <h4 class="text-sm font-bold text-blue-300">إشعار من الإدارة</h4>
-                    <p id="custNotificationText" class="text-xs text-blue-100 mt-1 leading-relaxed"></p>
-                </div>
-            </div>
-
-            <div id="customerPromoBannerContainer" class="hidden w-full overflow-hidden rounded-3xl shadow-lg border border-slate-700" style="aspect-ratio: 700/250; max-width: 700px; margin: 0 auto;">
-                <a id="customerPromoBannerLink" href="#" target="_blank" class="block w-full h-full cursor-pointer relative group">
-                    <img id="customerPromoBannerImg" src="" alt="إعلان خاص" class="w-full h-full object-cover">
-                </a>
+                <h1 id="custWelcomeTitle" class="text-lg font-black text-amber-400">حسابي</h1>
+                <button onclick="logout()" class="bg-slate-700 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-bold">خروج</button>
             </div>
 
             <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center space-y-5 shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400"></div>
-                <p id="custBalanceDesc" class="text-sm text-slate-400 font-medium">الرصيد النهائي المستحق:</p>
-                <h2 id="custTotalDisplay" class="text-5xl md:text-6xl font-black text-amber-400 tracking-tight">0.00 $</h2>
+                <p class="text-sm text-slate-400 font-medium">الرصيد النهائي المستحق:</p>
+                <h2 id="custTotalDisplay" class="text-5xl font-black text-amber-400">0.00 $</h2>
                 
-                <div id="custLimitContainer" class="w-full bg-slate-900/60 rounded-full h-3.5 mt-6 overflow-hidden border border-slate-700 shadow-inner">
+                <!-- العداد الملون لسقف الحساب -->
+                <div id="custLimitContainer" class="w-full bg-slate-900/60 rounded-full h-3.5 mt-6 overflow-hidden border border-slate-700">
                     <div id="custLimitProgressBar" class="bg-emerald-500 h-full transition-all duration-700 ease-out" style="width: 0%"></div>
                 </div>
                 <div id="custLimitLabels" class="flex justify-between text-xs font-medium text-slate-400 px-2 mt-1.5">
@@ -233,113 +123,28 @@
                 </div>
 
                 <div class="flex justify-center gap-2 pt-6 border-t border-slate-700/50">
-                    <button onclick="changeCurrency('USD')" id="btnCurrUSD" class="px-5 py-2.5 bg-amber-500 text-slate-900 rounded-xl text-sm font-bold shadow-lg">دولار ($)</button>
+                    <button onclick="changeCurrency('USD')" id="btnCurrUSD" class="px-5 py-2.5 bg-amber-500 text-slate-900 rounded-xl text-sm font-bold">دولار ($)</button>
                     <button onclick="changeCurrency('SYP_NEW')" id="btnCurrNew" class="px-5 py-2.5 bg-slate-700 rounded-xl text-sm font-bold">ليرة جديدة</button>
                     <button onclick="changeCurrency('SYP_OLD')" id="btnCurrOld" class="px-5 py-2.5 bg-slate-700 rounded-xl text-sm font-bold">ليرة قديمة</button>
                 </div>
             </div>
 
             <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700 space-y-5 shadow-xl">
-                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                    <h3 class="font-black text-amber-300 text-base">كشف الحساب التفصيلي</h3>
-                    <button onclick="window.print()" class="bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow border border-slate-600">🖨️ طباعة</button>
-                </div>
-                <div id="custTransactionsList" class="space-y-3 pt-2 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar"></div>
-            </div>
-            
-            <div id="dynamicAdsenseContainer" class="hidden bg-slate-800 p-2 rounded-3xl border border-slate-700 text-center shadow-lg mt-6 overflow-hidden min-h-[100px] flex-col justify-center relative">
-                <span class="absolute top-1 left-2 text-[10px] text-slate-500">Ad / إعلان</span>
-                <div id="adsenseWrapper"></div>
+                <h3 class="font-black text-amber-300 text-base border-b border-slate-700 pb-3">كشف الحساب التفصيلي</h3>
+                <div id="custTransactionsList" class="space-y-3 pt-2 max-h-[50vh] overflow-y-auto"></div>
             </div>
         </div>
     </div>
 
-    <!-- نوافذ الإدارة والمودال -->
-    <div id="notificationDashboard" class="hidden fixed inset-0 z-50 flex justify-start bg-black/60 backdrop-blur-sm">
-        <div class="bg-slate-800 w-full md:w-96 h-full border-l border-slate-700 shadow-2xl flex flex-col">
-            <div class="p-5 border-b border-slate-700 flex justify-between items-center bg-slate-900/30">
-                <h2 class="font-black text-blue-400 text-lg">مركز الإشعارات</h2>
-                <button onclick="closeNotificationDashboard()" class="text-slate-400 hover:text-white bg-slate-700 rounded-full p-2">✕</button>
-            </div>
-            <div class="p-5 flex-1 overflow-y-auto space-y-6">
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700 space-y-3">
-                    <h3 class="font-bold text-sm text-amber-300">إشعار عام للجميع</h3>
-                    <textarea id="globalNotifText" rows="3" placeholder="اكتب الإشعار هنا..." class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none"></textarea>
-                    <div class="flex gap-2">
-                        <button onclick="setGlobalNotification()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex-1">نشر</button>
-                        <button onclick="clearGlobalNotification()" class="bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold">مسح</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: إعدادات الزبون (التعديل الشامل والأرشفة) -->
-    <div id="custSettingsModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <h3 class="font-black text-amber-400 text-lg">إعدادات الحساب والأرشيف</h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400">✕</button>
-            </div>
-            <div class="space-y-3">
-                <input type="hidden" id="editCustPhoneHidden">
-                <input type="text" id="editCustName" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none">
-                <div class="grid grid-cols-2 gap-3">
-                    <select id="editCustType" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none">
-                        <option value="customer">زبون</option><option value="supplier">مورد</option>
-                    </select>
-                    <input type="number" id="editCustLimit" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none" placeholder="سقف الدين">
-                </div>
-                <div class="flex items-center gap-2 bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                    <input type="checkbox" id="editCustArchived" class="w-4 h-4 accent-amber-500">
-                    <label for="editCustArchived" class="text-xs text-slate-300 font-bold">أرشفة الحساب (إخفاء من القائمة النشطة)</label>
-                </div>
-                <div class="bg-slate-700/40 p-3 rounded-xl border border-slate-600 space-y-2">
-                    <p class="text-xs text-amber-300 font-bold">الرقم الوطني والهوية:</p>
-                    <input type="text" id="editCustNationalId" placeholder="الرقم الوطني..." class="w-full p-2.5 rounded-lg bg-slate-900/80 border border-slate-700 text-white text-xs outline-none">
-                    <input type="file" id="editCustIdPhoto" accept="image/*" class="w-full text-[10px] text-slate-400">
-                    <img id="editCustIdPhotoPreview" class="hidden w-20 h-20 object-cover mt-2 rounded border border-slate-600">
-                </div>
-                <input type="text" id="editCustPass" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-amber-300 font-mono text-sm outline-none" placeholder="كلمة المرور">
-                <textarea id="editCustAddress" rows="1" placeholder="العنوان..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none"></textarea>
-            </div>
-            <button onclick="saveCustSettings()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3 rounded-xl text-sm">حفظ التعديلات والأرشيف</button>
-        </div>
-    </div>
-
-    <!-- Modal: تعديل عملية مالية سابقة للإدارة -->
-    <div id="editTxModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <h3 class="font-black text-amber-400 text-lg">تعديل العملية المالية</h3>
-                <button onclick="closeEditTxModal()" class="text-slate-400">✕</button>
-            </div>
-            <input type="hidden" id="editTxPhone">
-            <input type="hidden" id="editTxId">
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">المبلغ بالدولار ($):</label>
-                <input type="number" step="any" id="editTxAmount" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-lg font-black outline-none">
-            </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">البيان / الملاحظات:</label>
-                <input type="text" id="editTxNotes" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none">
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="saveEditedTransaction()" class="bg-amber-500 text-slate-900 font-bold p-3 rounded-xl flex-1 text-sm">حفظ التعديل</button>
-                <button onclick="deleteTransactionDirect()" class="bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition">حذف العملية</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: إضافة دين أو دفعة -->
+    <!-- Modal: إضافة عملية -->
     <div id="debtModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
             <h3 id="modalOpTitle" class="font-black text-amber-400 text-lg">تسجيل عملية جديدة</h3>
-            <select id="inputCurrencyType" class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none">
+            <select id="inputCurrencyType" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
                 <option value="USD">دولار ($)</option><option value="SYP_NEW">ليرة جديدة</option><option value="SYP_OLD">ليرة قديمة</option>
             </select>
-            <input type="number" step="any" id="inputAmount" placeholder="المبلغ..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-lg font-black outline-none">
-            <input type="text" id="inputNotes" placeholder="الملاحظات والبيان..." class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white text-sm outline-none">
+            <input type="number" step="any" id="inputAmount" placeholder="المبلغ..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-lg font-black">
+            <input type="text" id="inputNotes" placeholder="الملاحظات..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
             <div class="flex gap-2 pt-2">
                 <button onclick="submitOperation()" class="bg-amber-500 font-bold p-3 rounded-xl flex-1 text-sm text-slate-900">تنفيذ</button>
                 <button onclick="closeDebtModal()" class="bg-slate-700 text-slate-300 px-5 py-3 rounded-xl text-sm">إلغاء</button>
@@ -354,16 +159,13 @@
         let allTxData = {};
         let activeModalPhone = null;
         let activeModalOpType = 'debt';
-        let currentFilter = 'all';
+        let currentLimitVal = 0;
 
-        // --- منطق تثبيت تطبيق الويب التقدمي (PWA) ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('pwaInstallBanner').classList.remove('hidden');
-            document.getElementById('adminInstallBtn')?.classList.remove('hidden');
-            document.getElementById('custInstallBtn')?.classList.remove('hidden');
         });
 
         function installPWA() {
@@ -376,26 +178,8 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("التطبيق مثبت مسبقاً على جهازك، أو أن المتصفح لا يدعم التثبيت المباشر. يمكنك تثبيته يدوياً من خيارات المتصفح (إضافة إلى الشاشة الرئيسية).");
+                alert("يمكنك تثبيت التطبيق يدوياً من خيارات المتصفح (إضافة إلى الشاشة الرئيسية).");
             }
-        }
-
-        function resizeAndEncodeImage(file, maxWidth, callback) {
-            if (!file) return callback(null);
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height;
-                    if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    callback(canvas.toDataURL('image/jpeg', 0.7)); 
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
         }
 
         window.onload = function() {
@@ -425,24 +209,6 @@
         function logout() { localStorage.clear(); location.reload(); }
         function showAdminPanel() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); loadAdminData(); }
         function showCustomerPanel(phone) { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('customerPanel').classList.remove('hidden'); loadCustomerData(phone); }
-        
-        function saveExchangeRate() {
-            const r = document.getElementById('exchangeRateInput').value;
-            if(r) window.set(window.dbRef(window.db, 'settings/exchangeRate'), Number(r)).then(() => alert("تم التحديث"));
-        }
-        function saveBannerBase64() {
-            const f = document.getElementById('adminBannerFileInput'), l = document.getElementById('adminBannerLinkInput').value.trim();
-            if(f.files.length > 0) {
-                resizeAndEncodeImage(f.files[0], 800, b64 => {
-                    window.set(window.dbRef(window.db, 'settings/promoBanner'), { image_base64: b64, link_url: l }).then(()=>alert("تم حفظ البانر"));
-                });
-            } else { window.set(window.dbRef(window.db, 'settings/promoBanner/link_url'), l).then(()=>alert("تم التحديث")); }
-        }
-        function saveAdsenseSettings() {
-            const client = document.getElementById('adminAdClientInput').value.trim();
-            const slot = document.getElementById('adminAdSlotInput').value.trim();
-            window.set(window.dbRef(window.db, 'settings/adsense'), { client, slot }).then(()=>alert("تم تفعيل أدسنس"));
-        }
 
         function addCustomer(e) {
             e.preventDefault();
@@ -451,136 +217,41 @@
             const type = document.getElementById('newCustType').value;
             const password = document.getElementById('newCustPass').value.trim();
             const limit = document.getElementById('newCustLimit').value;
-            const nationalId = document.getElementById('newCustNationalId').value.trim();
-            const f = document.getElementById('newCustIdPhoto');
-            let data = { name, phone, type, password, credit_limit: Number(limit), national_id: nationalId, archived: false, address: "", notes: "" };
-            
-            if(f.files.length > 0) {
-                resizeAndEncodeImage(f.files[0], 600, img => {
-                    data.id_photo = img;
-                    window.set(window.dbRef(window.db, 'customers/' + phone), data).then(() => { alert("تمت إضافة الحساب بنجاح"); e.target.reset(); });
-                });
-            } else {
-                window.set(window.dbRef(window.db, 'customers/' + phone), data).then(() => { alert("تمت إضافة الحساب بنجاح"); e.target.reset(); });
-            }
+            let data = { name, phone, type, password, credit_limit: Number(limit), archived: false };
+            window.set(window.dbRef(window.db, 'customers/' + phone), data).then(() => { alert("تمت إضافة الحساب بنجاح"); e.target.reset(); });
         }
 
         function loadAdminData() {
-            window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snap) => { if(snap.exists()) { currentRate = Number(snap.val()); document.getElementById('exchangeRateInput').value = currentRate; } });
-            window.onValue(window.dbRef(window.db, 'transactions'), (txSnap) => { allTxData = txSnap.exists() ? txSnap.val() : {}; calculateGlobalStats(); applyFilters(); });
-            window.onValue(window.dbRef(window.db, 'customers'), (snap) => { allCustomersData = snap.exists() ? snap.val() : {}; document.getElementById('globalCustCount').innerText = Object.keys(allCustomersData).length; applyFilters(); calculateGlobalStats(); });
+            window.onValue(window.dbRef(window.db, 'transactions'), (txSnap) => { allTxData = txSnap.exists() ? txSnap.val() : {}; applyFilters(); });
+            window.onValue(window.dbRef(window.db, 'customers'), (snap) => { allCustomersData = snap.exists() ? snap.val() : {}; applyFilters(); });
         }
 
-        function exportDataExcel() {
-            let csv = "\uFEFFالاسم,الهاتف,النوع,الرصيد الحالي ($),سقف الدين ($),الحالة\n";
-            for(let p in allCustomersData) {
-                const c = allCustomersData[p];
-                const txs = allTxData[p] || {};
-                let net = 0;
-                for(let id in txs) { net += (txs[id].type==='payment'?-1:1)*Number(txs[id].amount_usd); }
-                csv += `"${c.name}","${c.phone}","${c.type==='supplier'?'مورد':'زبون'}",${net.toFixed(2)},${c.credit_limit||0},"${c.archived?'مؤرشف':'نشط'}"\n`;
-            }
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "moaath_store_accounts.csv");
-            document.body.appendChild(link); link.click(); link.remove();
-        }
-
-        function calculateGlobalStats() {
-            let dfm = 0, don = 0;
-            for(let p in allCustomersData) {
-                const c = allCustomersData[p];
-                if(c.archived) continue;
-                const txs = allTxData[p] || {};
-                let net = 0;
-                for(let id in txs) { net += (txs[id].type==='payment'?-1:1)*Number(txs[id].amount_usd); }
-                if(net > 0) { if(c.type==='customer'||!c.type) dfm+=net; else don+=net; }
-                else if(net < 0) { if(c.type==='customer'||!c.type) don+=Math.abs(net); else dfm+=Math.abs(net); }
-            }
-            document.getElementById('globalDebtForMe').innerText = `$${dfm.toFixed(2)}`;
-            document.getElementById('globalDebtOnMe').innerText = `$${don.toFixed(2)}`;
-            document.getElementById('globalNetBalance').innerText = `$${(dfm - don).toFixed(2)}`;
-        }
-
-        function filterType(t) { currentFilter = t; applyFilters(); }
         function applyFilters() {
             const q = document.getElementById('searchCustomerInput').value.toLowerCase().trim();
-            const filtered = {};
+            const list = document.getElementById('adminCustomersList'); list.innerHTML = "";
             for(let p in allCustomersData) {
                 const c = allCustomersData[p];
-                const txs = allTxData[p] || {};
-                let net = 0; for(let id in txs) { net += (txs[id].type==='payment'?-1:1)*Number(txs[id].amount_usd); }
+                if(q && !(c.name+" "+c.phone).toLowerCase().includes(q)) continue;
+                const txs = allTxData[p] || {}; let net = 0;
+                for(let id in txs) { net += (txs[id].type==='payment'?-1:1)*Number(txs[id].amount_usd); }
                 
-                let matchF = false;
-                if(currentFilter==='all') matchF = !c.archived;
-                else if(currentFilter==='archived') matchF = c.archived;
-                else if(currentFilter==='debtor') matchF = !c.archived && ((c.type==='customer'&&net>=0)||(c.type==='supplier'&&net<0));
-                else if(currentFilter==='creditor') matchF = !c.archived && ((c.type==='supplier'&&net>=0)||(c.type==='customer'&&net<0));
-
-                let matchT = !q || (c.name+" "+c.phone).toLowerCase().includes(q);
-                if(matchF && matchT) { c._tempNetUsd = net; filtered[p] = c; }
-            }
-            renderCustomersList(filtered);
-        }
-
-        function renderCustomersList(obj) {
-            const list = document.getElementById('adminCustomersList'); list.innerHTML = "";
-            Object.keys(obj).forEach(p => {
-                const c = obj[p]; const isSup = (c.type==='supplier');
-                let bText = c._tempNetUsd>=0 ? `الرصيد: $${c._tempNetUsd.toFixed(2)}` : `رصيد زائد: $${Math.abs(c._tempNetUsd).toFixed(2)}`;
-                let badge = c.national_id ? `<span class="bg-blue-600/30 text-blue-300 text-[9px] px-1.5 rounded">✔️ موثق</span>` : '';
-                
-                list.innerHTML += `<div class="bg-slate-900/60 p-4 rounded-2xl space-y-3 border border-slate-700">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-bold text-amber-300 text-base">${isSup?'🏭':'👤'} ${c.name} ${badge} ${c.archived?'<span class="text-red-400 text-xs">(مؤرشف)</span>':''}</h3>
-                            <p class="text-[11px] text-slate-400 mt-1">${c.phone} | <span class="font-bold text-emerald-400">${bText}</span></p>
-                        </div>
-                        <button onclick="openSettingsModal('${p}')" class="text-blue-400 p-1">⚙️ الإعدادات</button>
+                list.innerHTML += `<div class="bg-slate-900/60 p-4 rounded-2xl flex justify-between items-center border border-slate-700">
+                    <div>
+                        <h3 class="font-bold text-amber-300 text-sm">${c.name} (${c.phone})</h3>
+                        <p class="text-xs text-slate-400 mt-1">الرصيد: <span class="text-emerald-400 font-bold">$${net.toFixed(2)}</span> | السقف: $${c.credit_limit||0}</p>
                     </div>
-                    <div class="flex gap-2 pt-2 border-t border-slate-700/50">
-                        <button onclick="openOpModal('${p}', 'debt')" class="bg-amber-500/10 text-amber-400 font-bold px-3 py-2 rounded-xl text-[11px] flex-1">➕ إضافة ${isSup?'فاتورة':'دين'}</button>
-                        <button onclick="openOpModal('${p}', 'payment')" class="bg-emerald-500/10 text-emerald-400 font-bold px-3 py-2 rounded-xl text-[11px] flex-1">💵 تسجيل دفعة</button>
+                    <div class="flex gap-1">
+                        <button onclick="openOpModal('${p}', 'debt')" class="bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold">دين</button>
+                        <button onclick="openOpModal('${p}', 'payment')" class="bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold">دفعة</button>
                     </div>
                 </div>`;
-            });
-        }
-
-        function openSettingsModal(phone) {
-            const c = allCustomersData[phone]; if(!c) return;
-            document.getElementById('editCustPhoneHidden').value = phone;
-            document.getElementById('editCustName').value = c.name || "";
-            document.getElementById('editCustType').value = c.type || "customer";
-            document.getElementById('editCustLimit').value = c.credit_limit || 0;
-            document.getElementById('editCustPass').value = c.password || "";
-            document.getElementById('editCustNationalId').value = c.national_id || "";
-            document.getElementById('editCustArchived').checked = c.archived || false;
-            document.getElementById('custSettingsModal').classList.remove('hidden');
-        }
-        function closeSettingsModal() { document.getElementById('custSettingsModal').classList.add('hidden'); }
-        function saveCustSettings() {
-            const p = document.getElementById('editCustPhoneHidden').value;
-            const f = document.getElementById('editCustIdPhoto');
-            let updates = {
-                name: document.getElementById('editCustName').value.trim(),
-                type: document.getElementById('editCustType').value,
-                credit_limit: Number(document.getElementById('editCustLimit').value),
-                password: document.getElementById('editCustPass').value.trim(),
-                national_id: document.getElementById('editCustNationalId').value.trim(),
-                archived: document.getElementById('editCustArchived').checked
-            };
-            if(f.files.length > 0) {
-                resizeAndEncodeImage(f.files[0], 600, img => {
-                    updates.id_photo = img; window.update(window.dbRef(window.db, 'customers/'+p), updates).then(()=>{alert("تم الحفظ");closeSettingsModal();});
-                });
-            } else { window.update(window.dbRef(window.db, 'customers/'+p), updates).then(()=>{alert("تم الحفظ");closeSettingsModal();}); }
+            }
         }
 
         function openOpModal(phone, opType) {
             activeModalPhone = phone; activeModalOpType = opType;
             document.getElementById('inputAmount').value = ''; document.getElementById('inputNotes').value = '';
-            document.getElementById('modalOpTitle').innerText = opType==='debt' ? 'تسجيل دين أو فاتورة جديدة' : 'تسجيل دفعة نقدية';
+            document.getElementById('modalOpTitle').innerText = opType==='debt' ? 'تسجيل دين جديد' : 'تسجيل دفعة نقدية';
             document.getElementById('debtModal').classList.remove('hidden');
         }
         function closeDebtModal() { document.getElementById('debtModal').classList.add('hidden'); }
@@ -593,79 +264,58 @@
             closeDebtModal(); alert("تمت العملية بنجاح!");
         }
 
-        function openEditTxModal(phone, txId, currentAmt, currentNotes) {
-            document.getElementById('editTxPhone').value = phone;
-            document.getElementById('editTxId').value = txId;
-            document.getElementById('editTxAmount').value = currentAmt;
-            document.getElementById('editTxNotes').value = currentNotes;
-            document.getElementById('editTxModal').classList.remove('hidden');
-        }
-        function closeEditTxModal() { document.getElementById('editTxModal').classList.add('hidden'); }
-        async function saveEditedTransaction() {
-            const p = document.getElementById('editTxPhone').value, id = document.getElementById('editTxId').value;
-            const amt = Number(document.getElementById('editTxAmount').value), notes = document.getElementById('editTxNotes').value;
-            if(!amt || amt<=0) return alert("مبلغ غير صالح");
-            await window.update(window.dbRef(window.db, `transactions/${p}/${id}`), { amount_usd: amt, notes: notes });
-            closeEditTxModal(); alert("تم تعديل العملية بنجاح!");
-        }
-        async function deleteTransactionDirect() {
-            const p = document.getElementById('editTxPhone').value, id = document.getElementById('editTxId').value;
-            if(confirm("هل أنت متأكد من حذف هذه العملية نهائياً؟")) {
-                await window.remove(window.dbRef(window.db, `transactions/${p}/${id}`));
-                closeEditTxModal(); alert("تم حذف العملية!");
-            }
-        }
-
         function loadCustomerData(phone) {
             window.onValue(window.dbRef(window.db, 'settings/exchangeRate'), (snap) => { if(snap.exists()) currentRate = Number(snap.val()); });
-            window.onValue(window.dbRef(window.db, 'settings/promoBanner'), (snap) => {
-                const c = document.getElementById('customerPromoBannerContainer'), i = document.getElementById('customerPromoBannerImg'), l = document.getElementById('customerPromoBannerLink');
-                if(snap.exists() && snap.val().image_base64) { i.src = snap.val().image_base64; l.href = snap.val().link_url || "#"; c.classList.remove('hidden'); } else c.classList.add('hidden');
-            });
-            window.onValue(window.dbRef(window.db, 'settings/adsense'), (snap) => {
-                const adCont = document.getElementById('dynamicAdsenseContainer');
-                if(snap.exists() && snap.val().client) {
-                    adCont.classList.remove('hidden'); adCont.classList.add('flex');
-                    document.getElementById('adsenseWrapper').innerHTML = `<ins class="adsbygoogle" style="display:block" data-ad-client="${snap.val().client}" data-ad-slot="${snap.val().slot}" data-ad-format="auto"></ins>`;
-                    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-                }
-            });
             window.onValue(window.dbRef(window.db, 'customers/' + phone), (snap) => {
                 if(snap.exists()) {
                     const d = snap.val();
                     document.getElementById('custWelcomeTitle').innerText = `حساب: ${d.name}`;
-                    if(d.type==='supplier') document.getElementById('custLimitContainer').classList.add('hidden');
+                    currentLimitVal = Number(d.credit_limit || 0);
+                    if(d.type==='supplier') {
+                        document.getElementById('custLimitContainer').classList.add('hidden');
+                        document.getElementById('custLimitLabels').classList.add('hidden');
+                    } else {
+                        document.getElementById('custLimitText').innerText = `سقف الحساب: $${currentLimitVal}`;
+                    }
                 }
             });
             window.onValue(window.dbRef(window.db, 'transactions/' + phone), (snap) => {
                 const list = document.getElementById('custTransactionsList'); list.innerHTML = ""; let net = 0;
                 if(!snap.exists()) return updateDisplayTotal(0);
                 snap.forEach(child => {
-                    const tx = child.val(); const amt = Number(tx.amount_usd); const txId = child.key;
+                    const tx = child.val(); const amt = Number(tx.amount_usd);
                     if(tx.type==='payment') net -= amt; else net += amt;
-                    let isAdmin = localStorage.getItem("userRole") === "admin";
-                    let editBtn = isAdmin ? `<button onclick="openEditTxModal('${phone}', '${txId}', ${amt}, '${tx.notes}')" class="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-amber-300">⚙️ تعديل</button>` : '';
-
-                    list.innerHTML += `<div class="bg-slate-900/50 p-4 rounded-2xl flex justify-between items-center border-l-4 ${tx.type==='payment'?'border-emerald-500':'border-amber-500'}">
+                    list.innerHTML += `<div class="bg-slate-900/50 p-3 rounded-xl flex justify-between items-center border-r-4 ${tx.type==='payment'?'border-emerald-500':'border-amber-500'}">
                         <div>
-                            <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase ${tx.type==='payment'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">${tx.type==='payment'?'سداد':'دين'}</span>
-                            <span class="font-bold text-sm text-white block mt-1">${tx.notes}</span>
-                            <span class="text-[10px] text-slate-400 block">${tx.date}</span>
+                            <span class="font-bold text-xs text-white">${tx.notes}</span>
+                            <span class="text-[9px] text-slate-400 block">${tx.date}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-black text-lg ${tx.type==='payment'?'text-emerald-400':'text-amber-400'}">${tx.type==='payment'?'-':'+'}$${amt.toFixed(2)}</span>
-                            ${editBtn}
-                        </div>
+                        <span class="font-black text-sm ${tx.type==='payment'?'text-emerald-400':'text-amber-400'}">${tx.type==='payment'?'-':'+'}$${amt.toFixed(2)}</span>
                     </div>`;
                 });
                 window.lastNetTotalUSD = net; updateDisplayTotal(net);
             });
         }
+
         function changeCurrency(t) { currentCurrency = t; if(window.lastNetTotalUSD!==undefined) updateDisplayTotal(window.lastNetTotalUSD); }
+        
         function updateDisplayTotal(usd) {
             let v = Math.max(0, usd); let s = "$";
             if(currentCurrency==='SYP_NEW'){ v=v*currentRate; s="ل.س جديدة"; } else if(currentCurrency==='SYP_OLD'){ v=v*currentRate*100; s="ل.س قديمة"; }
             document.getElementById('custTotalDisplay').innerText = `${v.toLocaleString()} ${s}`;
+
+            // تفعيل وتحديث العداد الملون لسقف الحساب بشكل فوري ودقيق
+            if(currentLimitVal > 0) {
+                let percentage = (Math.max(0, usd) / currentLimitVal) * 100;
+                if(percentage > 100) percentage = 100;
+                const bar = document.getElementById('custLimitProgressBar');
+                bar.style.width = percentage + "%";
+                document.getElementById('custLimitPercentage').innerText = Math.round(percentage) + "% مستهلَك";
+                
+                if(percentage > 85) bar.className = "bg-red-500 h-full transition-all duration-700";
+                else if(percentage > 60) bar.className = "bg-amber-500 h-full transition-all duration-700";
+                else bar.className = "bg-emerald-500 h-full transition-all duration-700";
+            }
         }
     </script>
 </body>
