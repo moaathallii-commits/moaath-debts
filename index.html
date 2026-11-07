@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم v7</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم v8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -49,7 +49,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p id="sync-status-text" class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار المتقدم v7 (متعدد العملات)
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار المتقدم v8 (التقارير الحية)
                     </p>
                 </div>
             </div>
@@ -63,7 +63,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full p-4 flex-grow">
         
-        <!-- قسم تسجيل الدخول -->
+        <!-- تسجيل الدخول -->
         <section id="auth-section" class="max-w-md mx-auto mt-8 bg-slate-800/90 p-6 md:p-8 rounded-3xl border border-slate-700 shadow-2xl">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-goldAccent/10 text-goldAccent rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
@@ -108,10 +108,14 @@
                 </div>
             </div>
 
+            <!-- أزرار الإدارة والتقارير -->
             <div class="bg-slate-800 p-4 rounded-3xl border border-slate-700 flex flex-wrap gap-2 items-center justify-between">
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="openModal('modal-add-account')" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2">
                         <i class="fa-solid fa-user-plus"></i> إضافة حساب جديد
+                    </button>
+                    <button type="button" onclick="openReportModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-chart-line"></i> تقرير الأرباح والمبيعات اليومية
                     </button>
                     <button type="button" onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 border border-slate-600">
                         <i class="fa-solid fa-gear"></i> تحديد سعر الصرف
@@ -147,7 +151,7 @@
                         <p class="text-xs text-slate-400">مرحباً بك، <span id="cust-welcome-name" class="text-goldAccent font-bold"></span></p>
                         <h2 class="text-3xl font-black text-slate-100 mt-1" id="cust-display-balance">$0.00</h2>
                     </div>
-                    <!-- الثلاث أزرار الخاصة بالزبون للعملات -->
+                    <!-- أزرار العملات للزبون -->
                     <div class="flex bg-slate-900 p-1 rounded-2xl border border-slate-700 gap-1">
                         <button type="button" onclick="setCustomerCurrency('USD')" id="btn-curr-usd" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg">دولار ($)</button>
                         <button type="button" onclick="setCustomerCurrency('SYP_NEW')" id="btn-curr-new" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300">ل.س جديدة</button>
@@ -155,7 +159,7 @@
                     </div>
                 </div>
 
-                <!-- عداد السقف والنسبة المئوية -->
+                <!-- عداد السقف -->
                 <div class="pt-3 border-t border-slate-700/60">
                     <div class="flex justify-between items-center text-xs mb-1.5">
                         <span class="text-slate-400">استهلاك السقف المالي:</span>
@@ -168,7 +172,6 @@
                 </div>
             </div>
 
-            <!-- سجل الحركات للزبون -->
             <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-700">
                     <h3 class="font-bold text-sm text-slate-100">سجل الديون والمدفوعات</h3>
@@ -190,7 +193,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة معاملات الحساب (دين جديد / دفعة) مع أزرار عملات الإدارة -->
+    <!-- Modal: إدارة المعاملات مع الخط الأخضر الرفيع اللحظي للقيمة بالدولار -->
     <div id="modal-manage-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-xl rounded-3xl p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -212,7 +215,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">أزرار اختيار العملة:</label>
+                        <label class="block text-xs text-slate-400 mb-1">عملة الإدخال:</label>
                         <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 gap-1">
                             <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg">$</button>
                             <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">ل.س جديدة</button>
@@ -221,20 +224,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1" id="lbl-trans-amount">المبلغ بالعملة المختارة:</label>
-                        <input type="number" step="any" id="trans-amount" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1" id="lbl-trans-amount">المبلغ بالعملة المختارة:</label>
+                    <input type="number" step="any" id="trans-amount" oninput="updateLiveUsdPreview()" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                    <!-- خط أخضر رفيع يعرض القيمة المحولة بالدولار لحظياً -->
+                    <div id="live-usd-preview" class="text-[11px] text-emerald-400 font-bold mt-1.5 hidden border-t border-emerald-500/30 pt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> القيمة الحالية بالدولار: <span id="live-usd-value">$0.00</span>
                     </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">البيان أو التفاصيل:</label>
-                        <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد تموينية / متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
-                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">البيان أو التفاصيل:</label>
+                    <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد تموينية / متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
                 </div>
 
                 <div class="flex justify-end pt-2">
                     <button type="submit" class="bg-successGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2.5 rounded-xl text-xs transition">
-                        <i class="fa-solid fa-check ml-1"></i> حفظ وتحديث الرصيد لحظياً
+                        <i class="fa-solid fa-check ml-1"></i> حفظ العملية وسجلها بدقة
                     </button>
                 </div>
             </form>
@@ -256,6 +262,44 @@
         </div>
     </div>
 
+    <!-- Modal: تقرير الأرباح والمبيعات اليومية والأسبوعية -->
+    <div id="modal-reports" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="font-bold text-base text-goldAccent"><i class="fa-solid fa-chart-line ml-1"></i> تقرير الأرباح والمبيعات الحية</h3>
+                <button type="button" onclick="closeModal('modal-reports')" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-slate-200 text-sm border-b border-slate-800 pb-1">📅 ملخص اليوم الحالي</h4>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">إجمالي الديون المسجلة (اليوم):</span>
+                        <span id="rep-today-debts" class="font-bold text-red-400">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">المقبوضات النقدية / السداد (اليوم):</span>
+                        <span id="rep-today-payments" class="font-bold text-successGreen">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-bold text-slate-200 text-sm border-b border-slate-800 pb-1">📊 ملخص الأسبوع الحالي</h4>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">إجمالي الديون المسجلة (الأسبوع):</span>
+                        <span id="rep-week-debts" class="font-bold text-red-400">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">المقبوضات النقدية / السداد (الأسبوع):</span>
+                        <span id="rep-week-payments" class="font-bold text-successGreen">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="closeModal('modal-reports')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إغلاق التقرير</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 space-y-4">
@@ -273,7 +317,7 @@
         </div>
     </div>
 
-    <!-- Modal: تحديد سعر الصرف المرجعي -->
+    <!-- Modal: سعر الصرف -->
     <div id="modal-settings" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-6 space-y-4">
             <h3 class="font-bold text-base text-goldAccent">سعر الصرف المرجعي للدولار</h3>
@@ -281,26 +325,26 @@
                 <div>
                     <label class="block text-xs text-slate-300 mb-1">سعر 1 دولار مقابل (ليرة سورية جديدة):</label>
                     <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-goldAccent font-bold">
-                    <p class="text-[11px] text-slate-400 mt-1">ملاحظة: المعامل الثابت لليرة القديمة هو 1 دولار = (سعر الجديدة × 100) ليرة قديمة.</p>
+                    <p class="text-[11px] text-slate-400 mt-1">المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة.</p>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
-                    <button type="button" onclick="saveExchangeRate()" class="bg-successGreen text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ سعر الصرف</button>
+                    <button type="button" onclick="saveExchangeRate()" class="bg-successGreen text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- البرمجة المنطقية الشاملة -->
+    <!-- البرمجة المنطقية -->
     <script>
         const ADMIN_PHONE = "0965461504";
         const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
         let currentUser = null;
         let activeManagingAccountKey = null;
-        let adminInputCurrency = 'USD'; // العملة المختارة حالياً للإدخال من قبل الإدارة
-        let customerDisplayCurrency = 'USD'; // العملة المختارة حالياً للعرض من قبل الزبون
+        let adminInputCurrency = 'USD';
+        let customerDisplayCurrency = 'USD';
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v7")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v8")) || {
             accounts: {},
             settings: { sypRate: 15000 }
         };
@@ -427,7 +471,6 @@
             document.getElementById("admin-accounts-list").innerHTML = html || `<tr><td colspan="4" class="p-4 text-center text-slate-400">لا توجد حسابات مسجلة</td></tr>`;
         }
 
-        // إبقاء أزرار عملات الإدارة
         function setAdminInputCurrency(curr) {
             adminInputCurrency = curr;
             document.getElementById("adm-curr-usd").className = curr === 'USD' ? "flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg" : "flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300";
@@ -438,6 +481,27 @@
             if (curr === 'USD') lbl.textContent = "المبلغ بالدولار ($):";
             else if (curr === 'SYP_NEW') lbl.textContent = "المبلغ بالليرة السورية الجديدة (ل.س):";
             else lbl.textContent = "المبلغ بالليرة السورية القديمة (ل.س):";
+            updateLiveUsdPreview();
+        }
+
+        // تحديث الخط الأخضر الرفيع اللحظي للقيمة بالدولار
+        function updateLiveUsdPreview() {
+            const raw = Number(document.getElementById("trans-amount").value) || 0;
+            const rate = Number(allStoreData.settings.sypRate) || 15000;
+            let usd = raw;
+
+            if (adminInputCurrency === 'SYP_NEW') usd = raw / rate;
+            else if (adminInputCurrency === 'SYP_OLD') usd = raw / (rate * 100);
+
+            const previewBox = document.getElementById("live-usd-preview");
+            const previewVal = document.getElementById("live-usd-value");
+
+            if (raw > 0) {
+                previewVal.textContent = `$${usd.toFixed(2)}`;
+                previewBox.classList.remove("hidden");
+            } else {
+                previewBox.classList.add("hidden");
+            }
         }
 
         function openManageAccountModal(key) {
@@ -447,6 +511,8 @@
             document.getElementById("modal-account-title").textContent = acc.name;
             document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${acc.phone} | السقف المالي: $${acc.creditLimit}`;
             document.getElementById("trans-target-id").value = key;
+            document.getElementById("trans-amount").value = "";
+            document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
             openModal('modal-manage-account');
         }
@@ -469,7 +535,6 @@
             document.getElementById("modal-transactions-list").innerHTML = html;
         }
 
-        // إضافة دين جديد أو دفعة مع التحويل اللحظي للدولار
         function handleAddTransaction(e) {
             e.preventDefault();
             const key = document.getElementById("trans-target-id").value;
@@ -482,12 +547,8 @@
             const rate = Number(allStoreData.settings.sypRate) || 15000;
 
             let amountUSD = rawAmount;
-            if (adminInputCurrency === 'SYP_NEW') {
-                amountUSD = rawAmount / rate;
-            } else if (adminInputCurrency === 'SYP_OLD') {
-                // المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة
-                amountUSD = rawAmount / (rate * 100);
-            }
+            if (adminInputCurrency === 'SYP_NEW') amountUSD = rawAmount / rate;
+            else if (adminInputCurrency === 'SYP_OLD') amountUSD = rawAmount / (rate * 100);
 
             if (type === 'debt') {
                 const currentBal = calculateAccountBalance(acc);
@@ -509,18 +570,59 @@
                 date: new Date().toISOString()
             };
 
-            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v8", JSON.stringify(allStoreData));
             document.getElementById("form-add-transaction").reset();
+            document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
             renderAdminDashboard();
         }
 
         function deleteTransaction(accKey, txId) {
-            if (!confirm("حذف هذه العملية؟")) return;
+            if (!confirm("حذف هذه العملية؟ سيتم تحديث السجل بشفافية.")) return;
             delete allStoreData.accounts[accKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v8", JSON.stringify(allStoreData));
             renderModalTransactions(allStoreData.accounts[accKey]);
             renderAdminDashboard();
+        }
+
+        // تقرير الأرباح والمبيعات اليومية والأسبوعية
+        function openReportModal() {
+            let todayDebts = 0, todayPayments = 0;
+            let weekDebts = 0, weekPayments = 0;
+
+            const now = new Date();
+            const todayStr = now.toDateString();
+            
+            // بداية الأسبوع (قبل 7 أيام)
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(now.getDate() - 7);
+
+            const accounts = allStoreData.accounts || {};
+            for (let k in accounts) {
+                const txs = accounts[k].transactions || {};
+                for (let id in txs) {
+                    const tx = txs[id];
+                    const txDate = new Date(tx.date);
+                    const amt = Number(tx.amountUSD) || 0;
+
+                    if (txDate.toDateString() === todayStr) {
+                        if (tx.type === 'debt') todayDebts += amt;
+                        else todayPayments += amt;
+                    }
+
+                    if (txDate >= oneWeekAgo) {
+                        if (tx.type === 'debt') weekDebts += amt;
+                        else weekPayments += amt;
+                    }
+                }
+            }
+
+            document.getElementById("rep-today-debts").textContent = `$${todayDebts.toFixed(2)}`;
+            document.getElementById("rep-today-payments").textContent = `$${todayPayments.toFixed(2)}`;
+            document.getElementById("rep-week-debts").textContent = `$${weekDebts.toFixed(2)}`;
+            document.getElementById("rep-week-payments").textContent = `$${weekPayments.toFixed(2)}`;
+
+            openModal('modal-reports');
         }
 
         function handleCreateAccount() {
@@ -540,7 +642,7 @@
                 transactions: { [id]: { type: 'debt', amountUSD: 0, rawAmount: 0, currency: 'USD', note: 'فتح حساب', date: new Date().toISOString() } }
             };
 
-            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v8", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
             alert("تم إنشاء حساب الزبون بنجاح!");
@@ -549,7 +651,7 @@
         function deleteAcc(key) {
             if (!confirm("حذف هذا الحساب نهائياً؟")) return;
             delete allStoreData.accounts[key];
-            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v8", JSON.stringify(allStoreData));
             renderAdminDashboard();
         }
 
@@ -560,13 +662,12 @@
                 return;
             }
             allStoreData.settings.sypRate = newRate;
-            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v8", JSON.stringify(allStoreData));
             closeModal('modal-settings');
             renderAdminDashboard();
             alert("تم تحديث سعر الصرف المرجعي بنجاح!");
         }
 
-        // أزرار عرض العملة في لوحة الزبون والتنبيه الذكي لكل 25%
         function setCustomerCurrency(curr) {
             customerDisplayCurrency = curr;
             document.getElementById("btn-curr-usd").className = curr === 'USD' ? "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300";
@@ -590,36 +691,23 @@
             const rate = Number(allStoreData.settings.sypRate) || 15000;
 
             let displayBal = `$${balUSD.toFixed(2)}`;
-            if (customerDisplayCurrency === 'SYP_NEW') {
-                displayBal = `${(balUSD * rate).toLocaleString()} ل.س جديدة`;
-            } else if (customerDisplayCurrency === 'SYP_OLD') {
-                // المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة
-                displayBal = `${(balUSD * rate * 100).toLocaleString()} ل.س قديمة`;
-            }
+            if (customerDisplayCurrency === 'SYP_NEW') displayBal = `${(balUSD * rate).toLocaleString()} ل.س جديدة`;
+            else if (customerDisplayCurrency === 'SYP_OLD') displayBal = `${(balUSD * rate * 100).toLocaleString()} ل.س قديمة`;
             document.getElementById("cust-display-balance").textContent = displayBal;
 
-            // العداد الملّون ونسبة الاستهلاك وسقف الحساب
             const limit = cust.creditLimit || 50;
             const ratio = Math.max(0, (balUSD / limit) * 100);
             const bar = document.getElementById("cust-limit-bar");
             bar.style.width = Math.min(ratio, 100) + "%";
             document.getElementById("cust-limit-status-text").textContent = `${ratio.toFixed(0)}% من سقف ($${limit})`;
-            
             bar.className = ratio <= 70 ? "bg-successGreen h-full transition-all duration-500 rounded-full" : (ratio <= 100 ? "bg-amber-400 h-full transition-all duration-500 rounded-full" : "bg-red-500 h-full transition-all duration-500 rounded-full pulse-red");
 
-            // تنبيه ذكي تلقائي لكل 25% من السقف
             let smartMsg = "";
-            if (ratio >= 100) {
-                smartMsg = "⚠️ تنبيه حرج: لقد تجاوزت سقف الحساب المسموح تماماً!";
-            } else if (ratio >= 75) {
-                smartMsg = "⚡ تنبيه ذكي (75%): لقد استهلكت ثلاثة أرباع سقف الحساب المالي.";
-            } else if (ratio >= 50) {
-                smartMsg = "ℹ️ تنبيه ذكي (50%): لقد وصلت إلى منتصف السقف المالي المسموح.";
-            } else if (ratio >= 25) {
-                smartMsg = "ℹ️ تنبيه ذكي (25%): لقد تجاوزت ربع السقف المالي المسموح.";
-            } else {
-                smartMsg = "✅ حسابك في نطاق الأمان المالي المريح.";
-            }
+            if (ratio >= 100) smartMsg = "⚠️ تنبيه حرج: لقد تجاوزت سقف الحساب المسموح تماماً!";
+            else if (ratio >= 75) smartMsg = "⚡ تنبيه ذكي (75%): لقد استهلكت ثلاثة أرباع سقف الحساب المالي.";
+            else if (ratio >= 50) smartMsg = "ℹ️ تنبيه ذكي (50%): لقد وصلت إلى منتصف السقف المالي المسموح.";
+            else if (ratio >= 25) smartMsg = "ℹ️ تنبيه ذكي (25%): لقد تجاوزت ربع السقف المالي المسموح.";
+            else smartMsg = "✅ حسابك في نطاق الأمان المالي المريح.";
             document.getElementById("cust-alert-smart").textContent = smartMsg;
 
             let txHTML = "";
