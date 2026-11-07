@@ -1,45 +1,38 @@
-const CACHE_NAME = 'moaath-store-offline-v3';
+const CACHE_NAME = 'moaath-store-offline-v5';
 const urlsToCache = [
-  'index.html',
-  'manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.png'
 ];
 
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
     self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
+        caches.keys().then(keys => Promise.all(
+            keys.map(key => {
+                if (key !== CACHE_NAME) return caches.delete(key);
+            })
+        ))
     );
     self.clients.claim();
 });
 
+// استراتيجية Network-First: جلب أحدث نسخة من الإنترنت، وعند انقطاعه يعمل من الكاش المحلي
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(response => {
-            // إرجاع الملف من الذاكرة المؤقتة إن وجد، وإلا جلبه من الشبكة
-            return response || fetch(event.request).catch(() => {
-                if (event.request.mode === 'navigate') {
-                    return caches.match('index.html');
-                }
-            });
-        })
+        fetch(event.request)
+            .then(response => {
+                const resClone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
+                return response;
+            })
+            .catch(() => caches.match(event.request).then(res => res || caches.match('./index.html')))
     );
 });
