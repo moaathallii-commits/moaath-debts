@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي الآمن</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم v7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -21,7 +21,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#0f172a">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -50,7 +49,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p id="sync-status-text" class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> آمن ومحمي
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار المتقدم v7 (متعدد العملات)
                     </p>
                 </div>
             </div>
@@ -100,8 +99,8 @@
                     <h3 id="stat-total-receivables" class="text-2xl font-black text-successGreen">$0.00</h3>
                 </div>
                 <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-md">
-                    <p class="text-xs text-slate-400 font-semibold mb-1">الديون التي علي للموردين</p>
-                    <h3 id="stat-total-payables" class="text-2xl font-black text-red-400">$0.00</h3>
+                    <p class="text-xs text-slate-400 font-semibold mb-1">سعر الصرف المرجعي (1$ = ل.س جديدة)</p>
+                    <h3 id="stat-syp-rate-display" class="text-2xl font-black text-goldAccent">15,000 ل.س</h3>
                 </div>
                 <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-md">
                     <p class="text-xs text-slate-400 font-semibold mb-1">الصافي المالي الكلي</p>
@@ -114,12 +113,15 @@
                     <button type="button" onclick="openModal('modal-add-account')" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2">
                         <i class="fa-solid fa-user-plus"></i> إضافة حساب جديد
                     </button>
+                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 border border-slate-600">
+                        <i class="fa-solid fa-gear"></i> تحديد سعر الصرف
+                    </button>
                 </div>
             </div>
 
             <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-slate-100">قائمة الحسابات</h3>
+                    <h3 class="font-bold text-sm text-slate-100">قائمة الحسابات والديون</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
@@ -128,7 +130,7 @@
                                 <th class="p-3">الاسم</th>
                                 <th class="p-3">الهاتف</th>
                                 <th class="p-3">الرصيد ($)</th>
-                                <th class="p-3 text-center">إدارة</th>
+                                <th class="p-3 text-center">إدارة العمليات</th>
                             </tr>
                         </thead>
                         <tbody id="admin-accounts-list" class="divide-y divide-slate-700/50"></tbody>
@@ -139,39 +141,168 @@
 
         <!-- لوحة الزبون -->
         <section id="customer-panel" class="hidden space-y-6">
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl">
-                <p class="text-xs text-slate-400">مرحباً بك، <span id="cust-welcome-name" class="text-goldAccent font-bold"></span></p>
-                <h2 class="text-3xl font-black text-slate-100 mt-1" id="cust-display-balance">$0.00</h2>
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <p class="text-xs text-slate-400">مرحباً بك، <span id="cust-welcome-name" class="text-goldAccent font-bold"></span></p>
+                        <h2 class="text-3xl font-black text-slate-100 mt-1" id="cust-display-balance">$0.00</h2>
+                    </div>
+                    <!-- الثلاث أزرار الخاصة بالزبون للعملات -->
+                    <div class="flex bg-slate-900 p-1 rounded-2xl border border-slate-700 gap-1">
+                        <button type="button" onclick="setCustomerCurrency('USD')" id="btn-curr-usd" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg">دولار ($)</button>
+                        <button type="button" onclick="setCustomerCurrency('SYP_NEW')" id="btn-curr-new" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300">ل.س جديدة</button>
+                        <button type="button" onclick="setCustomerCurrency('SYP_OLD')" id="btn-curr-old" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300">ل.س قديمة</button>
+                    </div>
+                </div>
+
+                <!-- عداد السقف والنسبة المئوية -->
+                <div class="pt-3 border-t border-slate-700/60">
+                    <div class="flex justify-between items-center text-xs mb-1.5">
+                        <span class="text-slate-400">استهلاك السقف المالي:</span>
+                        <span id="cust-limit-status-text" class="font-bold">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-3.5 overflow-hidden border border-slate-700">
+                        <div id="cust-limit-bar" class="bg-successGreen h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="cust-alert-smart" class="text-xs mt-2 font-semibold text-amber-400"></p>
+                </div>
+            </div>
+
+            <!-- سجل الحركات للزبون -->
+            <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
+                <div class="p-4 border-b border-slate-700">
+                    <h3 class="font-bold text-sm text-slate-100">سجل الديون والمدفوعات</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-900/60 text-slate-400 border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">التاريخ</th>
+                                <th class="p-3">النوع</th>
+                                <th class="p-3">البيان</th>
+                                <th class="p-3">المبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-transactions-list" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- Modal: إدارة معاملات الحساب (دين جديد / دفعة) مع أزرار عملات الإدارة -->
+    <div id="modal-manage-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-xl rounded-3xl p-6 space-y-4 my-8">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <div>
+                    <h3 id="modal-account-title" class="font-bold text-base text-goldAccent">إدارة حساب الزبون</h3>
+                    <p id="modal-account-subtitle" class="text-xs text-slate-400"></p>
+                </div>
+                <button type="button" onclick="closeModal('modal-manage-account')" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="bg-slate-900/70 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <input type="hidden" id="trans-target-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">نوع الحركة:</label>
+                        <select id="trans-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                            <option value="debt">تسجيل دين جديد (عليه)</option>
+                            <option value="payment">تسجيل دفعة سداد (له)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">أزرار اختيار العملة:</label>
+                        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 gap-1">
+                            <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg">$</button>
+                            <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">ل.س جديدة</button>
+                            <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300">ل.س قديمة</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1" id="lbl-trans-amount">المبلغ بالعملة المختارة:</label>
+                        <input type="number" step="any" id="trans-amount" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">البيان أو التفاصيل:</label>
+                        <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد تموينية / متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button type="submit" class="bg-successGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                        <i class="fa-solid fa-check ml-1"></i> حفظ وتحديث الرصيد لحظياً
+                    </button>
+                </div>
+            </form>
+
+            <div class="max-h-52 overflow-y-auto rounded-2xl border border-slate-700">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-900 text-slate-400 sticky top-0">
+                        <tr>
+                            <th class="p-2">التاريخ</th>
+                            <th class="p-2">النوع</th>
+                            <th class="p-2">البيان</th>
+                            <th class="p-2">المبلغ ($)</th>
+                            <th class="p-2 text-center">إدارة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-transactions-list" class="divide-y divide-slate-700/50"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 space-y-4">
-            <h3 class="font-bold text-base text-goldAccent">إضافة حساب جديد</h3>
+            <h3 class="font-bold text-base text-goldAccent">إضافة حساب زبون جديد</h3>
             <div class="space-y-3">
-                <input type="text" id="acc-name" placeholder="اسم الزبون" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
-                <input type="tel" id="acc-phone" placeholder="رقم الهاتف" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
+                <input type="text" id="acc-name" placeholder="اسم الزبون الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
+                <input type="tel" id="acc-phone" placeholder="رقم الهاتف (09xxxxxxxx)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <input type="text" id="acc-pass" placeholder="كلمة المرور الخاصة بالزبون" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
-                <input type="number" id="acc-limit" placeholder="السقف المالي ($)" value="50" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
+                <input type="number" id="acc-limit" placeholder="سقف الحساب بالدولار ($)" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
-                    <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ</button>
+                    <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ الحساب</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- البرمجة المنطقية الآمنة -->
+    <!-- Modal: تحديد سعر الصرف المرجعي -->
+    <div id="modal-settings" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-6 space-y-4">
+            <h3 class="font-bold text-base text-goldAccent">سعر الصرف المرجعي للدولار</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">سعر 1 دولار مقابل (ليرة سورية جديدة):</label>
+                    <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-goldAccent font-bold">
+                    <p class="text-[11px] text-slate-400 mt-1">ملاحظة: المعامل الثابت لليرة القديمة هو 1 دولار = (سعر الجديدة × 100) ليرة قديمة.</p>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
+                    <button type="button" onclick="saveExchangeRate()" class="bg-successGreen text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ سعر الصرف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- البرمجة المنطقية الشاملة -->
     <script>
         const ADMIN_PHONE = "0965461504";
         const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
         let currentUser = null;
+        let activeManagingAccountKey = null;
+        let adminInputCurrency = 'USD'; // العملة المختارة حالياً للإدخال من قبل الإدارة
+        let customerDisplayCurrency = 'USD'; // العملة المختارة حالياً للعرض من قبل الزبون
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v7")) || {
             accounts: {},
-            settings: { sypRate: 15000, bannerBase64: "" }
+            settings: { sypRate: 15000 }
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -213,22 +344,16 @@
             }
         }
 
-        // دالة تسجيل الدخول مع التحقق الصارم من رمز الإدارة
         function handleLogin(event) {
             if (event) event.preventDefault();
-            
-            const phoneInput = document.getElementById("login-phone");
-            const passInput = document.getElementById("login-pass");
-            
-            const phone = phoneInput ? phoneInput.value.trim() : "";
-            const pass = passInput ? passInput.value.trim() : "";
+            const phone = document.getElementById("login-phone").value.trim();
+            const pass = document.getElementById("login-pass").value.trim();
 
             if (!phone || !pass) {
                 alert("يرجى إدخال رقم الهاتف وكلمة المرور");
                 return;
             }
 
-            // التحقق من صلاحيات الإدارة حصراً بالرمز السري الجديد
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     currentUser = { phone: ADMIN_PHONE, name: "معاذ العلي", isAdmin: true };
@@ -241,7 +366,6 @@
                 }
             }
 
-            // التحقق من حسابات الزبائن
             const accounts = allStoreData.accounts || {};
             let found = false;
             for (let key in accounts) {
@@ -254,9 +378,7 @@
                 }
             }
 
-            if (!found) {
-                alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
-            }
+            if (!found) alert("رقم الهاتف أو كلمة المرور غير صحيحة!");
         }
 
         function logout() {
@@ -269,8 +391,8 @@
             let bal = 0;
             const txs = acc.transactions || {};
             for (let id in txs) {
-                if (txs[id].type === 'debt') bal += Number(txs[id].amount);
-                else bal -= Number(txs[id].amount);
+                if (txs[id].type === 'debt') bal += Number(txs[id].amountUSD);
+                else bal -= Number(txs[id].amountUSD);
             }
             return bal;
         }
@@ -278,56 +400,179 @@
         function renderAdminDashboard() {
             const accounts = allStoreData.accounts || {};
             let receivables = 0, html = "";
+            const rate = allStoreData.settings.sypRate || 15000;
+
+            document.getElementById("stat-syp-rate-display").textContent = `${Number(rate).toLocaleString()} ل.س`;
 
             for (let key in accounts) {
                 const acc = accounts[key];
                 const bal = calculateAccountBalance(acc);
-                if (acc.type === 'customer' && bal > 0) receivables += bal;
+                if (bal > 0) receivables += bal;
 
                 html += `
                     <tr class="hover:bg-slate-700/40">
                         <td class="p-3 font-bold">${acc.name}</td>
                         <td class="p-3 font-mono">${acc.phone}</td>
                         <td class="p-3 font-bold text-successGreen">$${bal.toFixed(2)}</td>
-                        <td class="p-3 text-center"><button type="button" onclick="deleteAcc('${key}')" class="text-red-400"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-3 text-center flex justify-center gap-2">
+                            <button type="button" onclick="openManageAccountModal('${key}')" class="bg-goldAccent text-darkBg font-bold text-xs px-3 py-1.5 rounded-xl">إدارة العمليات</button>
+                            <button type="button" onclick="deleteAcc('${key}')" class="text-red-400 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                 `;
             }
 
             document.getElementById("stat-total-receivables").textContent = `$${receivables.toFixed(2)}`;
-            document.getElementById("stat-total-payables").textContent = `$0.00`;
             document.getElementById("stat-net-balance").textContent = `$${receivables.toFixed(2)}`;
             document.getElementById("admin-accounts-list").innerHTML = html || `<tr><td colspan="4" class="p-4 text-center text-slate-400">لا توجد حسابات مسجلة</td></tr>`;
+        }
+
+        // إبقاء أزرار عملات الإدارة
+        function setAdminInputCurrency(curr) {
+            adminInputCurrency = curr;
+            document.getElementById("adm-curr-usd").className = curr === 'USD' ? "flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg" : "flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300";
+            document.getElementById("adm-curr-new").className = curr === 'SYP_NEW' ? "flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg" : "flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300";
+            document.getElementById("adm-curr-old").className = curr === 'SYP_OLD' ? "flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-goldAccent text-darkBg" : "flex-1 py-1.5 rounded-lg text-xs font-bold transition text-slate-300";
+
+            const lbl = document.getElementById("lbl-trans-amount");
+            if (curr === 'USD') lbl.textContent = "المبلغ بالدولار ($):";
+            else if (curr === 'SYP_NEW') lbl.textContent = "المبلغ بالليرة السورية الجديدة (ل.س):";
+            else lbl.textContent = "المبلغ بالليرة السورية القديمة (ل.س):";
+        }
+
+        function openManageAccountModal(key) {
+            activeManagingAccountKey = key;
+            const acc = allStoreData.accounts[key];
+            if (!acc) return;
+            document.getElementById("modal-account-title").textContent = acc.name;
+            document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${acc.phone} | السقف المالي: $${acc.creditLimit}`;
+            document.getElementById("trans-target-id").value = key;
+            renderModalTransactions(acc);
+            openModal('modal-manage-account');
+        }
+
+        function renderModalTransactions(acc) {
+            let html = "";
+            const txs = acc.transactions || {};
+            for (let id in txs) {
+                const tx = txs[id];
+                html += `
+                    <tr>
+                        <td class="p-2 text-slate-400">${new Date(tx.date).toLocaleDateString('ar-SY')}</td>
+                        <td class="p-2 font-bold ${tx.type === 'debt' ? 'text-red-400' : 'text-successGreen'}">${tx.type === 'debt' ? 'دين' : 'دفعة'}</td>
+                        <td class="p-2">${tx.note}</td>
+                        <td class="p-2 font-bold">$${Number(tx.amountUSD).toFixed(2)}</td>
+                        <td class="p-2 text-center"><button type="button" onclick="deleteTransaction('${activeManagingAccountKey}', '${id}')" class="text-red-400"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }
+            document.getElementById("modal-transactions-list").innerHTML = html;
+        }
+
+        // إضافة دين جديد أو دفعة مع التحويل اللحظي للدولار
+        function handleAddTransaction(e) {
+            e.preventDefault();
+            const key = document.getElementById("trans-target-id").value;
+            const acc = allStoreData.accounts[key];
+            if (!acc) return;
+
+            const type = document.getElementById("trans-type").value;
+            const rawAmount = Number(document.getElementById("trans-amount").value);
+            const note = document.getElementById("trans-note").value.trim();
+            const rate = Number(allStoreData.settings.sypRate) || 15000;
+
+            let amountUSD = rawAmount;
+            if (adminInputCurrency === 'SYP_NEW') {
+                amountUSD = rawAmount / rate;
+            } else if (adminInputCurrency === 'SYP_OLD') {
+                // المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة
+                amountUSD = rawAmount / (rate * 100);
+            }
+
+            if (type === 'debt') {
+                const currentBal = calculateAccountBalance(acc);
+                const projected = currentBal + amountUSD;
+                const limit = acc.creditLimit || 50;
+                if (projected > limit) {
+                    if (!confirm(`⚠️ تنبيه حارس السقف اللحظي:\nالرصيد المتوقع ($${projected.toFixed(2)}) يتجاوز سقف الحساب المسموح ($${limit}).\nهل تريد التأكيد الإجباري لإتمام العملية؟`)) return;
+                }
+            }
+
+            const txId = Date.now().toString();
+            acc.transactions = acc.transactions || {};
+            acc.transactions[txId] = {
+                type,
+                amountUSD,
+                rawAmount,
+                currency: adminInputCurrency,
+                note,
+                date: new Date().toISOString()
+            };
+
+            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            document.getElementById("form-add-transaction").reset();
+            renderModalTransactions(acc);
+            renderAdminDashboard();
+        }
+
+        function deleteTransaction(accKey, txId) {
+            if (!confirm("حذف هذه العملية؟")) return;
+            delete allStoreData.accounts[accKey].transactions[txId];
+            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            renderModalTransactions(allStoreData.accounts[accKey]);
+            renderAdminDashboard();
         }
 
         function handleCreateAccount() {
             const name = document.getElementById("acc-name").value.trim();
             const phone = document.getElementById("acc-phone").value.trim();
             const pass = document.getElementById("acc-pass").value.trim();
-            const limit = Number(document.getElementById("acc-limit").value) || 50;
+            const limit = Number(document.getElementById("acc-limit").value) || 100;
 
             if (!name || !phone || !pass) {
-                alert("يرجى تعبئة الحقول الأساسية");
+                alert("يرجى تعبئة الحقول المطلوبة");
                 return;
             }
 
             const id = Date.now().toString();
             allStoreData.accounts[id] = {
                 name, phone, password: pass, creditLimit: limit, type: 'customer',
-                transactions: { [id]: { type: 'debt', amount: 0, note: 'افتتاح الحساب', date: new Date().toISOString() } }
+                transactions: { [id]: { type: 'debt', amountUSD: 0, rawAmount: 0, currency: 'USD', note: 'فتح حساب', date: new Date().toISOString() } }
             };
 
-            localStorage.setItem("moaath_offline_db", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
-            alert("تم إضافة الحساب بنجاح!");
+            alert("تم إنشاء حساب الزبون بنجاح!");
         }
 
         function deleteAcc(key) {
-            if (!confirm("حذف الحساب؟")) return;
+            if (!confirm("حذف هذا الحساب نهائياً؟")) return;
             delete allStoreData.accounts[key];
-            localStorage.setItem("moaath_offline_db", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
             renderAdminDashboard();
+        }
+
+        function saveExchangeRate() {
+            const newRate = Number(document.getElementById("setting-syp-rate").value);
+            if (!newRate || newRate <= 0) {
+                alert("يرجى إدخال سعر صرف صحيح");
+                return;
+            }
+            allStoreData.settings.sypRate = newRate;
+            localStorage.setItem("moaath_offline_db_v7", JSON.stringify(allStoreData));
+            closeModal('modal-settings');
+            renderAdminDashboard();
+            alert("تم تحديث سعر الصرف المرجعي بنجاح!");
+        }
+
+        // أزرار عرض العملة في لوحة الزبون والتنبيه الذكي لكل 25%
+        function setCustomerCurrency(curr) {
+            customerDisplayCurrency = curr;
+            document.getElementById("btn-curr-usd").className = curr === 'USD' ? "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300";
+            document.getElementById("btn-curr-new").className = curr === 'SYP_NEW' ? "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300";
+            document.getElementById("btn-curr-old").className = curr === 'SYP_OLD' ? "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-goldAccent text-darkBg" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-300";
+            renderCustomerPanel();
         }
 
         function renderCustomerPanel() {
@@ -339,12 +584,69 @@
                 }
             }
             if (!cust) return;
+
             document.getElementById("cust-welcome-name").textContent = cust.name;
-            const bal = calculateAccountBalance(cust);
-            document.getElementById("cust-display-balance").textContent = `$${bal.toFixed(2)}`;
+            const balUSD = calculateAccountBalance(cust);
+            const rate = Number(allStoreData.settings.sypRate) || 15000;
+
+            let displayBal = `$${balUSD.toFixed(2)}`;
+            if (customerDisplayCurrency === 'SYP_NEW') {
+                displayBal = `${(balUSD * rate).toLocaleString()} ل.س جديدة`;
+            } else if (customerDisplayCurrency === 'SYP_OLD') {
+                // المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة
+                displayBal = `${(balUSD * rate * 100).toLocaleString()} ل.س قديمة`;
+            }
+            document.getElementById("cust-display-balance").textContent = displayBal;
+
+            // العداد الملّون ونسبة الاستهلاك وسقف الحساب
+            const limit = cust.creditLimit || 50;
+            const ratio = Math.max(0, (balUSD / limit) * 100);
+            const bar = document.getElementById("cust-limit-bar");
+            bar.style.width = Math.min(ratio, 100) + "%";
+            document.getElementById("cust-limit-status-text").textContent = `${ratio.toFixed(0)}% من سقف ($${limit})`;
+            
+            bar.className = ratio <= 70 ? "bg-successGreen h-full transition-all duration-500 rounded-full" : (ratio <= 100 ? "bg-amber-400 h-full transition-all duration-500 rounded-full" : "bg-red-500 h-full transition-all duration-500 rounded-full pulse-red");
+
+            // تنبيه ذكي تلقائي لكل 25% من السقف
+            let smartMsg = "";
+            if (ratio >= 100) {
+                smartMsg = "⚠️ تنبيه حرج: لقد تجاوزت سقف الحساب المسموح تماماً!";
+            } else if (ratio >= 75) {
+                smartMsg = "⚡ تنبيه ذكي (75%): لقد استهلكت ثلاثة أرباع سقف الحساب المالي.";
+            } else if (ratio >= 50) {
+                smartMsg = "ℹ️ تنبيه ذكي (50%): لقد وصلت إلى منتصف السقف المالي المسموح.";
+            } else if (ratio >= 25) {
+                smartMsg = "ℹ️ تنبيه ذكي (25%): لقد تجاوزت ربع السقف المالي المسموح.";
+            } else {
+                smartMsg = "✅ حسابك في نطاق الأمان المالي المريح.";
+            }
+            document.getElementById("cust-alert-smart").textContent = smartMsg;
+
+            let txHTML = "";
+            for (let id in (cust.transactions || {})) {
+                const tx = cust.transactions[id];
+                let txDisplayAmt = `$${Number(tx.amountUSD).toFixed(2)}`;
+                if (customerDisplayCurrency === 'SYP_NEW') txDisplayAmt = `${(tx.amountUSD * rate).toLocaleString()} ل.س`;
+                else if (customerDisplayCurrency === 'SYP_OLD') txDisplayAmt = `${(tx.amountUSD * rate * 100).toLocaleString()} ل.س`;
+
+                txHTML += `
+                    <tr>
+                        <td class="p-3 text-slate-400">${new Date(tx.date).toLocaleDateString('ar-SY')}</td>
+                        <td class="p-3 font-bold ${tx.type === 'debt' ? 'text-red-400' : 'text-successGreen'}">${tx.type === 'debt' ? 'دين' : 'سداد'}</td>
+                        <td class="p-3">${tx.note}</td>
+                        <td class="p-3 font-bold">${txDisplayAmt}</td>
+                    </tr>
+                `;
+            }
+            document.getElementById("customer-transactions-list").innerHTML = txHTML;
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove("hidden"); }
+        function openModal(id) { 
+            if(id === 'modal-settings') {
+                document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate || 15000;
+            }
+            document.getElementById(id).classList.remove("hidden"); 
+        }
         function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
     </script>
 </body>
