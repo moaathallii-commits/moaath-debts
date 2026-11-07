@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي الآمن</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -50,7 +50,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p id="sync-status-text" class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار المعتمد v6
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> آمن ومحمي
                     </p>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-slate-100">تسجيل الدخول</h2>
-                <p class="text-xs text-slate-400 mt-1">أدخل رقم الإدارة أو الزبون للمتابعة</p>
+                <p class="text-xs text-slate-400 mt-1">منطقة آمنة ومحمية</p>
             </div>
             
             <div class="space-y-4">
@@ -88,7 +88,7 @@
                 </button>
             </div>
             <div class="mt-6 text-center border-t border-slate-700/60 pt-4">
-                <p class="text-xs text-slate-400">رقم الإدارة: <span class="text-goldAccent font-bold">0965461504</span></p>
+                <p class="text-xs text-slate-400">إدارة متجر معاذ - ريف حماة</p>
             </div>
         </section>
 
@@ -153,7 +153,7 @@
             <div class="space-y-3">
                 <input type="text" id="acc-name" placeholder="اسم الزبون" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <input type="tel" id="acc-phone" placeholder="رقم الهاتف" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
-                <input type="text" id="acc-pass" placeholder="كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
+                <input type="text" id="acc-pass" placeholder="كلمة المرور الخاصة بالزبون" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <input type="number" id="acc-limit" placeholder="السقف المالي ($)" value="50" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
@@ -163,9 +163,10 @@
         </div>
     </div>
 
-    <!-- البرمجة المنطقية المستقلة -->
+    <!-- البرمجة المنطقية الآمنة -->
     <script>
         const ADMIN_PHONE = "0965461504";
+        const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
         let currentUser = null;
 
         let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db")) || {
@@ -202,7 +203,7 @@
             if (currentUser.isAdmin) {
                 adminSec.classList.remove("hidden");
                 custSec.classList.add("hidden");
-                badge.textContent = "الإدارة (معاذ)";
+                badge.textContent = "الإدارة (معاذ العلي)";
                 renderAdminDashboard();
             } else {
                 adminSec.classList.add("hidden");
@@ -212,7 +213,7 @@
             }
         }
 
-        // دالة تسجيل الدخول المباشرة والآمنة
+        // دالة تسجيل الدخول مع التحقق الصارم من رمز الإدارة
         function handleLogin(event) {
             if (event) event.preventDefault();
             
@@ -222,18 +223,25 @@
             const phone = phoneInput ? phoneInput.value.trim() : "";
             const pass = passInput ? passInput.value.trim() : "";
 
-            if (!phone) {
-                alert("يرجى إدخال رقم الهاتف");
+            if (!phone || !pass) {
+                alert("يرجى إدخال رقم الهاتف وكلمة المرور");
                 return;
             }
 
+            // التحقق من صلاحيات الإدارة حصراً بالرمز السري الجديد
             if (phone === ADMIN_PHONE) {
-                currentUser = { phone: ADMIN_PHONE, name: "معاذ العلي", isAdmin: true };
-                localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
-                updateUIState();
-                return;
+                if (pass === ADMIN_SECRET_PASS) {
+                    currentUser = { phone: ADMIN_PHONE, name: "معاذ العلي", isAdmin: true };
+                    localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
+                    updateUIState();
+                    return;
+                } else {
+                    alert("كلمة مرور الإدارة غير صحيحة!");
+                    return;
+                }
             }
 
+            // التحقق من حسابات الزبائن
             const accounts = allStoreData.accounts || {};
             let found = false;
             for (let key in accounts) {
@@ -269,7 +277,7 @@
 
         function renderAdminDashboard() {
             const accounts = allStoreData.accounts || {};
-            let receivables = 0, payables = 0, html = "";
+            let receivables = 0, html = "";
 
             for (let key in accounts) {
                 const acc = accounts[key];
