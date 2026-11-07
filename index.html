@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتقدم UX</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -45,7 +45,7 @@
     <!-- شاشة التحميل العامة -->
     <div id="global-loader" class="fixed inset-0 bg-darkBg z-50 flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="w-20 h-20 border-4 border-goldAccent border-t-transparent rounded-full animate-spin mb-4"></div>
-        <h2 class="text-xl font-bold text-goldAccent">جاري تهيئة نظام متجر معاذ المتقدم...</h2>
+        <h2 class="text-xl font-bold text-goldAccent">جاري تهيئة نظام متجر معاذ المطوّر...</h2>
     </div>
 
     <!-- رأس الصفحة والشعار -->
@@ -111,7 +111,6 @@
 
         <!-- لوحة تحكم الإدارة (Admin Panel) -->
         <section id="admin-panel" class="hidden space-y-6">
-            <!-- بانر إعلاني للإدارة -->
             <div id="admin-banner-container" class="hidden rounded-3xl overflow-hidden border border-slate-700 shadow-lg"></div>
 
             <!-- إحصائيات مالية شاملة بالدولار -->
@@ -153,17 +152,25 @@
                 </div>
             </div>
 
-            <!-- قائمة الحسابات النشطة -->
+            <!-- قائمة الحسابات النشطة مع نظام التصنيفات -->
             <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
-                <div class="p-4 bg-slate-750 border-b border-slate-700 flex justify-between items-center">
-                    <h3 class="font-bold text-base text-slate-100 flex items-center gap-2"><i class="fa-solid fa-address-book text-goldAccent"></i> دفتر الحسابات النشطة</h3>
+                <div class="p-4 bg-slate-750 border-b border-slate-700 flex flex-wrap gap-3 justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <h3 class="font-bold text-base text-slate-100 flex items-center gap-2"><i class="fa-solid fa-address-book text-goldAccent"></i> دفتر الحسابات النشطة</h3>
+                        <select id="admin-group-filter" onchange="filterAccounts()" class="bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-xl text-goldAccent focus:outline-none">
+                            <option value="all">كل التصنيفات</option>
+                            <option value="neighbor">جيران المتجر</option>
+                            <option value="regular">زبائن دائمون</option>
+                            <option value="supplier">موردون</option>
+                        </select>
+                    </div>
                     <input type="text" id="admin-search-input" oninput="filterAccounts()" placeholder="بحث بالاسم أو الهاتف..." class="bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-xl text-slate-100 w-48 focus:outline-none focus:border-goldAccent">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-sm">
                         <thead class="bg-slate-900/60 text-slate-400 text-xs border-b border-slate-700">
                             <tr>
-                                <th class="p-3">الاسم والنوع</th>
+                                <th class="p-3">الاسم والتصنيف</th>
                                 <th class="p-3">رقم الهاتف</th>
                                 <th class="p-3">الرصيد الحالي ($)</th>
                                 <th class="p-3">السقف ($)</th>
@@ -180,13 +187,18 @@
         <section id="customer-panel" class="hidden space-y-6">
             <div id="customer-banner-container" class="hidden rounded-3xl overflow-hidden border border-slate-700 shadow-lg"></div>
 
-            <!-- صندوق التنبيهات الفوري -->
-            <div id="customer-alert-box" class="hidden bg-red-950/80 border border-red-500 text-red-200 p-4 rounded-3xl shadow-lg flex items-center gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-2xl text-red-400 animate-bounce"></i>
-                <div>
-                    <h4 class="font-bold text-sm">تنبيه هام من الإدارة:</h4>
-                    <p id="customer-alert-text" class="text-xs mt-0.5"></p>
+            <!-- صندوق التنبيهات الفوري مع زر تأكيد القراءة -->
+            <div id="customer-alert-box" class="hidden bg-red-950/80 border border-red-500 text-red-200 p-4 rounded-3xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-2xl text-red-400 animate-bounce"></i>
+                    <div>
+                        <h4 class="font-bold text-sm">تنبيه هام من الإدارة:</h4>
+                        <p id="customer-alert-text" class="text-xs mt-0.5"></p>
+                    </div>
                 </div>
+                <button onclick="acknowledgeAlert()" class="bg-successGreen hover:bg-emerald-600 text-darkBg font-bold text-xs px-4 py-2 rounded-xl transition shadow">
+                    <i class="fa-solid fa-check"></i> تم الاطلاع والموافقة
+                </button>
             </div>
 
             <!-- بطاقة الرصيد وسقف الحساب -->
@@ -260,11 +272,11 @@
         <p>متجر معاذ - ريف حماة، قرية العوينة | جميع الحقوق محفوظة © 2026</p>
     </footer>
 
-    <!-- Modal: إضافة حساب جديد -->
+    <!-- Modal: إضافة حساب جديد مع التصنيف -->
     <div id="modal-add-account" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <h3 class="font-bold text-lg text-goldAccent flex items-center gap-2"><i class="fa-solid fa-user-plus"></i> إضافة حساب جديد (زبون أو مورد)</h3>
+                <h3 class="font-bold text-lg text-goldAccent flex items-center gap-2"><i class="fa-solid fa-user-plus"></i> إضافة حساب جديد وتصنيف</h3>
                 <button onclick="closeModal('modal-add-account')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-add-account" onsubmit="handleCreateAccount(event)" class="space-y-3">
@@ -281,28 +293,32 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">نوع الحساب:</label>
-                        <select id="acc-type" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-goldAccent">
+                        <select id="acc-type" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none">
                             <option value="customer">زبون (له وعليه)</option>
                             <option value="supplier">مورد (دين علي)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">كلمة المرور الخاصة:</label>
-                        <input type="text" id="acc-pass" required placeholder="كلمة المرور للزبون" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-goldAccent">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">التصنيف:</label>
+                        <select id="acc-group" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-goldAccent focus:outline-none">
+                            <option value="neighbor">جيران المتجر</option>
+                            <option value="regular">زبون دائم</option>
+                            <option value="supplier">مورد رئيسي</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">سقف الحساب ($):</label>
-                        <input type="number" step="any" id="acc-limit" value="100" required class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-goldAccent">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">كلمة المرور:</label>
+                        <input type="text" id="acc-pass" required placeholder="كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">العنوان:</label>
-                        <input type="text" id="acc-address" placeholder="قرية العوينة / ريف حماة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-goldAccent">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">سقف الحساب ($):</label>
+                        <input type="number" step="any" id="acc-limit" value="100" required class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">الرقم الوطني (اختياري):</label>
-                        <input type="text" id="acc-national-id" placeholder="الرقم الوطني" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-goldAccent">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">العنوان:</label>
+                        <input type="text" id="acc-address" placeholder="قرية العوينة / ريف حماة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none">
                     </div>
                 </div>
                 <div>
@@ -312,13 +328,13 @@
                 </div>
                 <div class="pt-3 flex justify-end gap-2">
                     <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
-                    <button type="submit" class="bg-goldAccent text-darkBg font-bold px-5 py-2 rounded-2xl text-xs hover:bg-amber-400 transition">حفظ الحساب وإرسال الواتساب</button>
+                    <button type="submit" class="bg-goldAccent text-darkBg font-bold px-5 py-2 rounded-2xl text-xs hover:bg-amber-400 transition">حفظ وإرسال الترحيب</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal: إدارة المعاملات وحارس السقف -->
+    <!-- Modal: إدارة المعاملات مع سلة الشراء المتقدمة وسجل التدقيق -->
     <div id="modal-manage-account" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -329,10 +345,10 @@
                 <button onclick="closeModal('modal-manage-account')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- نموذج إضافة حركة جديدة مع حارس السقف اللحظي والأصناف السريعة -->
+            <!-- نموذج سلة الشراء المصغرة وحارس السقف -->
             <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700 space-y-3">
                 <input type="hidden" id="trans-target-id">
-                <h4 class="font-bold text-xs text-slate-200 flex items-center gap-1"><i class="fa-solid fa-plus-circle text-goldAccent"></i> إضافة دين أو دفعة جديدة</h4>
+                <h4 class="font-bold text-xs text-slate-200 flex items-center gap-1"><i class="fa-solid fa-cart-shopping text-goldAccent"></i> سلة الشراء السريعة وتسجيل الدين أو الدفعة</h4>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
@@ -343,48 +359,39 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">المبلغ ($):</label>
+                        <label class="block text-xs text-slate-400 mb-1">المبلغ الإجمالي ($):</label>
                         <input type="number" step="any" id="trans-amount" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-100 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">أصناف سريعة / بيان:</label>
-                        <select id="quick-items-select" onchange="applyQuickItem(this)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-100 focus:outline-none">
-                            <option value="">أصناف سريعة (اختياري)...</option>
+                        <label class="block text-xs text-slate-400 mb-1">أصناف المتجر السريعة:</label>
+                        <select id="quick-items-select" onchange="addCartItem(this)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-goldAccent focus:outline-none">
+                            <option value="">إضافة صنف للسلة...</option>
                             <option value="سكر">سكر</option>
                             <option value="رز">رز</option>
                             <option value="زيت">زيت</option>
                             <option value="متة">متة</option>
+                            <option value="شاي">شاي</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">البيان أو التفاصيل:</label>
-                    <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد غذائية ومشروبات متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-100 focus:outline-none">
-                </div>
-                
-                <!-- حاسبة سريعة مبسطة داخل نافذة الدين -->
-                <div class="bg-slate-800 p-2.5 rounded-xl border border-slate-700 flex items-center gap-2 text-xs">
-                    <span class="text-slate-400">حاسبة سريعة (الكمية × السعر):</span>
-                    <input type="number" id="calc-qty" placeholder="الكمية" oninput="calculateQuickTotal()" class="w-20 bg-slate-900 border border-slate-700 rounded-lg p-1 text-center">
-                    <span>×</span>
-                    <input type="number" id="calc-price" placeholder="السعر الفردي" oninput="calculateQuickTotal()" class="w-20 bg-slate-900 border border-slate-700 rounded-lg p-1 text-center">
-                    <span>=</span>
-                    <span id="calc-result" class="font-bold text-goldAccent">$0.00</span>
-                    <button type="button" onclick="transferCalcResult()" class="bg-goldAccent text-darkBg px-2 py-1 rounded-lg font-bold text-xs">إدراج بالمبلغ</button>
+                    <label class="block text-xs text-slate-400 mb-1">البيان التفصيلي للفاتورة:</label>
+                    <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد تموينية ومشروبات متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-100 focus:outline-none">
                 </div>
 
                 <div class="flex justify-end pt-2">
                     <button type="submit" class="bg-successGreen hover:bg-emerald-600 text-darkBg font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1">
-                        <i class="fa-solid fa-check"></i> تنفيذ وحفظ الحركة (تفعيل حارس السقف)
+                        <i class="fa-solid fa-check"></i> حفظ الحركة وتحديث الرصيد اللحظي
                     </button>
                 </div>
             </form>
 
+            <!-- سجل الحركات مع تتبع تدقيق التعديلات (Audit Trail) -->
             <div class="max-h-60 overflow-y-auto rounded-2xl border border-slate-700">
                 <table class="w-full text-right text-xs">
                     <thead class="bg-slate-900 text-slate-400 sticky top-0">
                         <tr>
-                            <th class="p-2.5">التاريخ</th>
+                            <th class="p-2.5">التاريخ والتدقيق</th>
                             <th class="p-2.5">النوع</th>
                             <th class="p-2.5">البيان</th>
                             <th class="p-2.5">المبلغ ($)</th>
@@ -425,13 +432,13 @@
                     <textarea id="notif-text" rows="3" placeholder="اكتب نص التنبيه الذي سيظهر فوراً في حساب الزبون..." class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100 focus:outline-none"></textarea>
                 </div>
                 <button onclick="sendPushNotification()" class="w-full bg-goldAccent hover:bg-amber-400 text-darkBg font-bold py-3 rounded-2xl text-xs transition shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> إرسال الإشعار فوراً
+                    <i class="fa-solid fa-paper-plane"></i> إرسال الإشعار وتتبع التأكيد
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: الإعدادات والبانر وسعر الصرف -->
+    <!-- Modal: الإعدادات والبانر -->
     <div id="modal-settings" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -497,7 +504,7 @@
         });
     </script>
 
-    <!-- البرمجة المنطقية للتطبيق مع التحسينات -->
+    <!-- البرمجة المنطقية للتطبيق مع التحسينات الجديدة -->
     <script>
         const ADMIN_PHONE = "0965461504";
         let currentUser = null;
@@ -629,9 +636,16 @@
             let notifTargetSelect = document.getElementById("notif-target");
             let notifOptionsHTML = `<option value="all">إرسال لجميع الزبائن (إشعار عام)</option>`;
 
+            const selectedGroup = document.getElementById("admin-group-filter").value;
+            const searchQuery = document.getElementById("admin-search-input").value.toLowerCase();
+
             for (let key in accounts) {
                 const acc = accounts[key];
                 if (acc.archived) continue;
+
+                // تطبيق الفلترة حسب التصنيف والبحث
+                if (selectedGroup !== 'all' && acc.group !== selectedGroup) continue;
+                if (searchQuery && !acc.name.toLowerCase().includes(searchQuery) && !acc.phone.includes(searchQuery)) continue;
 
                 const balance = calculateAccountBalance(acc);
                 if (acc.type === 'customer') {
@@ -643,11 +657,19 @@
 
                 notifOptionsHTML += `<option value="${key}">${acc.name} (${acc.phone})</option>`;
 
+                let groupBadgeName = "زبون دائم";
+                let groupBadgeColor = "bg-blue-950 text-blue-300 border-blue-800";
+                if (acc.group === 'neighbor') { groupBadgeName = "جيران المتجر"; groupBadgeColor = "bg-emerald-950 text-emerald-300 border-emerald-800"; }
+                else if (acc.group === 'supplier') { groupBadgeName = "مورد رئيسي"; groupBadgeColor = "bg-amber-950 text-amber-300 border-amber-800"; }
+
                 accountsHTML += `
                     <tr class="hover:bg-slate-750 transition border-b border-slate-700/50">
                         <td class="p-3">
-                            <div class="font-bold text-slate-100">${acc.name}</div>
-                            <div class="text-xs text-slate-400">${acc.type === 'customer' ? 'زبون' : 'مورد'} - ${acc.address || 'بدون عنوان'}</div>
+                            <div class="font-bold text-slate-100 flex items-center gap-2">
+                                ${acc.name}
+                                <span class="text-[10px] px-2 py-0.5 rounded-full border ${groupBadgeColor}">${groupBadgeName}</span>
+                            </div>
+                            <div class="text-xs text-slate-400">${acc.address || 'بدون عنوان'}</div>
                         </td>
                         <td class="p-3 text-slate-300 font-mono text-xs">${acc.phone}</td>
                         <td class="p-3 font-bold ${balance > 0 ? 'text-successGreen' : 'text-slate-200'}">$${balance.toFixed(2)}</td>
@@ -664,7 +686,7 @@
             document.getElementById("stat-total-receivables").textContent = `$${totalReceivables.toFixed(2)}`;
             document.getElementById("stat-total-payables").textContent = `$${totalPayables.toFixed(2)}`;
             document.getElementById("stat-net-balance").textContent = `$${(totalReceivables - totalPayables).toFixed(2)}`;
-            document.getElementById("admin-accounts-list").innerHTML = accountsHTML || `<tr><td colspan="5" class="p-6 text-center text-slate-400">لا توجد حسابات نشطة حالياً.</td></tr>`;
+            document.getElementById("admin-accounts-list").innerHTML = accountsHTML || `<tr><td colspan="5" class="p-6 text-center text-slate-400">لا توجد حسابات مطابقة للبحث أو التصنيف.</td></tr>`;
             if (notifTargetSelect) notifTargetSelect.innerHTML = notifOptionsHTML;
         }
 
@@ -684,18 +706,18 @@
             const name = document.getElementById("acc-name").value.trim();
             const phone = document.getElementById("acc-phone").value.trim();
             const type = document.getElementById("acc-type").value;
+            const group = document.getElementById("acc-group").value;
             const pass = document.getElementById("acc-pass").value.trim();
             const limit = Number(document.getElementById("acc-limit").value);
             const address = document.getElementById("acc-address").value.trim();
-            const nationalId = document.getElementById("acc-national-id").value.trim();
             const idImage = document.getElementById("acc-id-base64").value;
 
             const newAccRef = window.firebaseDB.ref(window.firebaseDB.db, 'accounts/' + Date.now());
             const newAccountData = {
-                name, phone, type, password: pass, creditLimit: limit, address, nationalId, idImage, archived: false,
+                name, phone, type, group, password: pass, creditLimit: limit, address, idImage, archived: false,
                 createdAt: new Date().toISOString(),
                 transactions: {
-                    [Date.now()]: { type: type === 'customer' ? 'debt' : 'payment', amount: 0, note: 'افتتاح الحساب', date: new Date().toISOString() }
+                    [Date.now()]: { type: type === 'customer' ? 'debt' : 'payment', amount: 0, note: 'افتتاح الحساب', audit: 'أُنشئ بواسطة الإدارة', date: new Date().toISOString() }
                 }
             };
 
@@ -732,7 +754,10 @@
                 const tx = txs[id];
                 html += `
                     <tr class="border-b border-slate-700/50">
-                        <td class="p-2 text-slate-400 text-xs">${new Date(tx.date).toLocaleDateString('ar-SY')}</td>
+                        <td class="p-2 text-slate-400 text-xs">
+                            <div>${new Date(tx.date).toLocaleDateString('ar-SY')}</div>
+                            <div class="text-[10px] text-goldAccent">${tx.audit || 'عملية أساسية'}</div>
+                        </td>
                         <td class="p-2 font-bold ${tx.type === 'debt' ? 'text-red-400' : 'text-successGreen'}">${tx.type === 'debt' ? 'دين (له)' : 'دفعة (عليه)'}</td>
                         <td class="p-2 text-slate-200">${tx.note}</td>
                         <td class="p-2 font-bold">$${Number(tx.amount).toFixed(2)}</td>
@@ -745,7 +770,7 @@
             document.getElementById("modal-transactions-list").innerHTML = html || `<tr><td colspan="5" class="p-3 text-center text-slate-400">لا توجد حركات مسجلة.</td></tr>`;
         }
 
-        // حارس السقف المالي اللحظي
+        // سلة الشراء المتقدمة وحارس السقف المالي اللحظي مع تسجيل التدقيق (Audit Trail)
         function handleAddTransaction(e) {
             e.preventDefault();
             const key = document.getElementById("trans-target-id").value;
@@ -769,7 +794,13 @@
             }
 
             const newTxId = Date.now();
-            const txData = { type, amount, note, date: new Date().toISOString() };
+            const txData = { 
+                type, 
+                amount, 
+                note, 
+                audit: `أُضيف بواسطة الإدارة (${new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'})})`, 
+                date: new Date().toISOString() 
+            };
             const txRef = window.firebaseDB.ref(window.firebaseDB.db, `accounts/${key}/transactions/${newTxId}`);
 
             window.firebaseDB.set(txRef, txData).then(() => {
@@ -783,7 +814,7 @@
         }
 
         function deleteTransaction(accKey, txId) {
-            if (!confirm("هل أنت متأكد من حذف هذه العملية؟")) return;
+            if (!confirm("هل أنت متأكد من حذف هذه العملية؟ سيتم تسجيل الحذف في سجل التدقيق.")) return;
             const txRef = window.firebaseDB.ref(window.firebaseDB.db, `accounts/${accKey}/transactions/${txId}`);
             window.firebaseDB.remove(txRef).then(() => {
                 delete allStoreData.accounts[accKey].transactions[txId];
@@ -823,6 +854,15 @@
             }
         }
 
+        // تأكيد قراءة الإشعارات من قبل الزبون
+        function acknowledgeAlert() {
+            if (!currentUser || !currentUser.dbKey) return;
+            const alertRef = window.firebaseDB.ref(window.firebaseDB.db, `accounts/${currentUser.dbKey}/activeAlert`);
+            window.firebaseDB.set(alertRef, null).then(() => {
+                document.getElementById("customer-alert-box").classList.add("hidden");
+            });
+        }
+
         function renderCustomerPanel() {
             const accounts = allStoreData.accounts || {};
             let customerData = null;
@@ -830,6 +870,7 @@
             for (let key in accounts) {
                 if (accounts[key].phone === currentUser.phone) {
                     customerData = accounts[key];
+                    currentUser.dbKey = key;
                     break;
                 }
             }
@@ -897,7 +938,6 @@
         function openModal(modalId) { document.getElementById(modalId).classList.remove("hidden"); }
         function closeModal(modalId) { document.getElementById(modalId).classList.add("hidden"); }
 
-        // ضغط وتخزين الصور كنص Base64
         function compressImage(inputElement, targetHiddenId) {
             const file = inputElement.files[0];
             if (!file) return;
@@ -928,20 +968,17 @@
             reader.readAsDataURL(file);
         }
 
-        function calculateQuickTotal() {
-            const qty = Number(document.getElementById("calc-qty").value) || 0;
-            const price = Number(document.getElementById("calc-price").value) || 0;
-            document.getElementById("calc-result").textContent = `$${(qty * price).toFixed(2)}`;
-        }
-
-        function transferCalcResult() {
-            document.getElementById("trans-amount").value = document.getElementById("calc-result").textContent.replace('$', '');
-        }
-
-        function applyQuickItem(selectEl) {
-            const val = selectEl.value;
-            if (!val) return;
-            document.getElementById("trans-note").value = `شراء صنف سريع: ${val}`;
+        // سلة الشراء المتقدمة لإضافة الأصناف السريعة للبيان
+        function addCartItem(selectEl) {
+            const item = selectEl.value;
+            if (!item) return;
+            const noteInput = document.getElementById("trans-note");
+            if (noteInput.value) {
+                noteInput.value += ` + ${item}`;
+            } else {
+                noteInput.value = `شراء أصناف: ${item}`;
+            }
+            selectEl.value = "";
         }
 
         function sendPushNotification() {
@@ -954,7 +991,7 @@
                 for (let key in accounts) {
                     window.firebaseDB.set(window.firebaseDB.ref(window.firebaseDB.db, `accounts/${key}/activeAlert`), text);
                 }
-                alert("تم إرسال الإشعار العام لجميع الزبائن بنجاح.");
+                alert("تم إرسال الإشعار العام لجميع الزبائن بنجاح مع تفعيل زر موافقة القراءة.");
             } else {
                 triggerCustomerAlert(target, text);
                 alert("تم إرسال الإشعار الخاص بنجاح.");
@@ -985,11 +1022,11 @@
         }
 
         function exportExcelCSV() {
-            let csvContent = "\uFEFFاسم الحساب,رقم الهاتف,النوع,السقف المالي\n";
+            let csvContent = "\uFEFFاسم الحساب,التصنيف,رقم الهاتف,النوع,السقف المالي\n";
             const accounts = allStoreData.accounts || {};
             for (let key in accounts) {
                 const acc = accounts[key];
-                csvContent += `"${acc.name}","${acc.phone}","${acc.type}","${acc.creditLimit}"\n`;
+                csvContent += `"${acc.name}","${acc.group || 'عام'}","${acc.phone}","${acc.type}","${acc.creditLimit}"\n`;
             }
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -1010,12 +1047,7 @@
         }
 
         function filterAccounts() {
-            const query = document.getElementById("admin-search-input").value.toLowerCase();
-            const rows = document.querySelectorAll("#admin-accounts-list tr");
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(query) ? "" : "none";
-            });
+            renderAdminDashboard();
         }
     </script>
 </body>
