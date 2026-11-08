@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v21 (السياسة + شام كاش)</title>
+    <title>دفتر ديون متجر معاذ - v20 (شأم كاش واستعادة البيانات)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -37,10 +37,8 @@
         .bg-slate-700 { background-color: #334155; }
         .bg-goldAccent { background-color: #f59e0b; }
         .bg-successGreen { background-color: #10b981; }
-        .bg-emerald-600 { background-color: #059669; }
         .bg-emerald-950 { background-color: #022c22; }
         .bg-red-950 { background-color: #450a0a; }
-        .bg-red-600 { background-color: #dc2626; }
         .bg-red-500 { background-color: #ef4444; }
         .bg-red-400 { background-color: #f87171; }
         
@@ -63,7 +61,6 @@
         .border-slate-600 { border-color: #475569; }
         .border-goldAccent { border-color: #f59e0b; }
         .border-successGreen { border-color: #10b981; }
-        .border-emerald-900 { border-color: #064e3b; }
         
         .rounded-lg { border-radius: 0.5rem; }
         .rounded-xl { border-radius: 0.75rem; }
@@ -78,15 +75,13 @@
         .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
         .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
         
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
         
         input, select, textarea { outline: none; transition: border-color 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: #f59e0b; }
-        button { cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+        button { cursor: pointer; border: none; font-family: inherit; transition: opacity 0.2s, background-color 0.2s; }
         button:hover { opacity: 0.9; }
         
         .grid { display: grid; }
@@ -278,14 +273,14 @@
                 </div>
             </div>
 
-            <!-- إضافة زر النسخ الاحتياطي في لوحة الإدارة والتنبيه بضرورة النسخ -->
+            <!-- زر النسخ الاحتياطي في لوحة الإدارة والتنبيه بضرورة النسخ -->
             <div class="bg-slate-900 border border-goldAccent p-4 rounded-2xl mb-4 flex items-center justify-between shadow-sm">
                 <div>
                     <h4 class="font-bold text-sm text-goldAccent"><i class="fa-solid fa-shield-halved mr-1"></i> المهام اليومية للإدارة</h4>
                     <p class="text-xs text-slate-400 mt-1">يجب إنشاء نسخة احتياطية (PDF) لجميع الحسابات يومياً، والاحتفاظ بآخر 5 نسخ.</p>
                 </div>
                 <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf-main" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-3 rounded-xl text-xs transition shadow flex items-center gap-2">
-                    <i class="fa-solid fa-file-pdf text-lg"></i> إنشاء النسخة الاحتياطية (PDF)
+                    <i class="fa-solid fa-file-pdf text-lg"></i> إنشاء النسخة الاحتياطية
                 </button>
             </div>
 
@@ -383,22 +378,13 @@
                             <span id="cust-self-calc" class="text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-900 hidden"></span>
                         </div>
                     </div>
-                </div>
-
-                <!-- زر وبطاقة الدفع عبر شام كاش (للزائن) -->
-                <div id="cust-shamcash-card" class="bg-slate-900 border border-emerald-900/50 p-4 rounded-3xl shadow-lg flex items-center justify-between hidden">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-emerald-950 text-emerald-400 rounded-xl flex items-center justify-center text-xl shadow-inner border border-emerald-900/50">
-                            <i class="fa-solid fa-money-bill-transfer"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-white">سداد عبر شام كاش</h4>
-                            <p class="text-[10px] text-slate-400 mt-0.5">انسخ المعرّف وحوّل الدفعة بسهولة</p>
-                        </div>
+                    
+                    <!-- زر الدفع عبر شأم كاش للزبون -->
+                    <div class="mt-4 relative z-10">
+                        <button type="button" onclick="payViaShamCash()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl text-sm shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-wallet text-lg"></i> نسخ معرف شأم كاش وتسديد الدفعة
+                        </button>
                     </div>
-                    <button type="button" onclick="payViaShamCash(this)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-copy"></i> انسخ وحوّل
-                    </button>
                 </div>
 
                 <!-- التنبيه اليدوي من الإدارة -->
@@ -555,39 +541,43 @@
         </div>
     </div>
 
-    <!-- Modal: الإعدادات (مع إضافة حقل معرف شام كاش) -->
+    <!-- Modal: الإعدادات العامة -->
     <div id="modal-settings" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-settings')">
-        <div class="modal-content max-w-md space-y-4">
-            <h3 class="font-black text-lg text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-gear ml-2"></i>الإعدادات</h3>
-            
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <label class="block text-xs font-bold text-slate-300 mb-2">سعر الدولار مقابل (الليرة الجديدة):</label>
-                <div class="flex gap-2">
-                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-goldAccent font-black font-mono">
-                </div>
-                <p class="text-[10px] text-slate-500 mt-2">الليرة القديمة تُحسب بضرب سعر الجديدة بـ 100 تلقائياً.</p>
+        <div class="modal-content max-w-md flex flex-col h-[85vh] md:h-auto md:max-h-[85vh]">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-700 mb-4 shrink-0">
+                <h3 class="font-black text-lg text-goldAccent"><i class="fa-solid fa-gear ml-2"></i>الإعدادات العامة</h3>
+                <button type="button" onclick="closeModal('modal-settings')" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center hover:bg-slate-700 hover:text-white transition"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <label class="block text-xs font-bold text-emerald-400 mb-2">معرّف محفظة (شام كاش):</label>
-                <div class="flex flex-col gap-2">
-                    <input type="text" id="setting-shamcash-id" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-emerald-400 font-mono" placeholder="الصق معرّف المحفظة هنا...">
+            <div class="overflow-y-auto flex-grow pr-1 custom-scrollbar space-y-4">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
+                    <label class="block text-xs font-bold text-slate-300 mb-2">سعر الدولار مقابل (الليرة الجديدة):</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-goldAccent font-black font-mono">
+                        <button type="button" onclick="saveSettings()" class="bg-slate-700 text-white font-bold px-4 rounded-xl text-xs">حفظ</button>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-2">سيظهر هذا المعرّف للزبائن ليتمكنوا من تحويل الدفعات إليك.</p>
-            </div>
 
-            <button type="button" onclick="saveGeneralSettings()" class="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl text-sm transition shadow">حفظ الإعدادات</button>
-
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 mt-4">
-                <label class="block text-xs font-bold text-successGreen mb-3">أزرار الأصناف السريعة (الفواتير):</label>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="new-quick-item-input" placeholder="اسم صنف جديد..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100">
-                    <button type="button" onclick="addNewQuickItem()" class="bg-successGreen text-darkBg px-4 rounded-xl font-black text-lg">+</button>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
+                    <label class="block text-xs font-bold text-emerald-400 mb-2">معرف شأم كاش (للدفع الإلكتروني):</label>
+                    <input type="text" id="setting-shamcash-id" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-100 font-mono mb-2" placeholder="أدخل المعرف هنا...">
+                    <button type="button" onclick="saveSettings()" class="w-full bg-slate-700 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition">حفظ المعرف</button>
+                    <p class="text-[9px] text-slate-500 mt-2">هذا المعرف سيظهر للزبائن ليتمكنوا من نسخه وتسديد ديونهم.</p>
                 </div>
-                <div id="settings-quick-items-list" class="flex flex-wrap gap-2"></div>
+
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
+                    <label class="block text-xs font-bold text-successGreen mb-3">أزرار الأصناف السريعة (الفواتير):</label>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="new-quick-item-input" placeholder="اسم صنف جديد..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100">
+                        <button type="button" onclick="addNewQuickItem()" class="bg-successGreen text-darkBg px-4 rounded-xl font-black text-lg">+</button>
+                    </div>
+                    <div id="settings-quick-items-list" class="flex flex-wrap gap-2"></div>
+                </div>
             </div>
             
-            <button type="button" onclick="closeModal('modal-settings')" class="w-full bg-slate-800 text-slate-300 py-3 rounded-xl text-sm font-bold border border-slate-700 mt-2">إغلاق</button>
+            <div class="shrink-0 pt-4 mt-2 border-t border-slate-700">
+                <button type="button" onclick="closeModal('modal-settings')" class="w-full bg-slate-800 text-slate-300 py-3 rounded-xl text-sm font-bold border border-slate-700 hover:bg-slate-700 transition">إغلاق</button>
+            </div>
         </div>
     </div>
 
@@ -703,29 +693,45 @@
     <script>
         const ADMIN_PHONE = "0965461504";
         const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
+        const DB_KEY = "moaath_offline_db"; // استخدام مفتاح ثابت لضمان عدم ضياع البيانات مستقبلاً
+        
         let currentUser = null;
         let activeManagingAccountKey = null;
         let adminInputCurrency = 'USD';
         let customerDisplayCurrency = 'USD';
         let pendingCustomerKey = null;
 
-        // استخدمنا نفس المفتاح القديم (v19) لاستعادة بياناتك وحساباتك التي فقدتها
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v19")) || {
-            accounts: {},
-            settings: { 
-                sypRate: 15000, 
-                shamcashId: "da3e13cd8a2ef2af282445e148df9599", // تم إضافة شام كاش
-                quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] 
+        // دالة استرجاع البيانات المفقودة من الإصدارات السابقة
+        let allStoreData = JSON.parse(localStorage.getItem(DB_KEY));
+        
+        if (!allStoreData) {
+            const oldKeys = ["moaath_offline_db_v19", "moaath_offline_db_v18", "moaath_offline_db_v17", "moaath_offline_db_v16", "moaath_offline_db_v15", "moaath_offline_db_v14", "moaath_offline_db_final"];
+            for (let k of oldKeys) {
+                let oldData = localStorage.getItem(k);
+                if (oldData) {
+                    allStoreData = JSON.parse(oldData);
+                    break;
+                }
             }
-        };
+            if (!allStoreData) {
+                allStoreData = {
+                    accounts: {},
+                    settings: { 
+                        sypRate: 15000, 
+                        quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'],
+                        shamCashId: 'da3e13cd8a2ef2af282445e148df9599'
+                    }
+                };
+            }
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
+        }
 
+        // التأكد من وجود الخصائص الجديدة في حال الترقية
         if (!allStoreData.settings.quickItems) {
             allStoreData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'];
         }
-        
-        // التحقق من وجود معرف شام كاش وتعيينه إذا لم يكن موجوداً لضمان ظهوره للزبائن
-        if (allStoreData.settings.shamcashId === undefined) {
-            allStoreData.settings.shamcashId = "da3e13cd8a2ef2af282445e148df9599";
+        if (!allStoreData.settings.shamCashId) {
+            allStoreData.settings.shamCashId = 'da3e13cd8a2ef2af282445e148df9599';
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -869,7 +875,7 @@
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
                 
                 allStoreData.accounts[pendingCustomerKey].policyAccepted = false;
-                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+                localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -887,7 +893,7 @@
         function acceptPolicy() {
             if (currentUser && currentUser.dbKey && allStoreData.accounts[currentUser.dbKey]) {
                 allStoreData.accounts[currentUser.dbKey].policyAccepted = true;
-                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+                localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
                 
                 currentUser.requiresPolicyAcceptance = false;
                 localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
@@ -899,7 +905,7 @@
             const newPass = document.getElementById("admin-new-cust-pass").value.trim();
             if (newPass && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+                localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تغيير كلمة مرور الزبون بنجاح.");
             } else {
@@ -911,7 +917,7 @@
             const newLimit = Number(document.getElementById("admin-new-limit-input").value);
             if (newLimit > 0 && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+                localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `سقف الحساب المحدث: $${newLimit}`;
                 renderAdminDashboard();
@@ -923,7 +929,6 @@
             currentUser = null; pendingCustomerKey = null;
             localStorage.removeItem("moaath_current_user");
             
-            // تفريغ حقول الإدخال
             document.getElementById("login-phone").value = "";
             document.getElementById("login-pass").value = "";
             
@@ -1139,7 +1144,7 @@
             const txId = Date.now().toString();
             acc.transactions = acc.transactions || {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
-            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
             
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").style.display = "none";
@@ -1153,7 +1158,7 @@
         function deleteTransaction(txId) {
             if (!confirm("تأكيد حذف الحركة بشكل نهائي؟")) return;
             delete allStoreData.accounts[activeManagingAccountKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
             renderAdminModalTransactions(allStoreData.accounts[activeManagingAccountKey]);
             renderAdminDashboard();
         }
@@ -1182,7 +1187,7 @@
                 type: 'customer', isFirstLogin: true, transactions: {} 
             };
             
-            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             
             document.getElementById("form-create-account").reset();
@@ -1191,7 +1196,7 @@
             alert("تم إنشاء الحساب. سيطلب من الزبون تغيير كلمة المرور وقراءة السياسة عند أول دخول.");
         }
 
-        // دوال الزبون و شام كاش
+        // دوال الزبون
         function setCustomerCurrency(curr) {
             customerDisplayCurrency = curr;
             document.getElementById("btn-curr-usd").className = curr === 'USD' ? "px-3 py-1.5 rounded-xl text-xs font-black transition bg-goldAccent text-darkBg shadow" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200";
@@ -1206,26 +1211,24 @@
             if (customerDisplayCurrency === 'SYP_OLD') return `${(amountUSD * rate * 100).toLocaleString()} ل.س`;
             return `$${amountUSD.toFixed(2)}`;
         }
-        
-        function payViaShamCash(btnElement) {
-            const shamId = allStoreData.settings.shamcashId;
-            if (!shamId) {
-                alert("لم يتم تعيين معرف شام كاش من قبل الإدارة بعد.");
+
+        // دفع عبر شأم كاش
+        function payViaShamCash() {
+            const id = allStoreData.settings.shamCashId;
+            if (!id) {
+                alert("عذراً، لم تقم إدارة المتجر بتحديد معرف الدفع بعد.");
                 return;
             }
+            
+            navigator.clipboard.writeText(id).then(() => {
+                alert(`تم نسخ معرف شأم كاش الخاص بمتجر معاذ بنجاح:
 
-            navigator.clipboard.writeText(shamId).then(() => {
-                const originalHTML = btnElement.innerHTML;
-                btnElement.innerHTML = `<i class="fa-solid fa-check"></i> تم النسخ`;
-                btnElement.classList.replace('bg-emerald-600', 'bg-successGreen');
-                
-                setTimeout(() => {
-                    btnElement.innerHTML = originalHTML;
-                    btnElement.classList.replace('bg-successGreen', 'bg-emerald-600');
-                    window.location.href = "intent://#Intent;scheme=shamcash;end;";
-                }, 1500);
+${id}
+
+يرجى فتح تطبيق شأم كاش الآن للصق المعرف وتسديد الدفعة.`);
             }).catch(err => {
-                alert("تعذر النسخ التلقائي. المعرّف هو: " + shamId);
+                alert("تعذر النسخ التلقائي، معرف الدفع هو:
+" + id);
             });
         }
 
@@ -1269,10 +1272,6 @@
             const selfCalcBox = document.getElementById("cust-self-calc");
             
             if (balUSD > 0) {
-                if(allStoreData.settings.shamcashId) {
-                    document.getElementById("cust-shamcash-card").classList.remove("hidden");
-                }
-                
                 let targetDrop = Math.max(0, balUSD - (limit * 0.5));
                 if (targetDrop > 0) {
                     selfCalcBox.textContent = `للوصول للوضع الآمن، سدد: ${formatDisplayAmount(targetDrop)}`;
@@ -1283,7 +1282,6 @@
                     selfCalcBox.style.display = "none";
                 }
             } else {
-                document.getElementById("cust-shamcash-card").classList.add("hidden");
                 selfCalcBox.classList.add("hidden");
                 selfCalcBox.style.display = "none";
             }
@@ -1363,22 +1361,19 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
         function generateAllAccountsPDF() {
             const btn = document.getElementById("btn-export-pdf");
-            const btnMain = document.getElementById("btn-export-pdf-main"); 
+            const btnMain = document.getElementById("btn-export-pdf-main"); // الزر الأساسي في لوحة الإدارة
             
-            const originalText = btn.innerHTML;
+            const originalText = btn ? btn.innerHTML : '';
             const originalTextMain = btnMain ? btnMain.innerHTML : '';
             
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري التحضير...`; 
-            if(btnMain) btnMain.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-lg"></i> جاري إنشاء النسخة...`;
-            
-            btn.disabled = true;
-            if(btnMain) btnMain.disabled = true;
+            if(btn) { btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري التحضير...`; btn.disabled = true; }
+            if(btnMain) { btnMain.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-lg"></i> جاري إنشاء النسخة...`; btnMain.disabled = true; }
             
             document.getElementById("pdf-export-date").textContent = `تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
             const container = document.getElementById("pdf-export-content");
@@ -1412,10 +1407,8 @@
             setTimeout(() => {
                 html2pdf().set({ margin: 10, filename: `ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => {
                     element.style.display = 'none'; 
-                    btn.innerHTML = originalText; 
-                    if(btnMain) btnMain.innerHTML = originalTextMain;
-                    btn.disabled = false;
-                    if(btnMain) btnMain.disabled = false;
+                    if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
+                    if(btnMain) { btnMain.innerHTML = originalTextMain; btnMain.disabled = false; }
                 });
             }, 500);
         }
@@ -1424,44 +1417,37 @@
 
         function renderAdminSettings() {
             document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate;
-            document.getElementById("setting-shamcash-id").value = allStoreData.settings.shamcashId || "";
-            
+            document.getElementById("setting-shamcash-id").value = allStoreData.settings.shamCashId || "";
             const cont = document.getElementById("settings-quick-items-list");
             cont.innerHTML = "";
             allStoreData.settings.quickItems.forEach((item, index) => {
                 cont.innerHTML += `<span class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 border border-slate-700 shadow-sm">${item} <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-white bg-red-950/50 w-5 h-5 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-xmark text-[10px]"></i></button></span>`;
             });
         }
-        
         function addNewQuickItem() {
             const val = document.getElementById("new-quick-item-input").value.trim();
-            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
+            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem(DB_KEY, JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
         }
-        
         function removeQuickItem(i) {
-            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); renderAdminSettings();
+            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem(DB_KEY, JSON.stringify(allStoreData)); renderAdminSettings();
         }
-        
-        function saveGeneralSettings() {
+        function saveSettings() {
             const rate = Number(document.getElementById("setting-syp-rate").value);
             const shamId = document.getElementById("setting-shamcash-id").value.trim();
             
-            if (rate > 0) {
-                allStoreData.settings.sypRate = rate;
-                allStoreData.settings.shamcashId = shamId;
-                
-                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); 
-                closeModal('modal-settings'); 
-                renderAdminDashboard();
-                alert("تم حفظ الإعدادات بنجاح.");
-            }
+            if (rate > 0) allStoreData.settings.sypRate = rate;
+            allStoreData.settings.shamCashId = shamId;
+            
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData)); 
+            closeModal('modal-settings'); 
+            renderAdminDashboard();
+            alert("تم حفظ الإعدادات بنجاح.");
         }
-        
         function sendBroadcastNotification() {
             const text = document.getElementById("notif-text").value.trim();
             if (!text) return;
             for (let k in allStoreData.accounts) { allStoreData.accounts[k].activeAlert = text; }
-            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
             closeModal('modal-notification'); alert("تم إرسال التنبيه الجماعي بنجاح.");
         }
         
