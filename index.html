@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v14 (التصميم الاحترافي)</title>
+    <title>دفتر ديون متجر معاذ - v15 (سياسة المتجر)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -23,7 +23,6 @@
         
         .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; }
         .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; }
-        .ml-1 { margin-left: 0.25rem; } .mr-1 { margin-right: 0.25rem; } .mr-2 { margin-right: 0.5rem; }
         
         .w-full { width: 100%; } .w-11 { width: 2.75rem; } .w-16 { width: 4rem; } .w-24 { width: 6rem; }
         .h-full { height: 100%; } .h-11 { height: 2.75rem; } .h-16 { height: 4rem; }
@@ -55,16 +54,12 @@
         .text-red-400 { color: #f87171; }
         
         .border { border-width: 1px; border-style: solid; }
-        .border-t { border-top-width: 1px; border-style: solid; }
         .border-b { border-bottom-width: 1px; border-style: solid; }
-        .border-l { border-left-width: 4px; border-style: solid; }
         .border-slate-800 { border-color: #1e293b; }
         .border-slate-700 { border-color: #334155; }
         .border-slate-600 { border-color: #475569; }
         .border-goldAccent { border-color: #f59e0b; }
         .border-successGreen { border-color: #10b981; }
-        .border-red-400 { border-color: #f87171; }
-        .border-red-500 { border-color: #ef4444; }
         
         .rounded-lg { border-radius: 0.5rem; }
         .rounded-xl { border-radius: 0.75rem; }
@@ -83,7 +78,6 @@
         
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         
         input, select, textarea { outline: none; transition: border-color 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: #f59e0b; }
@@ -112,24 +106,20 @@
         .pulse-red { animation: pulseRed 1.5s infinite; }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         
-        /* التبويبات Tabs */
         .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; border-bottom: 2px solid transparent; transition: all 0.2s; background: none; }
         .tab-btn.active { color: #f59e0b; border-bottom-color: #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* البطاقات الحديثة (Card List) */
         .tx-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
         .tx-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; }
         .tx-card.debt::before { background-color: #f87171; }
         .tx-card.payment::before { background-color: #10b981; }
         
-        /* الأفاتار Avatar */
         .avatar { width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; }
         .avatar-gold { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         
-        /* الزر العائم FAB */
         .fab { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background-color: #f59e0b; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4); z-index: 40; cursor: pointer; transition: transform 0.2s; }
         .fab:hover { transform: scale(1.05); }
         .fab-menu { position: fixed; bottom: 6rem; left: 2rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; transform: translateY(10px); }
@@ -138,10 +128,8 @@
         .fab-item-label { background-color: #1e293b; color: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #334155; }
         .fab-item-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; background-color: #334155; color: #f59e0b; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #475569; }
 
-        /* تظليل النص في البحث */
         .highlight { background-color: rgba(245, 158, 11, 0.3); color: #f59e0b; border-radius: 2px; padding: 0 2px; }
 
-        /* الرسوم البيانية المصغرة */
         .mini-chart-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background-color: #334155; margin-top: 4px; }
         .mini-chart-debt { background-color: #f87171; height: 100%; transition: width 0.5s ease; }
         .mini-chart-payment { background-color: #10b981; height: 100%; transition: width 0.5s ease; }
@@ -158,8 +146,11 @@
         .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: black; }
         .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
+        
+        /* تنسيقات سياسة المتجر */
+        .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; position: relative; overflow: hidden; }
+        .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.1; font-size: 3rem; color: #f59e0b; }
     </style>
-    <!-- تضمين مكتبة أيقونات FontAwesome كـ SVG لضمان العمل Offline إن أمكن -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -174,7 +165,7 @@
                 <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">الإصدار v14 الاحترافي</p>
+                    <p class="text-[10px] text-slate-400 font-bold">الإصدار v15 الاحترافي</p>
                 </div>
             </div>
             <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-2xl border border-slate-700">
@@ -223,7 +214,39 @@
             <div class="space-y-3 pt-4 border-t border-slate-700">
                 <input type="password" id="new-cust-pass" placeholder="كلمة المرور الجديدة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
                 <input type="password" id="new-cust-pass-confirm" placeholder="تأكيد كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
-                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm mt-2 shadow-[0_4px_14px_0_rgba(16,185,129,0.39)]">حفظ والانتقال لحسابي</button>
+                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm mt-2 shadow-[0_4px_14px_0_rgba(16,185,129,0.39)]">متابعة</button>
+            </div>
+        </section>
+
+        <!-- سياسة التعامل (الشروط والأحكام الودية) - تظهر مرة واحدة -->
+        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-5 relative overflow-hidden">
+            <div class="text-center pb-4 border-b border-slate-700">
+                <h2 class="text-2xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
+                <p class="text-sm text-slate-400">يسعدنا انضمامك إلينا، يرجى قراءة السياسة التنظيمية للحساب.</p>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="policy-card">
+                    <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">1. آلية التقييد وحفظ الحقوق</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">لضمان حقوق الطرفين واستقرار الأسعار بعيداً عن تقلبات السوق، يتم تسجيل كافة المسحوبات والديون في النظام بناءً على قيمتها بالدولار الأمريكي.</p>
+                </div>
+                
+                <div class="policy-card">
+                    <i class="fa-solid fa-scale-unbalanced"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">2. سقف الحساب والتنبيهات</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">يتم تخصيص سقف مالي محدد لكل حساب. نرجو التعاون بالسداد عند اقتراب الرصيد من السقف، علماً أن النظام سيرسل تنبيهات تلقائية عند تجاوز 75% من الحد المسموح.</p>
+                </div>
+
+                <div class="policy-card">
+                    <i class="fa-solid fa-lock"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">3. سياسة عدم الالتزام (إيقاف الخدمة مؤقتاً)</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">في حال تجاوز السقف المالي المحدد وتأخر السداد بعد استلام التنبيهات، سيقوم النظام تلقائياً بتعليق إمكانية سحب مواد جديدة على الحساب مؤقتاً، إلى حين تسديد الدفعة المطلوبة للعودة لنطاق الأمان.</p>
+                </div>
+            </div>
+            
+            <div class="pt-4 mt-2">
+                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow-[0_4px_14px_0_rgba(245,158,11,0.39)]">قرأت التفاصيل، موافق وانتقل لحسابي</button>
             </div>
         </section>
 
@@ -273,13 +296,11 @@
                     </div>
                 </div>
                 
-                <!-- عرض الحسابات كقائمة بطاقات بدلاً من جدول كلاسيكي على الجوال -->
                 <div id="admin-accounts-list-cards" class="p-3 space-y-2 max-h-[60vh] overflow-y-auto">
                     <!-- سيتم توليد البطاقات هنا -->
                 </div>
             </div>
             
-            <!-- الزر العائم للإدارة FAB -->
             <div class="fab-container no-print">
                 <div id="admin-fab-menu" class="fab-menu">
                     <div class="fab-item" onclick="openModal('modal-notification'); toggleFab();">
@@ -298,13 +319,21 @@
         <!-- لوحة الزبون -->
         <section id="customer-panel" class="hidden space-y-4">
             
-            <!-- الحالة الفارغة (Empty State) -->
             <div id="cust-empty-state" class="hidden bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center shadow-lg mt-8">
                 <div class="w-20 h-20 bg-successGreen/10 text-successGreen rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
                     <i class="fa-regular fa-face-smile"></i>
                 </div>
                 <h3 class="text-lg font-black text-slate-100">حسابك مصفر تماماً</h3>
                 <p class="text-sm text-slate-400 mt-2">شكراً لالتزامك المالي وثقتك بمتجر معاذ.</p>
+            </div>
+
+            <!-- إشعار تعليق الحساب (يظهر إذا تجاوز 100%) -->
+            <div id="cust-suspended-banner" class="hidden bg-red-950/80 border border-red-500 text-red-200 p-4 rounded-2xl shadow-lg flex items-center gap-3">
+                <i class="fa-solid fa-lock text-2xl text-red-400"></i>
+                <div>
+                    <h4 class="font-bold text-sm">حسابك معلق مؤقتاً</h4>
+                    <p class="text-xs mt-0.5">لقد تجاوزت السقف المالي. يرجى تسديد الدفعة المطلوبة لإعادة تفعيل السحب.</p>
+                </div>
             </div>
 
             <div id="cust-content-state" class="space-y-4">
@@ -338,12 +367,23 @@
                     </div>
                 </div>
 
+                <!-- التنبيه اليدوي من الإدارة -->
+                <div id="customer-alert-box" class="hidden bg-slate-800 border border-goldAccent/30 text-goldAccent p-4 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <div>
+                            <h4 class="font-bold text-sm">رسالة من إدارة المتجر:</h4>
+                            <p id="customer-alert-text" class="text-xs mt-0.5 text-slate-300"></p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="acknowledgeAlert()" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-bold text-xs px-4 py-2 rounded-xl transition shadow shrink-0">علم، إخفاء</button>
+                </div>
+
                 <div class="flex justify-between items-center px-1">
                     <h3 class="font-bold text-sm text-slate-100">سجل الحركات</h3>
                     <button type="button" onclick="exportCustomerPDF()" class="text-goldAccent text-xs font-bold bg-goldAccent/10 px-3 py-1.5 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> تحميل كشف</button>
                 </div>
                 
-                <!-- قائمة حركات الزبون كبطاقات أنيقة (Card List) -->
                 <div id="customer-transactions-cards" class="space-y-2 pb-6">
                     <!-- سيتم التوليد هنا -->
                 </div>
@@ -351,7 +391,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة حساب زبون وتعديل السقف والعمليات (تبويبات Tabs) -->
+    <!-- Modal: إدارة حساب زبون وتعديل السقف والعمليات -->
     <div id="modal-manage-account" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-manage-account')">
         <div class="modal-content max-w-xl flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
             <div class="flex justify-between items-center pb-4">
@@ -578,7 +618,6 @@
     <!-- نافذة منبثقة للزبون: إيصال الفاتورة الرقمي (Digital Receipt) -->
     <div id="modal-receipt" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-receipt')">
         <div class="modal-content max-w-xs bg-white text-darkBg p-0 overflow-hidden" style="border-radius: 8px; border: none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
-            <!-- مسننات علوية تحاكي الفاتورة -->
             <div style="height: 10px; background-image: radial-gradient(#fff 50%, transparent 50%); background-size: 20px 20px; background-position: -10px -10px; margin-top: -5px; transform: rotate(180deg);"></div>
             
             <div class="p-6 text-center space-y-4" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 19px, #f1f5f9 19px, #f1f5f9 20px); background-position: top; background-size: 100% 20px;">
@@ -604,9 +643,17 @@
                 </div>
             </div>
             
-            <!-- مسننات سفلية تحاكي الفاتورة -->
             <div style="height: 10px; background-image: radial-gradient(#fff 50%, transparent 50%); background-size: 20px 20px; background-position: -10px 0px;"></div>
         </div>
+    </div>
+
+    <!-- حاوية مخفية لتوليد تقرير PDF الشامل للزبائن -->
+    <div id="pdf-export-container">
+        <div class="pdf-header">
+            <h2>دفتر ديون متجر معاذ - كشف شامل</h2>
+            <p id="pdf-export-date"></p>
+        </div>
+        <div id="pdf-export-content"></div>
     </div>
 
 
@@ -619,7 +666,7 @@
         let customerDisplayCurrency = 'USD';
         let pendingCustomerKey = null;
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v14")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v15")) || {
             accounts: {},
             settings: { 
                 sypRate: 15000, 
@@ -643,6 +690,7 @@
         function updateUIState() {
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("setup-password-section").classList.add("hidden");
+            document.getElementById("policy-section").classList.add("hidden");
             document.getElementById("admin-panel").classList.add("hidden");
             document.getElementById("customer-panel").classList.add("hidden");
             document.getElementById("user-status-display").classList.add("hidden");
@@ -655,6 +703,12 @@
 
             if (currentUser.requiresPasswordSetup) {
                 document.getElementById("setup-password-section").classList.remove("hidden");
+                return;
+            }
+            
+            // إظهار سياسة المتجر بعد تعيين كلمة المرور وقبل عرض الحساب
+            if (currentUser.requiresPolicyAcceptance) {
+                document.getElementById("policy-section").classList.remove("hidden");
                 return;
             }
 
@@ -703,19 +757,16 @@
         function openModal(id) { 
             const modal = document.getElementById(id);
             modal.classList.remove("hidden"); 
-            // تأخير بسيط لتفعيل الأنيميشن
             setTimeout(() => { modal.classList.add("active"); }, 10);
-            
             if(id === 'modal-settings') renderAdminSettings();
         }
         
         function closeModal(id) { 
             const modal = document.getElementById(id);
             modal.classList.remove("active");
-            setTimeout(() => { modal.classList.add("hidden"); }, 300); // انتظار انتهاء الأنيميشن
+            setTimeout(() => { modal.classList.add("hidden"); }, 300);
         }
 
-        // دوال تسجيل الدخول والحماية
         function handleLogin(event) {
             if (event) event.preventDefault();
             const phone = document.getElementById("login-phone").value.trim();
@@ -747,6 +798,8 @@
                 if (foundAcc.isFirstLogin === true || foundAcc.isFirstLogin === undefined) {
                     pendingCustomerKey = foundKey;
                     currentUser = { phone, name: foundAcc.name, requiresPasswordSetup: true, dbKey: foundKey };
+                } else if (foundAcc.policyAccepted !== true) {
+                    currentUser = { phone, name: foundAcc.name, isAdmin: false, requiresPolicyAcceptance: true, dbKey: foundKey };
                 } else {
                     currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
                     localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
@@ -761,13 +814,35 @@
             const p1 = document.getElementById("new-cust-pass").value.trim();
             const p2 = document.getElementById("new-cust-pass-confirm").value.trim();
             if (!p1 || p1.length < 4 || p1 !== p2) { alert("كلمة المرور قصيرة جداً أو غير متطابقة."); return; }
+            
             if (pendingCustomerKey && allStoreData.accounts[pendingCustomerKey]) {
                 allStoreData.accounts[pendingCustomerKey].password = p1;
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
-                localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
-                currentUser = { phone: allStoreData.accounts[pendingCustomerKey].phone, name: allStoreData.accounts[pendingCustomerKey].name, isAdmin: false, dbKey: pendingCustomerKey };
-                localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
+                
+                // إضافة متغير لضمان ظهور شاشة السياسة في الخطوة التالية
+                allStoreData.accounts[pendingCustomerKey].policyAccepted = false;
+                localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
+
+                currentUser = { 
+                    phone: allStoreData.accounts[pendingCustomerKey].phone, 
+                    name: allStoreData.accounts[pendingCustomerKey].name, 
+                    isAdmin: false, 
+                    requiresPolicyAcceptance: true,
+                    dbKey: pendingCustomerKey 
+                };
+                
                 pendingCustomerKey = null;
+                updateUIState();
+            }
+        }
+
+        function acceptPolicy() {
+            if (currentUser && currentUser.dbKey && allStoreData.accounts[currentUser.dbKey]) {
+                allStoreData.accounts[currentUser.dbKey].policyAccepted = true;
+                localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
+                
+                currentUser.requiresPolicyAcceptance = false;
+                localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
                 updateUIState();
             }
         }
@@ -776,7 +851,7 @@
             const newPass = document.getElementById("admin-new-cust-pass").value.trim();
             if (newPass && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تغيير كلمة مرور الزبون بنجاح.");
             } else {
@@ -788,7 +863,7 @@
             const newLimit = Number(document.getElementById("admin-new-limit-input").value);
             if (newLimit > 0 && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `سقف الحساب المحدث: $${newLimit}`;
                 renderAdminDashboard();
@@ -802,7 +877,6 @@
             updateUIState();
         }
 
-        // دوال الإدارة والعمليات المالية
         function calculateAccountBalance(acc) {
             let bal = 0;
             const txs = acc.transactions || {};
@@ -835,11 +909,10 @@
 
                 const limitRatio = acc.creditLimit ? (bal / acc.creditLimit) * 100 : 0;
                 let statusColor = "bg-slate-700";
-                if (limitRatio > 100) statusColor = "bg-red-500";
-                else if (limitRatio > 75) statusColor = "bg-goldAccent";
+                if (limitRatio >= 100) statusColor = "bg-red-500";
+                else if (limitRatio >= 75) statusColor = "bg-goldAccent";
                 else if (limitRatio > 0) statusColor = "bg-successGreen";
 
-                // تصميم البطاقة الحديث للحسابات (بدل الجدول)
                 html += `
                     <div class="bg-slate-900 border border-slate-700 rounded-2xl p-3 flex justify-between items-center relative overflow-hidden mb-2">
                         <div class="absolute right-0 top-0 bottom-0 w-1 ${statusColor}"></div>
@@ -875,7 +948,6 @@
             }
         }
 
-        // دالة مساعدة لتظليل نص البحث
         function highlightSearchText(text, query) {
             if (!query) return text;
             const regex = new RegExp(`(${query})`, 'gi');
@@ -945,10 +1017,8 @@
             document.getElementById("live-usd-preview").style.display = "none";
             document.getElementById("live-usd-preview").classList.add("hidden");
             
-            // تهيئة حقول الإعدادات
             document.getElementById("admin-new-limit-input").value = acc.creditLimit || 50;
             
-            // فتح التبويب الأول افتراضياً
             switchTab('tab-add-tx', document.querySelector('.tab-btn:first-child'));
             
             renderTransactionQuickButtons();
@@ -959,7 +1029,6 @@
         function renderAdminModalTransactions(acc) {
             let html = "";
             const txs = acc.transactions || {};
-            // ترتيب الحركات من الأحدث للأقدم
             const sortedTxIds = Object.keys(txs).sort((a, b) => b - a);
             
             if (sortedTxIds.length === 0) {
@@ -1007,17 +1076,14 @@
                 const limit = acc.creditLimit || 50;
                 const projected = calculateAccountBalance(acc) + usd;
                 if (projected > limit) {
-                    if (!confirm(`⚠️ تحذير السقف المالي!
-الرصيد سيصبح: $${projected.toFixed(2)}
-السقف المسموح: $${limit}
-تأكيد إجباري لتسجيل الدين؟`)) return;
+                    if (!confirm(`⚠️ تحذير السقف المالي!\nالرصيد سيصبح: $${projected.toFixed(2)}\nالسقف المسموح: $${limit}\nتأكيد إجباري لتسجيل الدين؟`)) return;
                 }
             }
 
             const txId = Date.now().toString();
             acc.transactions = acc.transactions || {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
-            localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
             
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").style.display = "none";
@@ -1025,15 +1091,13 @@
             
             renderAdminModalTransactions(acc);
             renderAdminDashboard();
-            
-            // التبديل تلقائياً لتبويب السجل بعد الإضافة
             switchTab('tab-history', document.querySelectorAll('.tab-btn')[1]);
         }
 
         function deleteTransaction(txId) {
             if (!confirm("تأكيد حذف الحركة بشكل نهائي؟")) return;
             delete allStoreData.accounts[activeManagingAccountKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
             renderAdminModalTransactions(allStoreData.accounts[activeManagingAccountKey]);
             renderAdminDashboard();
         }
@@ -1051,10 +1115,10 @@
                 group: document.getElementById("acc-group").value, 
                 type: 'customer', isFirstLogin: true, transactions: {} 
             };
-            localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
-            alert("تم إنشاء الحساب. سيطلب من الزبون تغيير كلمة المرور عند أول دخول.");
+            alert("تم إنشاء الحساب. سيطلب من الزبون تغيير كلمة المرور وقراءة السياسة عند أول دخول.");
         }
 
         // دوال الزبون
@@ -1079,8 +1143,16 @@
             document.getElementById("cust-welcome-name").textContent = cust.name;
             
             const balUSD = calculateAccountBalance(cust);
-            
-            // إدارة الحالة الفارغة (Empty State)
+            const limit = cust.creditLimit || 50;
+            const ratio = Math.max(0, (balUSD / limit) * 100);
+
+            // عرض إشعار الإيقاف للزبون في حال تجاوز 100%
+            if (ratio >= 100) {
+                document.getElementById("cust-suspended-banner").classList.remove("hidden");
+            } else {
+                document.getElementById("cust-suspended-banner").classList.add("hidden");
+            }
+
             const hasTransactions = Object.keys(cust.transactions || {}).length > 0;
             if (!hasTransactions) {
                 document.getElementById("cust-empty-state").classList.remove("hidden");
@@ -1092,27 +1164,23 @@
             }
 
             document.getElementById("cust-display-balance").textContent = formatDisplayAmount(balUSD);
-
-            const limit = cust.creditLimit || 50;
-            const ratio = Math.max(0, (balUSD / limit) * 100);
             const bar = document.getElementById("cust-limit-bar");
             bar.style.width = Math.min(ratio, 100) + "%";
             
             let barColorClass = "bg-successGreen";
-            if (ratio > 100) barColorClass = "bg-red-500 pulse-red";
-            else if (ratio > 75) barColorClass = "bg-goldAccent";
+            if (ratio >= 100) barColorClass = "bg-red-500 pulse-red";
+            else if (ratio >= 75) barColorClass = "bg-goldAccent";
             
             bar.className = `${barColorClass} h-full transition-all duration-1000 rounded-full`;
             document.getElementById("cust-limit-status-text").textContent = `${ratio.toFixed(0)}% من الحد المسموح`;
 
-            // التنبيه الذكي وحاسبة السداد
             const smartLabel = document.getElementById("cust-alert-smart");
             const selfCalcBox = document.getElementById("cust-self-calc");
             
             if (balUSD > 0) {
                 let targetDrop = Math.max(0, balUSD - (limit * 0.5));
                 if (targetDrop > 0) {
-                    selfCalcBox.textContent = `للوصول لنطاق الأمان، سدد: ${formatDisplayAmount(targetDrop)}`;
+                    selfCalcBox.textContent = `للوصول للوضع الآمن، سدد: ${formatDisplayAmount(targetDrop)}`;
                     selfCalcBox.classList.remove("hidden");
                     selfCalcBox.style.display = "inline-block";
                 } else {
@@ -1124,11 +1192,10 @@
                 selfCalcBox.style.display = "none";
             }
 
-            if (ratio >= 100) { smartLabel.innerHTML = "<i class='fa-solid fa-triangle-exclamation mr-1'></i> تجاوزت السقف المالي!"; smartLabel.className = "text-[10px] font-bold text-red-400"; }
+            if (ratio >= 100) { smartLabel.innerHTML = "<i class='fa-solid fa-lock mr-1'></i> الحساب معلق!"; smartLabel.className = "text-[10px] font-bold text-red-400"; }
             else if (ratio >= 75) { smartLabel.innerHTML = "<i class='fa-solid fa-bolt mr-1'></i> اقتربت من الحد الأقصى"; smartLabel.className = "text-[10px] font-bold text-goldAccent"; }
             else { smartLabel.textContent = "حسابك في الوضع الآمن"; smartLabel.className = "text-[10px] font-bold text-successGreen"; }
 
-            // التنبيه من الإدارة
             const alertBox = document.getElementById("customer-alert-box");
             if (cust.activeAlert) {
                 document.getElementById("customer-alert-text").textContent = cust.activeAlert;
@@ -1137,11 +1204,8 @@
                 alertBox.classList.add("hidden");
             }
 
-            // توليد بطاقات الحركات للزبون
             let html = "";
             const sortedTxIds = Object.keys(cust.transactions || {}).sort((a, b) => b - a);
-            
-            // تجميع الحركات حسب الشهر (Group by Month)
             let currentMonth = "";
             
             sortedTxIds.forEach(id => {
@@ -1157,7 +1221,6 @@
                 const isDebt = tx.type === 'debt';
                 const txDisplayAmt = formatDisplayAmount(tx.amountUSD);
                 
-                // زر الفاتورة الرقمية (الاستفسار)
                 html += `
                     <div class="tx-card ${isDebt ? 'debt' : 'payment'} cursor-pointer hover:bg-slate-800 transition" onclick="openDigitalReceipt('${id}')">
                         <div class="flex items-center gap-3">
@@ -1179,7 +1242,6 @@
             document.getElementById("customer-transactions-cards").innerHTML = html;
         }
 
-        // إيصال الفاتورة الرقمي للزبون
         function openDigitalReceipt(txId) {
             const cust = allStoreData.accounts[currentUser.dbKey];
             const tx = cust.transactions[txId];
@@ -1199,18 +1261,16 @@
             
             document.getElementById("receipt-note").textContent = tx.note;
             document.getElementById("receipt-amount").textContent = formatDisplayAmount(tx.amountUSD);
-            
             openModal('modal-receipt');
         }
 
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
-        // توليد PDF شامل لجميع حسابات المتجر
         function generateAllAccountsPDF() {
             const btn = document.getElementById("btn-export-pdf");
             const originalText = btn.innerHTML;
@@ -1243,25 +1303,18 @@
             }
 
             if (!hasData) container.innerHTML = "<p style='text-align:center;'>لا توجد حسابات مسجلة.</p>";
-
             const element = document.getElementById('pdf-export-container');
             element.style.display = 'block';
             
-            // تأخير بسيط لضمان تجهيز العناصر بالـ DOM
             setTimeout(() => {
                 html2pdf().set({ margin: 10, filename: `ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => {
-                    element.style.display = 'none'; 
-                    btn.innerHTML = originalText; 
-                    btn.disabled = false;
+                    element.style.display = 'none'; btn.innerHTML = originalText; btn.disabled = false;
                 });
             }, 500);
         }
         
-        function exportCustomerPDF() {
-            window.print();
-        }
+        function exportCustomerPDF() { window.print(); }
 
-        // دوال التقارير والإعدادات
         function renderAdminSettings() {
             document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate;
             const cont = document.getElementById("settings-quick-items-list");
@@ -1272,16 +1325,16 @@
         }
         function addNewQuickItem() {
             const val = document.getElementById("new-quick-item-input").value.trim();
-            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
+            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
         }
         function removeQuickItem(i) {
-            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData)); renderAdminSettings();
+            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData)); renderAdminSettings();
         }
         function saveExchangeRate() {
             const rate = Number(document.getElementById("setting-syp-rate").value);
             if (rate > 0) {
                 allStoreData.settings.sypRate = rate;
-                localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData)); 
+                localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData)); 
                 closeModal('modal-settings'); 
                 renderAdminDashboard();
             }
@@ -1289,58 +1342,40 @@
         function sendBroadcastNotification() {
             const text = document.getElementById("notif-text").value.trim();
             if (!text) return;
-            for (let k in allStoreData.accounts) {
-                allStoreData.accounts[k].activeAlert = text;
-            }
-            localStorage.setItem("moaath_offline_db_v14", JSON.stringify(allStoreData));
-            closeModal('modal-notification');
-            alert("تم إرسال التنبيه الجماعي بنجاح.");
+            for (let k in allStoreData.accounts) { allStoreData.accounts[k].activeAlert = text; }
+            localStorage.setItem("moaath_offline_db_v15", JSON.stringify(allStoreData));
+            closeModal('modal-notification'); alert("تم إرسال التنبيه الجماعي بنجاح.");
         }
         function sendAdminWhatsAppStatement() {
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
-            let msg = `مرحباً بك ${acc.name} في متجر معاذ.
-كشف الحساب المالي الحالي:
-إجمالي الرصيد: $${bal.toFixed(2)}
-سقف الحساب المسموح: $${acc.creditLimit || 50}
-شكراً لالتزامكم.`;
+            let msg = `مرحباً بك ${acc.name} في متجر معاذ.\nكشف الحساب المالي الحالي:\nإجمالي الرصيد: $${bal.toFixed(2)}\nسقف الحساب المسموح: $${acc.creditLimit || 50}\nشكراً لالتزامكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
-        
         function openReportModal() { 
-            let todayDebts = 0, todayPayments = 0;
-            let weekDebts = 0, weekPayments = 0;
-            const now = new Date();
-            const todayStr = now.toDateString();
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(now.getDate() - 7);
-
+            let todayDebts = 0, todayPayments = 0; let weekDebts = 0, weekPayments = 0;
+            const now = new Date(); const todayStr = now.toDateString();
+            const oneWeekAgo = new Date(); oneWeekAgo.setDate(now.getDate() - 7);
             for (let k in allStoreData.accounts) {
                 const txs = allStoreData.accounts[k].transactions || {};
                 for (let id in txs) {
-                    const tx = txs[id];
-                    const txDate = new Date(tx.date);
-                    const amt = Number(tx.amountUSD) || 0;
+                    const tx = txs[id]; const txDate = new Date(tx.date); const amt = Number(tx.amountUSD) || 0;
                     if (txDate.toDateString() === todayStr) { if (tx.type === 'debt') todayDebts += amt; else todayPayments += amt; }
                     if (txDate >= oneWeekAgo) { if (tx.type === 'debt') weekDebts += amt; else weekPayments += amt; }
                 }
             }
-
             document.getElementById("rep-today-debts").textContent = `$${todayDebts.toFixed(2)}`;
             document.getElementById("rep-today-payments").textContent = `$${todayPayments.toFixed(2)}`;
             document.getElementById("rep-week-debts").textContent = `$${weekDebts.toFixed(2)}`;
             document.getElementById("rep-week-payments").textContent = `$${weekPayments.toFixed(2)}`;
             
-            // تحديث الرسوم البيانية المصغرة (Mini-Charts)
-            const tTotal = todayDebts + todayPayments || 1; // لمنع القسمة على صفر
+            const tTotal = todayDebts + todayPayments || 1; 
             document.getElementById("chart-today-debt").style.width = `${(todayDebts/tTotal)*100}%`;
             document.getElementById("chart-today-pay").style.width = `${(todayPayments/tTotal)*100}%`;
-            
             const wTotal = weekDebts + weekPayments || 1;
             document.getElementById("chart-week-debt").style.width = `${(weekDebts/wTotal)*100}%`;
             document.getElementById("chart-week-pay").style.width = `${(weekPayments/wTotal)*100}%`;
-
             openModal('modal-reports'); 
         }
     </script>
