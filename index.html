@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون الآمن</title>
+    <title>متجر معاذ - دفتر الديون الآمن (الإصدار الاحترافي)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -35,22 +35,27 @@
         .mini-chart-bar { display: flex; width: 100%; height: 8px; border-radius: 9999px; overflow: hidden; background-color: #334155; }
         .mini-chart-debt { background-color: #ef4444; height: 100%; transition: width 0.5s ease; }
         .mini-chart-payment { background-color: #10b981; height: 100%; transition: width 0.5s ease; }
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-area { background: white !important; color: black !important; border: none !important; box-shadow: none !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <div id="offline-banner" class="hidden bg-goldAccent text-darkBg text-center text-xs font-bold py-2 px-4" style="position: sticky; top: 0; z-index: 60;">
-        وضع عدم الاتصال (Offline) - البيانات محمية ومحفوظة محلياً.
+    <div id="offline-banner" class="hidden bg-goldAccent text-darkBg text-center text-xs font-bold py-2 px-4 no-print" style="position: sticky; top: 0; z-index: 60;">
+        وضع عدم الاتصال (Offline-First) - البيانات محمية ومحفوظة محلياً.
     </div>
 
     <!-- رأس الصفحة -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-lg" style="position: sticky; top: 0; z-index: 40;">
+    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-lg no-print" style="position: sticky; top: 0; z-index: 40;">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">م</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">دفتر الديون الآمن</p>
+                    <p class="text-[10px] text-slate-400 font-bold">دفتر الديون الآمن (الإصدار الاحترافي)</p>
                 </div>
             </div>
             <div id="user-status-display" class="hidden items-center gap-2 bg-slate-900/50 pr-2 pl-3 py-1.5 rounded-2xl border border-slate-700">
@@ -101,7 +106,7 @@
                 </div>
                 <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-slate-400 font-bold">الإجراءات السريعة</p>
+                        <p class="text-xs text-slate-400 font-bold">الإجراءات والتقارير</p>
                         <div class="flex gap-2 mt-2">
                             <button onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">الإعدادات</button>
                             <button onclick="openReportModal()" class="bg-slate-700 hover:bg-slate-600 text-goldAccent text-xs font-bold px-3 py-1.5 rounded-lg transition">التقارير</button>
@@ -149,6 +154,18 @@
                 </div>
             </div>
 
+            <!-- بطاقة السداد عبر شام كاش -->
+            <div id="shamcash-pay-card" class="bg-slate-800 p-5 rounded-3xl border border-goldAccent/40 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-goldAccent/10 text-goldAccent rounded-2xl flex items-center justify-center text-2xl"><i class="fa-solid fa-wallet"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm text-white">السداد السريع عبر "شام كاش"</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">انسخ المعرف وحول المبلغ المطلوب فوراً</p>
+                    </div>
+                </div>
+                <button type="button" onclick="copyAndOpenShamCash()" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-black px-4 py-2.5 rounded-xl text-xs transition shadow flex items-center gap-2"><i class="fa-solid fa-copy"></i> انسخ وحوّل الآن</button>
+            </div>
+
             <!-- تفاصيل رصيد الزبون -->
             <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
@@ -157,15 +174,44 @@
                 </div>
                 <div class="text-3xl md:text-4xl font-black text-successGreen" id="cust-balance-display">$0.00</div>
                 <div class="text-xs text-slate-400 mt-2" id="cust-syp-display">ما يعادل 0 ل.س</div>
+                
+                <!-- شريط تقدم السقف المالي للزبون -->
+                <div class="mt-4">
+                    <div class="flex justify-between text-xs font-bold text-slate-400 mb-1">
+                        <span>السقف المالي المسموح</span>
+                        <span id="cust-limit-text">$50.00</span>
+                    </div>
+                    <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700">
+                        <div id="cust-limit-bar" class="bg-successGreen h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- سجل المعاملات للزبون -->
             <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-lg">
-                <h4 class="font-black text-slate-200 text-sm mb-3">سجل المعاملات</h4>
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-black text-slate-200 text-sm">سجل المعاملات</h4>
+                    <button onclick="exportCustomerPDF()" class="bg-slate-700 hover:bg-slate-600 text-goldAccent text-xs font-bold px-3 py-1.5 rounded-xl transition"><i class="fa-solid fa-file-pdf ml-1"></i> تحميل الكشف PDF</button>
+                </div>
                 <div id="cust-transactions-list" class="space-y-2"></div>
             </div>
         </section>
     </main>
+
+    <!-- Modal: أول دخول وتعيين كلمة المرور -->
+    <div id="modal-first-password" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <h3 class="font-black text-lg text-goldAccent border-b border-slate-700 pb-3">تعيين كلمة المرور الخاصة بك</h3>
+            <p class="text-xs text-slate-300">نظراً لدخولك لأول مرة، يرجى تعيين كلمة مرور جديدة ومؤمنة لحسابك:</p>
+            <form onsubmit="handleFirstPasswordSetup(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور الجديدة:</label>
+                    <input type="password" id="first-pass-input" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-goldAccent">
+                </div>
+                <button type="submit" class="w-full bg-goldAccent text-darkBg font-bold py-3 rounded-xl text-sm transition shadow">حفظ والبدء</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-add-account')">
@@ -181,7 +227,7 @@
                     <input type="text" id="new-acc-phone" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-goldAccent">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور:</label>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور المؤقتة:</label>
                     <input type="password" id="new-acc-pass" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-goldAccent">
                 </div>
                 <div>
@@ -204,7 +250,7 @@
         </div>
     </div>
 
-    <!-- Modal: إدارة الحساب -->
+    <!-- Modal: إدارة الحساب وتسجيل المعاملات (دين / سداد) -->
     <div id="modal-manage-account" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-manage-account')">
         <div class="modal-content space-y-4">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -215,18 +261,75 @@
                 <button type="button" onclick="sendAdminWhatsAppStatement()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> واتساب</button>
             </div>
             
-            <div class="space-y-3">
+            <!-- نموذج تسجيل معاملة جديدة (دين أو سداد) مع العملات وتعدد الخيارات -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <h4 class="font-bold text-xs text-goldAccent">تسجيل حركة جديدة</h4>
                 <div class="flex gap-2">
-                    <input type="number" id="admin-new-limit-input" placeholder="السقف المالي الجديد..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                    <button type="button" onclick="adminUpdateCreditLimit()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 rounded-xl text-xs font-bold">تحديث السقف</button>
+                    <button type="button" id="btn-type-debt" onclick="setTxType('debt')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-red-600 text-white transition">تسجيل دين (مشتريات)</button>
+                    <button type="button" id="btn-type-pay" onclick="setTxType('payment')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 transition">تسجيل سداد (دفعة)</button>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] text-slate-300 mb-1">اختر العملة وقيمتها:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <select id="tx-currency" onchange="calculateGreenLine()" class="bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none">
+                            <option value="usd">دولار ($)</option>
+                            <option value="syp_new">ليرة جديدة</option>
+                            <option value="syp_old">ليرة قديمة</option>
+                        </select>
+                        <input type="number" id="tx-amount" oninput="calculateGreenLine()" placeholder="المبلغ..." class="col-span-2 bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-goldAccent">
+                    </div>
+                </div>
+
+                <!-- أزرار الأصناف السريعة -->
+                <div>
+                    <label class="block text-[11px] text-successGreen mb-1 font-bold">أزرار الأصناف السريعة:</label>
+                    <div id="quick-items-container" class="flex flex-wrap gap-1.5">
+                        <!-- يتم تعبئتها ديناميكياً -->
+                    </div>
+                </div>
+
+                <div>
+                    <input type="text" id="tx-note" placeholder="ملاحظة أو بيان (مثلاً: مواد تموينية)..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+                </div>
+
+                <!-- الخط الأخضر الرفيع للتحويل اللحظي -->
+                <div id="green-line-display" class="hidden bg-emerald-950/60 border border-emerald-500/50 p-2.5 rounded-xl text-xs text-emerald-300 font-bold flex justify-between items-center">
+                    <span>القيمـة بالدولار المعتمـدة:</span>
+                    <span id="green-line-val" class="font-black text-sm text-successGreen">$0.00</span>
+                </div>
+
+                <button type="button" onclick="submitTransaction()" class="w-full bg-successGreen text-darkBg font-black py-2.5 rounded-xl text-xs transition shadow">اعتماد الحفظ</button>
+            </div>
+
+            <!-- تحديث السقف أو كلمة المرور -->
+            <div class="space-y-3 pt-2 border-t border-slate-700">
+                <div class="flex gap-2">
+                    <input type="number" id="admin-new-limit-input" placeholder="السقف المالي الجديد..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+                    <button type="button" onclick="adminUpdateCreditLimit()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 rounded-xl text-xs font-bold">تحديث السقف</button>
                 </div>
                 <div class="flex gap-2">
-                    <input type="password" id="admin-new-cust-pass" placeholder="كلمة المرور الجديدة..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
-                    <button type="button" onclick="adminResetCustomerPassword()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 rounded-xl text-xs font-bold">تغيير كلمة المرور</button>
+                    <input type="password" id="admin-new-cust-pass" placeholder="كلمة المرور الجديدة..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+                    <button type="button" onclick="adminResetCustomerPassword()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 rounded-xl text-xs font-bold">تغيير المرور</button>
                 </div>
             </div>
 
-            <button type="button" onclick="closeModal('modal-manage-account')" class="w-full bg-slate-700 text-slate-300 py-2.5 rounded-xl text-sm font-bold mt-2">إغلاق</button>
+            <button type="button" onclick="closeModal('modal-manage-account')" class="w-full bg-slate-800 text-slate-300 py-2.5 rounded-xl text-sm font-bold mt-2">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Modal: الإيصال الرقمي (Digital Receipt) للزبون -->
+    <div id="modal-receipt" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-receipt')">
+        <div class="modal-content max-w-sm space-y-4 bg-slate-900 border border-goldAccent/40">
+            <div class="text-center border-b border-slate-800 pb-3">
+                <div class="w-10 h-10 bg-goldAccent text-darkBg rounded-full flex items-center justify-center mx-auto mb-2 font-black">م</div>
+                <h3 class="font-black text-base text-goldAccent">متجر معاذ - إيصال رسمي</h3>
+                <p class="text-[10px] text-slate-400">دفتر الديون الآمن</p>
+            </div>
+            <div id="receipt-details" class="space-y-2 text-xs text-slate-300">
+                <!-- تفاصيل الإيصال -->
+            </div>
+            <button type="button" onclick="closeModal('modal-receipt')" class="w-full bg-slate-800 text-slate-200 py-2 rounded-xl text-xs font-bold border border-slate-700">إغلاق الإيصال</button>
         </div>
     </div>
 
@@ -240,7 +343,7 @@
                     <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">معرف شَام كاش (ShamCash):</label>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">معرف شَام كاش (ShamCash ID):</label>
                     <input type="text" id="setting-shamcash-id" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
                 </div>
             </div>
@@ -249,7 +352,7 @@
         </div>
     </div>
 
-    <!-- Modal: تقارير -->
+    <!-- Modal: تقارير حية -->
     <div id="modal-reports" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-reports')">
         <div class="modal-content max-w-lg space-y-4">
             <h3 class="font-black text-lg text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-chart-pie ml-2"></i>التقارير الحية</h3>
@@ -285,20 +388,23 @@
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="closeModal('modal-reports')" class="w-full bg-slate-700 text-slate-300 py-2.5 rounded-xl text-sm font-bold">إغلاق</button>
+            <div class="flex gap-2">
+                <button type="button" onclick="exportAdminPDFReport()" class="flex-1 bg-goldAccent text-darkBg font-bold py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-file-pdf ml-1"></i> تحميل نسخة PDF شاملة</button>
+                <button type="button" onclick="closeModal('modal-reports')" class="bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold">إغلاق</button>
+            </div>
         </div>
     </div>
 
     <!-- زر عائم للمدير لإضافة حساب -->
-    <button class="fab hidden" onclick="openModal('modal-add-account')" id="admin-fab-main"><i class="fa-solid fa-plus"></i></button>
+    <button class="fab hidden no-print" onclick="openModal('modal-add-account')" id="admin-fab-main"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const DB_KEY = "moaath_offline_db_v21";
+        const DB_KEY = "moaath_offline_db_pro_v22";
         let allStoreData = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            settings: { sypRate: 15000, shamcashId: "SHAM-MOAATH-01", quickItems: ["سكر", "رز", "شاي", "زيت"] },
+            settings: { sypRate: 15000, shamcashId: "SHAM-MOAATH-01", quickItems: ["سكر", "رز", "متة", "زيت", "معلبات", "موالـح"] },
             accounts: {
                 "admin": { name: "المدير (معاذ)", phone: "0911111111", password: "admin", group: "admin", creditLimit: 0, transactions: {} },
-                "cust1": { name: "أحمد محمد", phone: "0922222222", password: "123", group: "regular", creditLimit: 50, transactions: {
+                "cust1": { name: "أحمد محمد", phone: "0922222222", password: "123", group: "regular", creditLimit: 50, requiresPasswordSetup: true, transactions: {
                     "tx1": { type: "debt", amountUSD: 25, note: "مواد تموينية", date: new Date().toISOString() }
                 }}
             }
@@ -306,6 +412,7 @@
 
         let currentUser = JSON.parse(localStorage.getItem("moaath_current_user")) || null;
         let activeManagingAccountKey = null;
+        let currentTxType = 'debt';
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -320,11 +427,33 @@
                 if (acc.phone === phone && acc.password === pass) {
                     currentUser = { key, ...acc };
                     localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
-                    updateUIState();
+                    
+                    if (currentUser.requiresPasswordSetup) {
+                        openModal('modal-first-password');
+                    } else {
+                        updateUIState();
+                    }
                     return;
                 }
             }
             alert("رقم الهاتف أو كلمة المرور غير صحيحة.");
+        }
+
+        function handleFirstPasswordSetup(e) {
+            e.preventDefault();
+            const newPass = document.getElementById("first-pass-input").value.trim();
+            if (newPass && currentUser) {
+                currentUser.password = newPass;
+                currentUser.requiresPasswordSetup = false;
+                allStoreData.accounts[currentUser.key].password = newPass;
+                allStoreData.accounts[currentUser.key].requiresPasswordSetup = false;
+                
+                localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
+                closeModal('modal-first-password');
+                updateUIState();
+                alert("تم تعيين كلمة المرور بنجاح.");
+            }
         }
 
         function logout() {
@@ -453,9 +582,20 @@
                 emptyState.classList.add("hidden");
             }
 
-            if (acc.creditLimit && bal >= acc.creditLimit) {
+            const limit = acc.creditLimit || 50;
+            const limitRatio = Math.min((bal / limit) * 100, 100);
+            document.getElementById("cust-limit-text").textContent = `$${limit.toFixed(2)}`;
+            const limitBar = document.getElementById("cust-limit-bar");
+            limitBar.style.width = `${limitRatio}%`;
+
+            if (limitRatio >= 100) {
+                limitBar.className = "bg-red-500 h-full transition-all duration-500 animate-pulse";
                 suspendedBanner.classList.remove("hidden");
+            } else if (limitRatio >= 75) {
+                limitBar.className = "bg-goldAccent h-full transition-all duration-500";
+                suspendedBanner.classList.add("hidden");
             } else {
+                limitBar.className = "bg-successGreen h-full transition-all duration-500";
                 suspendedBanner.classList.add("hidden");
             }
 
@@ -465,37 +605,17 @@
                 const tx = txs[id];
                 const isDebt = tx.type === 'debt';
                 txHtml += `
-                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
+                    <div onclick='openDigitalReceipt(${JSON.stringify(tx)})' class="bg-slate-900 p-3 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-goldAccent transition">
                         <div>
-                            <span class="text-xs font-bold ${isDebt ? 'text-red-400' : 'text-successGreen'}">${isDebt ? 'تسجيل دين' : 'سداد / دفعة'}</span>
+                            <span class="text-xs font-bold ${isDebt ? 'text-red-400' : 'text-successGreen'}">${isDebt ? 'مشتريات / دين' : 'سداد / دفعة'}</span>
                             <p class="text-[11px] text-slate-300 mt-0.5">${tx.note || 'بدون وصف'}</p>
-                            <span class="text-[9px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')}</span>
+                            <span class="text-[9px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')} (انقر لعرض الإيصال)</span>
                         </div>
                         <span class="font-black text-sm ${isDebt ? 'text-red-400' : 'text-successGreen'}">${isDebt ? '+' : '-'}$${Number(tx.amountUSD).toFixed(2)}</span>
                     </div>
                 `;
             }
             document.getElementById("cust-transactions-list").innerHTML = txHtml || '<p class="text-center text-slate-500 py-3 text-xs">لا توجد معاملات مسجلة بعد</p>';
-        }
-
-        function handleAddNewAccount(e) {
-            e.preventDefault();
-            const name = document.getElementById("new-acc-name").value.trim();
-            const phone = document.getElementById("new-acc-phone").value.trim();
-            const password = document.getElementById("new-acc-pass").value.trim();
-            const group = document.getElementById("new-acc-group").value;
-            const creditLimit = Number(document.getElementById("new-acc-limit").value) || 50;
-
-            const key = 'cust_' + Date.now();
-            allStoreData.accounts[key] = { name, phone, password, group, creditLimit, transactions: {} };
-            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
-
-            closeModal('modal-add-account');
-            document.getElementById("new-acc-name").value = "";
-            document.getElementById("new-acc-phone").value = "";
-            document.getElementById("new-acc-pass").value = "";
-            renderAdminDashboard();
-            alert("تم إضافة الحساب بنجاح.");
         }
 
         function openManageAccountModal(key) {
@@ -506,7 +626,127 @@
             document.getElementById("modal-account-title").textContent = acc.name;
             document.getElementById("modal-account-subtitle").textContent = `رقم الهاتف: ${acc.phone} | السقف الحالي: $${acc.creditLimit || 50}`;
             document.getElementById("admin-new-limit-input").value = acc.creditLimit || 50;
+            
+            // Render quick items buttons
+            renderQuickItemsButtons();
+            setTxType('debt');
             openModal('modal-manage-account');
+        }
+
+        function setTxType(type) {
+            currentTxType = type;
+            const btnDebt = document.getElementById("btn-type-debt");
+            const btnPay = document.getElementById("btn-type-pay");
+            if (type === 'debt') {
+                btnDebt.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-red-600 text-white transition shadow";
+                btnPay.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 transition";
+            } else {
+                btnDebt.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 transition";
+                btnPay.className = "flex-1 py-2 rounded-xl text-xs font-bold bg-successGreen text-darkBg transition shadow";
+            }
+        }
+
+        function renderQuickItemsButtons() {
+            const items = allStoreData.settings.quickItems || [];
+            let html = "";
+            items.forEach(item => {
+                html += `<button type="button" onclick="appendQuickNote('${item}')" class="bg-slate-800 hover:bg-slate-700 text-goldAccent text-[10px] px-2.5 py-1 rounded-lg border border-slate-700 transition">${item}</button>`;
+            });
+            document.getElementById("quick-items-container").innerHTML = html;
+        }
+
+        function appendQuickNote(item) {
+            const noteInput = document.getElementById("tx-note");
+            noteInput.value = noteInput.value ? noteInput.value + "، " + item : item;
+        }
+
+        function calculateGreenLine() {
+            const currency = document.getElementById("tx-currency").value;
+            const rawVal = Number(document.getElementById("tx-amount").value) || 0;
+            const rate = allStoreData.settings.sypRate || 15000;
+            let usdVal = 0;
+
+            if (currency === 'usd') {
+                usdVal = rawVal;
+            } else if (currency === 'syp_new') {
+                usdVal = rawVal / rate;
+            } else if (currency === 'syp_old') {
+                // الليرة القديمة = الجديدة ضرب 100
+                usdVal = (rawVal / 100) / rate;
+            }
+
+            const greenLine = document.getElementById("green-line-display");
+            if (rawVal > 0) {
+                greenLine.classList.remove("hidden");
+                document.getElementById("green-line-val").textContent = `$${usdVal.toFixed(2)}`;
+            } else {
+                greenLine.classList.add("hidden");
+            }
+            return usdVal;
+        }
+
+        function submitTransaction() {
+            const rawVal = Number(document.getElementById("tx-amount").value) || 0;
+            if (rawVal <= 0 || !activeManagingAccountKey) {
+                alert("يرجى إدخال مبلغ صحيح.");
+                return;
+            }
+            const usdVal = calculateGreenLine();
+            const note = document.getElementById("tx-note").value.trim();
+            const txId = 'tx_' + Date.now();
+
+            if (!allStoreData.accounts[activeManagingAccountKey].transactions) {
+                allStoreData.accounts[activeManagingAccountKey].transactions = {};
+            }
+
+            allStoreData.accounts[activeManagingAccountKey].transactions[txId] = {
+                type: currentTxType,
+                amountUSD: usdVal,
+                note: note,
+                date: new Date().toISOString()
+            };
+
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
+            document.getElementById("tx-amount").value = "";
+            document.getElementById("tx-note").value = "";
+            document.getElementById("green-line-display").classList.add("hidden");
+            renderAdminDashboard();
+            alert("تم تسجيل الحركة بنجاح.");
+            closeModal('modal-manage-account');
+        }
+
+        function openDigitalReceipt(tx) {
+            const isDebt = tx.type === 'debt';
+            const html = `
+                <div class="space-y-2 text-slate-200">
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">نوع الحركة:</span>
+                        <span class="font-bold ${isDebt ? 'text-red-400' : 'text-successGreen'}">${isDebt ? 'مشتريات / دين' : 'سداد / دفعة'}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">المبلغ:</span>
+                        <span class="font-black text-sm">$${Number(tx.amountUSD).toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">البيان:</span>
+                        <span>${tx.note || 'بدون ملاحظات'}</span>
+                    </div>
+                    <div class="flex justify-between pb-1">
+                        <span class="text-slate-400">التاريخ والوقت:</span>
+                        <span class="font-mono text-[10px]">${new Date(tx.date).toLocaleString('ar-SY')}</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById("receipt-details").innerHTML = html;
+            openModal('modal-receipt');
+        }
+
+        function copyAndOpenShamCash() {
+            const shamId = allStoreData.settings.shamcashId || "SHAM-MOAATH-01";
+            navigator.clipboard.writeText(shamId).then(() => {
+                alert(`تم نسخ معرف شام كاش (${shamId}) إلى الحافظة بنجاح. سيتم فتح المحفظة الآن.`);
+                window.open("https://shamcash.app", "_blank");
+            });
         }
 
         function adminUpdateCreditLimit() {
@@ -535,8 +775,34 @@
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
-            let msg = `مرحباً بك ${acc.name} في متجر معاذ.\n\nكشف الحساب المالي الحالي:\nالرصيد: $${bal.toFixed(2)}\nالسقف المسموح: $${acc.creditLimit || 50}\n\nشكراً لتعاونكم.`;
+            let msg = `مرحباً بك ${acc.name} في متجر معاذ.
+
+كشف الحساب المالي الحالي:
+الرصيد: $${bal.toFixed(2)}
+السقف المسموح: $${acc.creditLimit || 50}
+
+شكراً لتعاونكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function handleAddNewAccount(e) {
+            e.preventDefault();
+            const name = document.getElementById("new-acc-name").value.trim();
+            const phone = document.getElementById("new-acc-phone").value.trim();
+            const password = document.getElementById("new-acc-pass").value.trim();
+            const group = document.getElementById("new-acc-group").value;
+            const creditLimit = Number(document.getElementById("new-acc-limit").value) || 50;
+
+            const key = 'cust_' + Date.now();
+            allStoreData.accounts[key] = { name, phone, password, group, creditLimit, requiresPasswordSetup: true, transactions: {} };
+            localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
+
+            closeModal('modal-add-account');
+            document.getElementById("new-acc-name").value = "";
+            document.getElementById("new-acc-phone").value = "";
+            document.getElementById("new-acc-pass").value = "";
+            renderAdminDashboard();
+            alert("تم إضافة الحساب بنجاح.");
         }
 
         function saveGeneralSettings() {
@@ -578,6 +844,14 @@
             document.getElementById("chart-week-pay").style.width = `${(weekPayments/wTotal)*100}%`;
 
             openModal('modal-reports');
+        }
+
+        function exportCustomerPDF() {
+            window.print();
+        }
+
+        function exportAdminPDFReport() {
+            window.print();
         }
 
         // Initialize Settings Inputs
