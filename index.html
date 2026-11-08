@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v18 (حل مشكلة إنشاء الحسابات)</title>
+    <title>دفتر ديون متجر معاذ - v20 (شام كاش)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -37,8 +37,10 @@
         .bg-slate-700 { background-color: #334155; }
         .bg-goldAccent { background-color: #f59e0b; }
         .bg-successGreen { background-color: #10b981; }
+        .bg-emerald-600 { background-color: #059669; }
         .bg-emerald-950 { background-color: #022c22; }
         .bg-red-950 { background-color: #450a0a; }
+        .bg-red-600 { background-color: #dc2626; }
         .bg-red-500 { background-color: #ef4444; }
         .bg-red-400 { background-color: #f87171; }
         
@@ -75,13 +77,15 @@
         .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
         .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
         
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
         
         input, select, textarea { outline: none; transition: border-color 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: #f59e0b; }
-        button { cursor: pointer; border: none; font-family: inherit; transition: opacity 0.2s, background-color 0.2s; }
+        button { cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
         button:hover { opacity: 0.9; }
         
         .grid { display: grid; }
@@ -134,8 +138,8 @@
         .mini-chart-debt { background-color: #f87171; height: 100%; transition: width 0.5s ease; }
         .mini-chart-payment { background-color: #10b981; height: 100%; transition: width 0.5s ease; }
         
-        .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; position: relative; overflow: hidden; }
-        .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.1; font-size: 3rem; color: #f59e0b; }
+        .policy-card { background-color: #1e293b; border: 1px solid #f59e0b; border-radius: 1rem; padding: 1.25rem; position: relative; overflow: hidden; box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.2); }
+        .policy-card i.bg-icon { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); font-size: 5rem; color: #f59e0b; opacity: 0.05; }
         
         @media print {
             body { background: white !important; color: black !important; }
@@ -219,35 +223,37 @@
             </div>
         </section>
 
-        <!-- سياسة التعامل (الشروط) -->
-        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-5 relative overflow-hidden">
+        <!-- سياسة التعامل (الشروط المحدثة) -->
+        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 bg-slate-900 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-6 relative overflow-hidden">
             <div class="text-center pb-4 border-b border-slate-700">
-                <h2 class="text-2xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
-                <p class="text-sm text-slate-400">يسعدنا انضمامك إلينا، يرجى قراءة السياسة التنظيمية للحساب.</p>
+                <h2 class="text-2xl font-black text-goldAccent mb-2">سياسة التعامل مع متجر معاذ</h2>
+                <p class="text-sm text-slate-300 font-bold bg-slate-800 py-2 rounded-xl border border-slate-700">يسعدنا انضمامك إلينا، يرجى قراءة السياسة التنظيمية للحساب.</p>
             </div>
             
-            <div class="space-y-3">
+            <div class="space-y-4">
                 <div class="policy-card">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">1. آلية التقييد وحفظ الحقوق</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">لضمان حقوق الطرفين واستقرار الأسعار بعيداً عن تقلبات السوق، يتم تسجيل كافة المسحوبات والديون في النظام بناءً على قيمتها بالدولار الأمريكي.</p>
+                    <i class="fa-solid fa-money-bill-trend-up bg-icon"></i>
+                    <h4 class="font-black text-base text-goldAccent mb-2 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-goldAccent"></div> 1. آلية التقييد وحفظ الحقوق</h4>
+                    <p class="text-sm text-slate-300 leading-relaxed mr-4">لضمان حقوق الطرفين واستقرار الأسعار بعيداً عن تقلبات السوق، يتم تسجيل كافة المسحوبات والديون في النظام بناءً على قيمتها بالدولار الأمريكي.</p>
                 </div>
                 
                 <div class="policy-card">
-                    <i class="fa-solid fa-scale-unbalanced"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">2. سقف الحساب والتنبيهات</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">يتم تخصيص سقف مالي محدد لكل حساب. نرجو التعاون بالسداد عند اقتراب الرصيد من السقف، علماً أن النظام سيرسل تنبيهات تلقائية عند تجاوز 75% من الحد المسموح.</p>
+                    <i class="fa-solid fa-scale-unbalanced bg-icon"></i>
+                    <h4 class="font-black text-base text-goldAccent mb-2 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-goldAccent"></div> 2. سقف الحساب والتنبيهات</h4>
+                    <p class="text-sm text-slate-300 leading-relaxed mr-4">يتم تخصيص سقف مالي محدد لكل حساب. نرجو التعاون بالسداد عند اقتراب الرصيد من السقف، علماً أن النظام سيرسل تنبيهات تلقائية عند تجاوز 75% من الحد المسموح.</p>
                 </div>
 
                 <div class="policy-card">
-                    <i class="fa-solid fa-lock"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">3. سياسة عدم الالتزام (إيقاف الخدمة مؤقتاً)</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">في حال تجاوز السقف المالي المحدد وتأخر السداد بعد استلام التنبيهات، سيقوم النظام تلقائياً بتعليق إمكانية سحب مواد جديدة على الحساب مؤقتاً، إلى حين تسديد الدفعة المطلوبة للعودة لنطاق الأمان.</p>
+                    <i class="fa-solid fa-lock bg-icon"></i>
+                    <h4 class="font-black text-base text-goldAccent mb-2 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-goldAccent"></div> 3. سياسة عدم الالتزام (إيقاف الخدمة مؤقتاً)</h4>
+                    <p class="text-sm text-slate-300 leading-relaxed mr-4">في حال تجاوز السقف المالي المحدد وتأخر السداد بعد استلام التنبيهات، سيقوم النظام تلقائياً بتعليق إمكانية سحب مواد جديدة على الحساب مؤقتاً، إلى حين تسديد الدفعة المطلوبة للعودة لنطاق الأمان.</p>
                 </div>
             </div>
             
             <div class="pt-4 mt-2">
-                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow-[0_4px_14px_0_rgba(245,158,11,0.39)]">قرأت التفاصيل، موافق وانتقل لحسابي</button>
+                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-base shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition hover:scale-[1.02]">
+                    <i class="fa-solid fa-check-circle mr-2"></i> قرأت التفاصيل، موافق وانتقل لحسابي
+                </button>
             </div>
         </section>
 
@@ -271,10 +277,20 @@
                 </div>
             </div>
 
+            <!-- إضافة زر النسخ الاحتياطي في لوحة الإدارة والتنبيه بضرورة النسخ -->
+            <div class="bg-slate-900 border border-goldAccent p-4 rounded-2xl mb-4 flex items-center justify-between shadow-sm">
+                <div>
+                    <h4 class="font-bold text-sm text-goldAccent"><i class="fa-solid fa-shield-halved mr-1"></i> المهام اليومية للإدارة</h4>
+                    <p class="text-xs text-slate-400 mt-1">يجب إنشاء نسخة احتياطية (PDF) لجميع الحسابات يومياً، والاحتفاظ بآخر 5 نسخ.</p>
+                </div>
+                <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf-main" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-3 rounded-xl text-xs transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-lg"></i> إنشاء النسخة الاحتياطية (PDF)
+                </button>
+            </div>
+
             <div class="bg-slate-800 p-2 rounded-2xl border border-slate-700 flex flex-wrap gap-2 items-center justify-between shadow-sm">
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="openReportModal()" class="bg-slate-900 text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs transition border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-chart-pie"></i> التقارير</button>
-                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 hover:text-red-400 font-bold px-4 py-2 rounded-xl text-xs transition border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> تصدير PDF</button>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-slate-300 hover:text-white font-bold px-3 py-2 rounded-xl text-xs transition border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-gear"></i> الإعدادات</button>
@@ -308,7 +324,6 @@
                         <span class="fab-item-label">إرسال تنبيه جماعي</span>
                         <button class="fab-item-btn"><i class="fa-solid fa-bullhorn"></i></button>
                     </div>
-                    <!-- هذا هو الزر المسؤول عن إنشاء حساب الزبون -->
                     <div class="fab-item" onclick="openModal('modal-add-account'); toggleFab();">
                         <span class="fab-item-label">إضافة حساب جديد</span>
                         <button class="fab-item-btn"><i class="fa-solid fa-user-plus"></i></button>
@@ -367,6 +382,22 @@
                             <span id="cust-self-calc" class="text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-900 hidden"></span>
                         </div>
                     </div>
+                </div>
+
+                <!-- زر وبطاقة الدفع عبر شام كاش (للزائن) -->
+                <div id="cust-shamcash-card" class="bg-slate-900 border border-emerald-900/50 p-4 rounded-3xl shadow-lg flex items-center justify-between hidden">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-950 text-emerald-400 rounded-xl flex items-center justify-center text-xl shadow-inner border border-emerald-900/50">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">سداد عبر شام كاش</h4>
+                            <p class="text-[10px] text-slate-400 mt-0.5">انسخ المعرّف وحوّل الدفعة بسهولة</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="payViaShamCash(this)" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> انسخ وحوّل
+                    </button>
                 </div>
 
                 <!-- التنبيه اليدوي من الإدارة -->
@@ -525,21 +556,30 @@
         </div>
     </div>
 
-    <!-- Modal: الإعدادات -->
+    <!-- Modal: الإعدادات (مع إضافة حقل معرف شام كاش) -->
     <div id="modal-settings" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-settings')">
-        <div class="modal-content max-w-md space-y-5">
+        <div class="modal-content max-w-md space-y-4">
             <h3 class="font-black text-lg text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-gear ml-2"></i>الإعدادات</h3>
             
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
                 <label class="block text-xs font-bold text-slate-300 mb-2">سعر الدولار مقابل (الليرة الجديدة):</label>
                 <div class="flex gap-2">
                     <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-goldAccent font-black font-mono">
-                    <button type="button" onclick="saveExchangeRate()" class="bg-slate-700 text-white font-bold px-4 rounded-xl text-xs">تحديث</button>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-2">ملاحظة: الليرة القديمة تُحسب بضرب سعر الجديدة بـ 100 تلقائياً.</p>
+                <p class="text-[10px] text-slate-500 mt-2">الليرة القديمة تُحسب بضرب سعر الجديدة بـ 100 تلقائياً.</p>
+            </div>
+            
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
+                <label class="block text-xs font-bold text-emerald-400 mb-2">معرّف محفظة (شام كاش):</label>
+                <div class="flex flex-col gap-2">
+                    <input type="text" id="setting-shamcash-id" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-emerald-400 font-mono" placeholder="الصق معرّف المحفظة هنا...">
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2">سيظهر هذا المعرّف للزبائن ليتمكنوا من تحويل الدفعات إليك.</p>
             </div>
 
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
+            <button type="button" onclick="saveGeneralSettings()" class="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl text-sm transition shadow">حفظ الإعدادات</button>
+
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 mt-4">
                 <label class="block text-xs font-bold text-successGreen mb-3">أزرار الأصناف السريعة (الفواتير):</label>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="new-quick-item-input" placeholder="اسم صنف جديد..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100">
@@ -671,10 +711,11 @@
         let pendingCustomerKey = null;
 
         // مفتاح جديد لحفظ البيانات لضمان عدم تعارضها مع الإصدارات السابقة
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v18")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v20")) || {
             accounts: {},
             settings: { 
                 sypRate: 15000, 
+                shamcashId: "da3e13cd8a2ef2af282445e148df9599", // القيمة الافتراضية
                 quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] 
             }
         };
@@ -824,7 +865,7 @@
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
                 
                 allStoreData.accounts[pendingCustomerKey].policyAccepted = false;
-                localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -842,7 +883,7 @@
         function acceptPolicy() {
             if (currentUser && currentUser.dbKey && allStoreData.accounts[currentUser.dbKey]) {
                 allStoreData.accounts[currentUser.dbKey].policyAccepted = true;
-                localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
                 
                 currentUser.requiresPolicyAcceptance = false;
                 localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
@@ -854,7 +895,7 @@
             const newPass = document.getElementById("admin-new-cust-pass").value.trim();
             if (newPass && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تغيير كلمة مرور الزبون بنجاح.");
             } else {
@@ -866,7 +907,7 @@
             const newLimit = Number(document.getElementById("admin-new-limit-input").value);
             if (newLimit > 0 && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `سقف الحساب المحدث: $${newLimit}`;
                 renderAdminDashboard();
@@ -1094,7 +1135,7 @@
             const txId = Date.now().toString();
             acc.transactions = acc.transactions || {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
-            localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
             
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").style.display = "none";
@@ -1108,7 +1149,7 @@
         function deleteTransaction(txId) {
             if (!confirm("تأكيد حذف الحركة بشكل نهائي؟")) return;
             delete allStoreData.accounts[activeManagingAccountKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
             renderAdminModalTransactions(allStoreData.accounts[activeManagingAccountKey]);
             renderAdminDashboard();
         }
@@ -1137,7 +1178,7 @@
                 type: 'customer', isFirstLogin: true, transactions: {} 
             };
             
-            localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             
             document.getElementById("form-create-account").reset();
@@ -1146,7 +1187,7 @@
             alert("تم إنشاء الحساب. سيطلب من الزبون تغيير كلمة المرور وقراءة السياسة عند أول دخول.");
         }
 
-        // دوال الزبون
+        // دوال الزبون و شام كاش
         function setCustomerCurrency(curr) {
             customerDisplayCurrency = curr;
             document.getElementById("btn-curr-usd").className = curr === 'USD' ? "px-3 py-1.5 rounded-xl text-xs font-black transition bg-goldAccent text-darkBg shadow" : "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-slate-200";
@@ -1160,6 +1201,29 @@
             if (customerDisplayCurrency === 'SYP_NEW') return `${(amountUSD * rate).toLocaleString()} ل.س`;
             if (customerDisplayCurrency === 'SYP_OLD') return `${(amountUSD * rate * 100).toLocaleString()} ل.س`;
             return `$${amountUSD.toFixed(2)}`;
+        }
+        
+        function payViaShamCash(btnElement) {
+            const shamId = allStoreData.settings.shamcashId;
+            if (!shamId) {
+                alert("لم يتم تعيين معرف شام كاش من قبل الإدارة بعد.");
+                return;
+            }
+
+            navigator.clipboard.writeText(shamId).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                btnElement.innerHTML = `<i class="fa-solid fa-check"></i> تم النسخ`;
+                btnElement.classList.replace('bg-emerald-600', 'bg-successGreen');
+                
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.replace('bg-successGreen', 'bg-emerald-600');
+                    // محاولة فتح التطبيق (إذا لم يكن مثبتًا سيتم تجاهل الأمر)
+                    window.location.href = "intent://#Intent;scheme=shamcash;end;";
+                }, 1500);
+            }).catch(err => {
+                alert("تعذر النسخ التلقائي. المعرّف هو: " + shamId);
+            });
         }
 
         function renderCustomerPanel() {
@@ -1202,6 +1266,11 @@
             const selfCalcBox = document.getElementById("cust-self-calc");
             
             if (balUSD > 0) {
+                // إظهار زر شام كاش إذا كان هنالك دين
+                if(allStoreData.settings.shamcashId) {
+                    document.getElementById("cust-shamcash-card").classList.remove("hidden");
+                }
+                
                 let targetDrop = Math.max(0, balUSD - (limit * 0.5));
                 if (targetDrop > 0) {
                     selfCalcBox.textContent = `للوصول للوضع الآمن، سدد: ${formatDisplayAmount(targetDrop)}`;
@@ -1212,6 +1281,7 @@
                     selfCalcBox.style.display = "none";
                 }
             } else {
+                document.getElementById("cust-shamcash-card").classList.add("hidden");
                 selfCalcBox.classList.add("hidden");
                 selfCalcBox.style.display = "none";
             }
@@ -1291,15 +1361,22 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
         function generateAllAccountsPDF() {
             const btn = document.getElementById("btn-export-pdf");
+            const btnMain = document.getElementById("btn-export-pdf-main"); // الزر الأساسي في لوحة الإدارة
+            
             const originalText = btn.innerHTML;
+            const originalTextMain = btnMain ? btnMain.innerHTML : '';
+            
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري التحضير...`; 
+            if(btnMain) btnMain.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-lg"></i> جاري إنشاء النسخة...`;
+            
             btn.disabled = true;
+            if(btnMain) btnMain.disabled = true;
             
             document.getElementById("pdf-export-date").textContent = `تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
             const container = document.getElementById("pdf-export-content");
@@ -1332,7 +1409,11 @@
             
             setTimeout(() => {
                 html2pdf().set({ margin: 10, filename: `ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => {
-                    element.style.display = 'none'; btn.innerHTML = originalText; btn.disabled = false;
+                    element.style.display = 'none'; 
+                    btn.innerHTML = originalText; 
+                    if(btnMain) btnMain.innerHTML = originalTextMain;
+                    btn.disabled = false;
+                    if(btnMain) btnMain.disabled = false;
                 });
             }, 500);
         }
@@ -1341,46 +1422,63 @@
 
         function renderAdminSettings() {
             document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate;
+            document.getElementById("setting-shamcash-id").value = allStoreData.settings.shamcashId || "";
+            
             const cont = document.getElementById("settings-quick-items-list");
             cont.innerHTML = "";
             allStoreData.settings.quickItems.forEach((item, index) => {
                 cont.innerHTML += `<span class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 border border-slate-700 shadow-sm">${item} <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-white bg-red-950/50 w-5 h-5 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-xmark text-[10px]"></i></button></span>`;
             });
         }
+        
         function addNewQuickItem() {
             const val = document.getElementById("new-quick-item-input").value.trim();
-            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
+            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
         }
+        
         function removeQuickItem(i) {
-            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData)); renderAdminSettings();
+            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); renderAdminSettings();
         }
-        function saveExchangeRate() {
+        
+        function saveGeneralSettings() {
             const rate = Number(document.getElementById("setting-syp-rate").value);
+            const shamId = document.getElementById("setting-shamcash-id").value.trim();
+            
             if (rate > 0) {
                 allStoreData.settings.sypRate = rate;
-                localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData)); 
+                allStoreData.settings.shamcashId = shamId;
+                
+                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); 
                 closeModal('modal-settings'); 
                 renderAdminDashboard();
+                alert("تم حفظ الإعدادات بنجاح.");
             }
         }
+        
         function sendBroadcastNotification() {
             const text = document.getElementById("notif-text").value.trim();
             if (!text) return;
             for (let k in allStoreData.accounts) { allStoreData.accounts[k].activeAlert = text; }
-            localStorage.setItem("moaath_offline_db_v18", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
             closeModal('modal-notification'); alert("تم إرسال التنبيه الجماعي بنجاح.");
         }
+        
+        // التعديل هنا: تحديث رسالة الواتساب لتكون أكثر وضوحاً وتنظيماً
         function sendAdminWhatsAppStatement() {
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
             let msg = `مرحباً بك ${acc.name} في متجر معاذ.
+
 كشف الحساب المالي الحالي:
-إجمالي الرصيد: $${bal.toFixed(2)}
+حسابك الحالي : $${bal.toFixed(2)}
+-----------
 سقف الحساب المسموح: $${acc.creditLimit || 50}
+
 شكراً لالتزامكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
+        
         function openReportModal() { 
             let todayDebts = 0, todayPayments = 0; let weekDebts = 0, weekPayments = 0;
             const now = new Date(); const todayStr = now.toDateString();
