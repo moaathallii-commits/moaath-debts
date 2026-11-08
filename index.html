@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v16 (تسجيل الخروج)</title>
+    <title>دفتر ديون متجر معاذ - v16 (تسجيل الخروج والسياسة)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -68,13 +68,14 @@
         .rounded-3xl { border-radius: 1.5rem; }
         .rounded-full { border-radius: 9999px; }
         
-        .font-bold { font-weight: 700; } .font-black { font-weight: 900; }
+        .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; } .font-black { font-weight: 900; }
         .text-xs { font-size: 0.75rem; line-height: 1rem; }
         .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
         .text-base { font-size: 1rem; line-height: 1.5rem; }
         .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
         .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
         
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
@@ -165,11 +166,11 @@
                 <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">دفتر الديون</p>
+                    <p class="text-[10px] text-slate-400 font-bold">دفتر الديون الآمن</p>
                 </div>
             </div>
             <!-- زر الخروج يظهر هنا بشكل دائم إذا كان هناك مستخدم مسجل -->
-            <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/50 pr-2 pl-3 py-1.5 rounded-2xl border border-slate-700">
+            <div id="user-status-display" class="hidden items-center gap-2 bg-slate-900/50 pr-2 pl-3 py-1.5 rounded-2xl border border-slate-700">
                 <div class="avatar avatar-gold" id="header-avatar">م</div>
                 <span id="current-user-badge" class="font-bold text-slate-200 text-xs hidden md:block"></span>
                 <button type="button" onclick="logout()" class="text-white text-xs font-bold bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-xl transition shadow shadow-red-500/50 flex items-center gap-1"><i class="fa-solid fa-power-off"></i> خروج</button>
@@ -616,7 +617,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة للزبون: إيصال الفاتورة الرقمي (Digital Receipt) -->
+    <!-- نافذة منبثقة للزبون: إيصال الفاتورة الرقمي -->
     <div id="modal-receipt" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-receipt')">
         <div class="modal-content max-w-xs bg-white text-darkBg p-0 overflow-hidden" style="border-radius: 8px; border: none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
             <div style="height: 10px; background-image: radial-gradient(#fff 50%, transparent 50%); background-size: 20px 20px; background-position: -10px -10px; margin-top: -5px; transform: rotate(180deg);"></div>
@@ -648,7 +649,7 @@
         </div>
     </div>
 
-    <!-- حاوية مخفية لتوليد تقرير PDF الشامل للزبائن -->
+    <!-- حاوية مخفية لتوليد تقرير PDF -->
     <div id="pdf-export-container">
         <div class="pdf-header">
             <h2>دفتر ديون متجر معاذ - كشف شامل</h2>
@@ -656,7 +657,6 @@
         </div>
         <div id="pdf-export-content"></div>
     </div>
-
 
     <script>
         const ADMIN_PHONE = "0965461504";
@@ -687,7 +687,6 @@
             updateUIState();
         });
 
-        // دوال التحكم بالواجهة الأساسية والتبويبات
         function updateUIState() {
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("setup-password-section").classList.add("hidden");
@@ -1075,7 +1074,10 @@
                 const limit = acc.creditLimit || 50;
                 const projected = calculateAccountBalance(acc) + usd;
                 if (projected > limit) {
-                    if (!confirm(`⚠️ تحذير السقف المالي!\nالرصيد سيصبح: $${projected.toFixed(2)}\nالسقف المسموح: $${limit}\nتأكيد إجباري لتسجيل الدين؟`)) return;
+                    if (!confirm(`⚠️ تحذير السقف المالي!
+الرصيد سيصبح: $${projected.toFixed(2)}
+السقف المسموح: $${limit}
+تأكيد إجباري لتسجيل الدين؟`)) return;
                 }
             }
 
@@ -1348,7 +1350,11 @@
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
-            let msg = `مرحباً بك ${acc.name} في متجر معاذ.\nكشف الحساب المالي الحالي:\nإجمالي الرصيد: $${bal.toFixed(2)}\nسقف الحساب المسموح: $${acc.creditLimit || 50}\nشكراً لالتزامكم.`;
+            let msg = `مرحباً بك ${acc.name} في متجر معاذ.
+كشف الحساب المالي الحالي:
+إجمالي الرصيد: $${bal.toFixed(2)}
+سقف الحساب المسموح: $${acc.creditLimit || 50}
+شكراً لالتزامكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
         function openReportModal() { 
