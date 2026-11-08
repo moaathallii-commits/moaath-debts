@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v20 (شام كاش)</title>
+    <title>دفتر ديون متجر معاذ - v21 (السياسة + شام كاش)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -63,6 +63,7 @@
         .border-slate-600 { border-color: #475569; }
         .border-goldAccent { border-color: #f59e0b; }
         .border-successGreen { border-color: #10b981; }
+        .border-emerald-900 { border-color: #064e3b; }
         
         .rounded-lg { border-radius: 0.5rem; }
         .rounded-xl { border-radius: 0.75rem; }
@@ -527,11 +528,10 @@
         </div>
     </div>
 
-    <!-- Modal: إضافة حساب جديد (تم إصلاح النموذج هنا) -->
+    <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="modal-overlay" onclick="if(event.target===this) closeModal('modal-add-account')">
         <div class="modal-content max-w-md space-y-4">
             <h3 class="font-black text-lg text-goldAccent border-b border-slate-700 pb-3">إضافة زبون جديد</h3>
-            <!-- أضفت type="button" لزر الحفظ لمنع إعادة تحميل الصفحة الافتراضية، أو يمكنك ترك form واستخدام onsubmit مع e.preventDefault() -->
             <form id="form-create-account" onsubmit="handleCreateAccount(event)" class="space-y-3 pt-2">
                 <input type="text" id="acc-name" required placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-slate-100 font-bold">
                 <input type="tel" id="acc-phone" required placeholder="رقم الهاتف (للتسجيل)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-slate-100 font-mono">
@@ -549,7 +549,6 @@
                 </div>
                 <div class="flex gap-2 pt-4">
                     <button type="button" onclick="closeModal('modal-add-account')" class="flex-1 bg-slate-800 text-slate-300 py-3 rounded-2xl text-sm font-bold border border-slate-700">إلغاء</button>
-                    <!-- الزر هنا سيفعل دالة handleCreateAccount عند الـ Submit -->
                     <button type="submit" class="flex-[2] bg-goldAccent text-darkBg font-black py-3 rounded-2xl text-sm shadow-[0_4px_14px_0_rgba(245,158,11,0.39)]">إنشاء الحساب</button>
                 </div>
             </form>
@@ -710,18 +709,23 @@
         let customerDisplayCurrency = 'USD';
         let pendingCustomerKey = null;
 
-        // مفتاح جديد لحفظ البيانات لضمان عدم تعارضها مع الإصدارات السابقة
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v20")) || {
+        // استخدمنا نفس المفتاح القديم (v19) لاستعادة بياناتك وحساباتك التي فقدتها
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v19")) || {
             accounts: {},
             settings: { 
                 sypRate: 15000, 
-                shamcashId: "da3e13cd8a2ef2af282445e148df9599", // القيمة الافتراضية
+                shamcashId: "da3e13cd8a2ef2af282445e148df9599", // تم إضافة شام كاش
                 quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] 
             }
         };
 
         if (!allStoreData.settings.quickItems) {
             allStoreData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'];
+        }
+        
+        // التحقق من وجود معرف شام كاش وتعيينه إذا لم يكن موجوداً لضمان ظهوره للزبائن
+        if (allStoreData.settings.shamcashId === undefined) {
+            allStoreData.settings.shamcashId = "da3e13cd8a2ef2af282445e148df9599";
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -865,7 +869,7 @@
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
                 
                 allStoreData.accounts[pendingCustomerKey].policyAccepted = false;
-                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -883,7 +887,7 @@
         function acceptPolicy() {
             if (currentUser && currentUser.dbKey && allStoreData.accounts[currentUser.dbKey]) {
                 allStoreData.accounts[currentUser.dbKey].policyAccepted = true;
-                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
                 
                 currentUser.requiresPolicyAcceptance = false;
                 localStorage.setItem("moaath_current_user", JSON.stringify(currentUser));
@@ -895,7 +899,7 @@
             const newPass = document.getElementById("admin-new-cust-pass").value.trim();
             if (newPass && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تغيير كلمة مرور الزبون بنجاح.");
             } else {
@@ -907,7 +911,7 @@
             const newLimit = Number(document.getElementById("admin-new-limit-input").value);
             if (newLimit > 0 && activeManagingAccountKey) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `سقف الحساب المحدث: $${newLimit}`;
                 renderAdminDashboard();
@@ -1135,7 +1139,7 @@
             const txId = Date.now().toString();
             acc.transactions = acc.transactions || {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
-            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
             
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").style.display = "none";
@@ -1149,7 +1153,7 @@
         function deleteTransaction(txId) {
             if (!confirm("تأكيد حذف الحركة بشكل نهائي؟")) return;
             delete allStoreData.accounts[activeManagingAccountKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
             renderAdminModalTransactions(allStoreData.accounts[activeManagingAccountKey]);
             renderAdminDashboard();
         }
@@ -1178,7 +1182,7 @@
                 type: 'customer', isFirstLogin: true, transactions: {} 
             };
             
-            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             
             document.getElementById("form-create-account").reset();
@@ -1218,7 +1222,6 @@
                 setTimeout(() => {
                     btnElement.innerHTML = originalHTML;
                     btnElement.classList.replace('bg-successGreen', 'bg-emerald-600');
-                    // محاولة فتح التطبيق (إذا لم يكن مثبتًا سيتم تجاهل الأمر)
                     window.location.href = "intent://#Intent;scheme=shamcash;end;";
                 }, 1500);
             }).catch(err => {
@@ -1266,7 +1269,6 @@
             const selfCalcBox = document.getElementById("cust-self-calc");
             
             if (balUSD > 0) {
-                // إظهار زر شام كاش إذا كان هنالك دين
                 if(allStoreData.settings.shamcashId) {
                     document.getElementById("cust-shamcash-card").classList.remove("hidden");
                 }
@@ -1361,13 +1363,13 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
         function generateAllAccountsPDF() {
             const btn = document.getElementById("btn-export-pdf");
-            const btnMain = document.getElementById("btn-export-pdf-main"); // الزر الأساسي في لوحة الإدارة
+            const btnMain = document.getElementById("btn-export-pdf-main"); 
             
             const originalText = btn.innerHTML;
             const originalTextMain = btnMain ? btnMain.innerHTML : '';
@@ -1433,11 +1435,11 @@
         
         function addNewQuickItem() {
             const val = document.getElementById("new-quick-item-input").value.trim();
-            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
+            if (val) { allStoreData.settings.quickItems.push(val); localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); renderAdminSettings(); document.getElementById("new-quick-item-input").value = ""; }
         }
         
         function removeQuickItem(i) {
-            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); renderAdminSettings();
+            allStoreData.settings.quickItems.splice(i, 1); localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); renderAdminSettings();
         }
         
         function saveGeneralSettings() {
@@ -1448,7 +1450,7 @@
                 allStoreData.settings.sypRate = rate;
                 allStoreData.settings.shamcashId = shamId;
                 
-                localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData)); 
+                localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData)); 
                 closeModal('modal-settings'); 
                 renderAdminDashboard();
                 alert("تم حفظ الإعدادات بنجاح.");
@@ -1459,11 +1461,10 @@
             const text = document.getElementById("notif-text").value.trim();
             if (!text) return;
             for (let k in allStoreData.accounts) { allStoreData.accounts[k].activeAlert = text; }
-            localStorage.setItem("moaath_offline_db_v20", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v19", JSON.stringify(allStoreData));
             closeModal('modal-notification'); alert("تم إرسال التنبيه الجماعي بنجاح.");
         }
         
-        // التعديل هنا: تحديث رسالة الواتساب لتكون أكثر وضوحاً وتنظيماً
         function sendAdminWhatsAppStatement() {
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
