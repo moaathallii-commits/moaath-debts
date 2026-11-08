@@ -399,11 +399,11 @@
     <button class="fab hidden no-print" onclick="openModal('modal-add-account')" id="admin-fab-main"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const DB_KEY = "moaath_offline_db_pro_v22";
+        const DB_KEY = "moaath_offline_db_pro_v23";
         let allStoreData = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            settings: { sypRate: 15000, shamcashId: "SHAM-MOAATH-01", quickItems: ["سكر", "رز", "متة", "زيت", "معلبات", "موالـح"] },
+            settings: { sypRate: 15000, shamcashId: "da3e13cd8a2ef2af282445e148df9599", quickItems: ["سكر", "رز", "متة", "زيت", "معلبات", "موالـح"] },
             accounts: {
-                "admin": { name: "المدير (معاذ)", phone: "0911111111", password: "admin", group: "admin", creditLimit: 0, transactions: {} },
+                "admin": { name: "معاذ العلي", phone: "0965461504", password: "MHA@1997//MOAATHS", group: "admin", creditLimit: 0, transactions: {} },
                 "cust1": { name: "أحمد محمد", phone: "0922222222", password: "123", group: "regular", creditLimit: 50, requiresPasswordSetup: true, transactions: {
                     "tx1": { type: "debt", amountUSD: 25, note: "مواد تموينية", date: new Date().toISOString() }
                 }}
@@ -742,7 +742,7 @@
         }
 
         function copyAndOpenShamCash() {
-            const shamId = allStoreData.settings.shamcashId || "SHAM-MOAATH-01";
+            const shamId = allStoreData.settings.shamcashId || "da3e13cd8a2ef2af282445e148df9599";
             navigator.clipboard.writeText(shamId).then(() => {
                 alert(`تم نسخ معرف شام كاش (${shamId}) إلى الحافظة بنجاح. سيتم فتح المحفظة الآن.`);
                 window.open("https://shamcash.app", "_blank");
