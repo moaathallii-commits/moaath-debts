@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي المتكامل v11</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتكامل v12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -54,7 +54,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار الآمن v11 (إدارة السقف المالي)
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار v12 (أزرار الفواتير السريعة)
                     </p>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                         <i class="fa-solid fa-bullhorn"></i> إرسال تنبيه جماعي
                     </button>
                     <button type="button" onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 border border-slate-600">
-                        <i class="fa-solid fa-gear"></i> تحديد سعر الصرف
+                        <i class="fa-solid fa-gear"></i> الإعدادات والتخصيص
                     </button>
                 </div>
             </div>
@@ -243,7 +243,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة الحسابات، تغيير السقف، وتغيير كلمة المرور -->
+    <!-- Modal: إدارة المعاملات -->
     <div id="modal-manage-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-xl rounded-3xl p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -259,7 +259,7 @@
                 <span class="text-xs text-slate-300"><i class="fa-solid fa-sliders text-goldAccent ml-1"></i> تغيير حد سقف الديون ($):</span>
                 <div class="flex gap-2">
                     <input type="number" step="any" id="admin-new-limit-input" placeholder="السقف الجديد" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 w-28">
-                    <button type="button" onclick="adminUpdateCreditLimit()" class="bg-goldAccent text-darkBg font-bold px-3 py-1.5 rounded-xl text-xs">تحديث السقف</button>
+                    <button type="button" onclick="adminUpdateCreditLimit()" class="bg-goldAccent text-darkBg font-bold px-3 py-1.5 rounded-xl text-xs">تحديث</button>
                 </div>
             </div>
 
@@ -300,9 +300,13 @@
                     </div>
                 </div>
 
+                <!-- أزرار الأصناف السريعة المخصصة -->
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">البيان أو التفاصيل:</label>
-                    <input type="text" id="trans-note" required placeholder="مثال: فاتورة مواد تموينية / متة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                    <label class="block text-xs text-slate-400 mb-1">أصناف الفاتورة السريعة:</label>
+                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5 mb-2">
+                        <!-- الأزرار ستظهر هنا ديناميكياً -->
+                    </div>
+                    <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل (يمكنك تعديل المكتوب)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
                 </div>
 
                 <div class="flex justify-end pt-2 gap-2">
@@ -356,6 +360,34 @@
         </div>
     </div>
 
+    <!-- Modal: الإعدادات العامة (العملات والأزرار السريعة) -->
+    <div id="modal-settings" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-6 space-y-5">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="font-bold text-base text-goldAccent">الإعدادات والتخصيص</h3>
+                <button type="button" onclick="closeModal('modal-settings')" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div>
+                <label class="block text-xs text-slate-300 mb-1">سعر 1 دولار مقابل (ليرة سورية جديدة):</label>
+                <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-goldAccent font-bold">
+                <p class="text-[11px] text-slate-400 mt-1">المعامل الثابت: كل ليرة جديدة = 100 ليرة قديمة.</p>
+                <button type="button" onclick="saveExchangeRate()" class="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-goldAccent font-bold py-2 rounded-xl text-xs border border-slate-600 transition">تحديث سعر الصرف فقط</button>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4">
+                <label class="block text-xs font-bold text-emerald-400 mb-2">أزرار الأصناف السريعة للفواتير:</label>
+                <div class="flex gap-2 mb-3">
+                    <input type="text" id="new-quick-item-input" placeholder="اسم الصنف الجديد..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
+                    <button type="button" onclick="addNewQuickItem()" class="bg-successGreen hover:bg-emerald-600 text-darkBg px-4 rounded-xl text-sm font-bold transition"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5">
+                    <!-- الأزرار قابلة للحذف -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: تنبيه جماعي -->
     <div id="modal-notification" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-6 space-y-4">
@@ -393,24 +425,7 @@
         </div>
     </div>
 
-    <!-- Modal: سعر الصرف -->
-    <div id="modal-settings" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-3xl p-6 space-y-4">
-            <h3 class="font-bold text-base text-goldAccent">سعر الصرف المرجعي للدولار</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs text-slate-300 mb-1">سعر 1 دولار مقابل (ليرة سورية جديدة):</label>
-                    <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-sm text-goldAccent font-bold">
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-2xl text-xs">إلغاء</button>
-                    <button type="button" onclick="saveExchangeRate()" class="bg-successGreen text-darkBg font-bold px-5 py-2 rounded-2xl text-xs">حفظ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- البرمجة المنطقية الأمنية والتشغيلية -->
+    <!-- البرمجة المنطقية والتشغيلية -->
     <script>
         const ADMIN_PHONE = "0965461504";
         const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
@@ -420,10 +435,18 @@
         let customerDisplayCurrency = 'USD';
         let pendingCustomerKey = null;
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v11")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v12")) || {
             accounts: {},
-            settings: { sypRate: 15000 }
+            settings: { 
+                sypRate: 15000, 
+                quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] 
+            }
         };
+
+        // تأمين وجود قائمة الأزرار السريعة برمجياً
+        if (!allStoreData.settings.quickItems) {
+            allStoreData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'];
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
@@ -535,7 +558,7 @@
             if (pendingCustomerKey && allStoreData.accounts[pendingCustomerKey]) {
                 allStoreData.accounts[pendingCustomerKey].password = p1;
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
-                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -558,13 +581,12 @@
             }
             if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تحديث كلمة مرور الزبون بنجاح من قبل الإدارة!");
             }
         }
 
-        // تحديث سقف الحساب المالي من قبل الإدارة
         function adminUpdateCreditLimit() {
             const newLimit = Number(document.getElementById("admin-new-limit-input").value);
             if (!newLimit || newLimit <= 0) {
@@ -573,7 +595,7 @@
             }
             if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${allStoreData.accounts[activeManagingAccountKey].phone} | السقف المالي: $${newLimit}`;
                 renderAdminDashboard();
@@ -672,6 +694,29 @@
             }
         }
 
+        // إدراج أزرار الفواتير السريعة في نافذة إضافة دين
+        function renderTransactionQuickButtons() {
+            const quickItems = allStoreData.settings.quickItems || [];
+            const container = document.getElementById("trans-quick-buttons-container");
+            container.innerHTML = "";
+            quickItems.forEach(item => {
+                container.innerHTML += `
+                    <button type="button" onclick="appendQuickItemToNote('${item}')" class="bg-slate-700 hover:bg-slate-600 text-goldAccent px-2 py-1 rounded-lg text-xs transition border border-slate-600">
+                        ${item}
+                    </button>
+                `;
+            });
+        }
+
+        function appendQuickItemToNote(item) {
+            const noteInput = document.getElementById("trans-note");
+            if (noteInput.value) {
+                noteInput.value += ` + ${item}`;
+            } else {
+                noteInput.value = item;
+            }
+        }
+
         function openManageAccountModal(key) {
             activeManagingAccountKey = key;
             const acc = allStoreData.accounts[key];
@@ -680,9 +725,12 @@
             document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${acc.phone} | السقف المالي: $${acc.creditLimit || 50}`;
             document.getElementById("trans-target-id").value = key;
             document.getElementById("trans-amount").value = "";
+            document.getElementById("trans-note").value = "";
             document.getElementById("admin-new-cust-pass").value = "";
             document.getElementById("admin-new-limit-input").value = acc.creditLimit || 50;
             document.getElementById("live-usd-preview").classList.add("hidden");
+            
+            renderTransactionQuickButtons();
             renderModalTransactions(acc);
             openModal('modal-manage-account');
         }
@@ -740,7 +788,7 @@
                 date: new Date().toISOString()
             };
 
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
@@ -750,7 +798,7 @@
         function deleteTransaction(accKey, txId) {
             if (!confirm("حذف هذه العملية؟")) return;
             delete allStoreData.accounts[accKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             renderModalTransactions(allStoreData.accounts[accKey]);
             renderAdminDashboard();
         }
@@ -816,7 +864,7 @@
                 transactions: { [id]: { type: 'debt', amountUSD: 0, rawAmount: 0, currency: 'USD', note: 'فتح حساب', date: new Date().toISOString() } }
             };
 
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
             alert("تم إنشاء حساب الزبون بنجاح!");
@@ -825,7 +873,7 @@
         function deleteAcc(key) {
             if (!confirm("حذف هذا الحساب نهائياً؟")) return;
             delete allStoreData.accounts[key];
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             renderAdminDashboard();
         }
 
@@ -835,9 +883,42 @@
             for (let k in allStoreData.accounts) {
                 allStoreData.accounts[k].activeAlert = text;
             }
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             closeModal('modal-notification');
             alert("تم إرسال التنبيه الفوري لجميع الحسابات!");
+        }
+
+        // إدارة إعدادات الأزرار السريعة
+        function renderAdminSettings() {
+            document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate || 15000;
+            const quickItems = allStoreData.settings.quickItems || [];
+            const container = document.getElementById("settings-quick-items-list");
+            container.innerHTML = "";
+            quickItems.forEach((item, index) => {
+                container.innerHTML += `
+                    <span class="bg-slate-700 text-slate-200 px-2 py-1 rounded-lg text-[11px] flex items-center gap-1 shadow">
+                        ${item}
+                        <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-red-300 mr-2 border-r border-slate-500 pr-2"><i class="fa-solid fa-xmark"></i></button>
+                    </span>
+                `;
+            });
+        }
+
+        function addNewQuickItem() {
+            const input = document.getElementById("new-quick-item-input");
+            const val = input.value.trim();
+            if (!val) return;
+            if (!allStoreData.settings.quickItems) allStoreData.settings.quickItems = [];
+            allStoreData.settings.quickItems.push(val);
+            input.value = "";
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            renderAdminSettings();
+        }
+
+        function removeQuickItem(index) {
+            allStoreData.settings.quickItems.splice(index, 1);
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            renderAdminSettings();
         }
 
         function saveExchangeRate() {
@@ -847,10 +928,9 @@
                 return;
             }
             allStoreData.settings.sypRate = newRate;
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
-            closeModal('modal-settings');
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             renderAdminDashboard();
-            alert("تم تحديث سعر الصرف المرجعي بنجاح!");
+            alert("تم حفظ إعدادات الصرف بنجاح!");
         }
 
         function setCustomerCurrency(curr) {
@@ -943,7 +1023,7 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
@@ -952,9 +1032,7 @@
         }
 
         function openModal(id) { 
-            if(id === 'modal-settings') {
-                document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate || 15000;
-            }
+            if(id === 'modal-settings') renderAdminSettings();
             document.getElementById(id).classList.remove("hidden"); 
         }
         function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
