@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي المتكامل v12</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتكامل v13</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -18,12 +18,14 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <meta name="theme-color" content="#0f172a">
+    <!-- مكتبة html2pdf لتوليد ملفات PDF -->
+    <script src="[https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js)"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        @import url('[https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap](https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap)');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; }
         .pulse-red { animation: pulseRed 1.5s infinite; }
         @keyframes pulseRed {
@@ -35,7 +37,14 @@
             body { background: white !important; color: black !important; }
             .no-print { display: none !important; }
             .print-area { background: white !important; color: black !important; border: none !important; box-shadow: none !important; }
+            #pdf-export-container { display: block !important; }
         }
+        /* لتنسيق تقرير PDF المخفي */
+        #pdf-export-container { display: none; background: white; color: black; padding: 20px; font-family: 'Cairo', sans-serif; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; }
+        .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
+        .pdf-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #0f172a; padding-bottom: 10px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-goldAccent selection:text-darkBg">
@@ -54,7 +63,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار v12 (أزرار الفواتير السريعة)
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار v13 (تصدير PDF الشامل)
                     </p>
                 </div>
             </div>
@@ -129,19 +138,26 @@
                 </div>
             </div>
 
-            <div class="bg-slate-800 p-4 rounded-3xl border border-slate-700 flex flex-wrap gap-2 items-center justify-between">
+            <!-- أزرار الإدارة والتقارير والنسخ الاحتياطي -->
+            <div class="bg-slate-800 p-4 rounded-3xl border border-slate-700 flex flex-wrap gap-3 items-center justify-between">
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="openModal('modal-add-account')" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2">
                         <i class="fa-solid fa-user-plus"></i> إضافة حساب جديد
                     </button>
                     <button type="button" onclick="openReportModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-chart-line"></i> تقرير الأرباح والمبيعات اليومية
+                        <i class="fa-solid fa-chart-line"></i> تقرير الأرباح والمبيعات
                     </button>
-                    <button type="button" onclick="openModal('modal-notification')" class="bg-slate-700 hover:bg-slate-600 text-goldAccent font-bold px-3 py-2.5 rounded-2xl text-xs transition border border-goldAccent/30">
-                        <i class="fa-solid fa-bullhorn"></i> إرسال تنبيه جماعي
+                    <!-- الزر الجديد: استخراج PDF لجميع الحسابات -->
+                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-pdf"></i> نسخة احتياطية PDF للزبائن
                     </button>
-                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-4 py-2.5 rounded-2xl text-xs transition flex items-center gap-2 border border-slate-600">
-                        <i class="fa-solid fa-gear"></i> الإعدادات والتخصيص
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="openModal('modal-notification')" class="bg-slate-700 hover:bg-slate-600 text-goldAccent font-bold px-3 py-2 rounded-xl text-xs transition border border-goldAccent/30">
+                        <i class="fa-solid fa-bullhorn"></i> تنبيه
+                    </button>
+                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-3 py-2 rounded-xl text-xs transition border border-slate-600">
+                        <i class="fa-solid fa-gear"></i> إعدادات
                     </button>
                 </div>
             </div>
@@ -221,8 +237,8 @@
             <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center">
                     <h3 class="font-bold text-sm text-slate-100">سجل الديون والمدفوعات</h3>
-                    <button type="button" onclick="exportCustomerPDF()" class="bg-slate-700 hover:bg-slate-600 text-goldAccent font-semibold px-3 py-1.5 rounded-xl text-xs border border-goldAccent/30 flex items-center gap-1">
-                        <i class="fa-solid fa-file-pdf"></i> تصدير الكشف (PDF/طباعة)
+                    <button type="button" onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-goldAccent font-semibold px-3 py-1.5 rounded-xl text-xs border border-goldAccent/30 flex items-center gap-1">
+                        <i class="fa-solid fa-file-pdf"></i> طباعة كشف
                     </button>
                 </div>
                 <div class="overflow-x-auto print-area">
@@ -243,7 +259,16 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة المعاملات -->
+    <!-- حاوية مخفية لتوليد تقرير PDF الشامل للزبائن -->
+    <div id="pdf-export-container">
+        <div class="pdf-header">
+            <h2>دفتر ديون متجر معاذ - النسخة الاحتياطية (كشف شامل)</h2>
+            <p id="pdf-export-date"></p>
+        </div>
+        <div id="pdf-export-content"></div>
+    </div>
+
+    <!-- Modal: إدارة المعاملات والإدخال بالخط الأخضر الرفيع والأصناف السريعة -->
     <div id="modal-manage-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-xl rounded-3xl p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -254,7 +279,6 @@
                 <button type="button" onclick="closeModal('modal-manage-account')" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- أداة الإدارة لتغيير سقف الحساب المالي -->
             <div class="bg-slate-900/80 p-3 rounded-2xl border border-goldAccent/30 flex flex-wrap items-center justify-between gap-2">
                 <span class="text-xs text-slate-300"><i class="fa-solid fa-sliders text-goldAccent ml-1"></i> تغيير حد سقف الديون ($):</span>
                 <div class="flex gap-2">
@@ -263,7 +287,6 @@
                 </div>
             </div>
 
-            <!-- أداة الإدارة لتغيير كلمة مرور الزبون حصراً -->
             <div class="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/30 flex flex-wrap items-center justify-between gap-2">
                 <span class="text-xs text-slate-300"><i class="fa-solid fa-key text-goldAccent ml-1"></i> تعديل كلمة مرور الزبون:</span>
                 <div class="flex gap-2">
@@ -300,12 +323,9 @@
                     </div>
                 </div>
 
-                <!-- أزرار الأصناف السريعة المخصصة -->
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">أصناف الفاتورة السريعة:</label>
-                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5 mb-2">
-                        <!-- الأزرار ستظهر هنا ديناميكياً -->
-                    </div>
+                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5 mb-2"></div>
                     <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل (يمكنك تعديل المكتوب)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
                 </div>
 
@@ -381,9 +401,7 @@
                     <input type="text" id="new-quick-item-input" placeholder="اسم الصنف الجديد..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-100">
                     <button type="button" onclick="addNewQuickItem()" class="bg-successGreen hover:bg-emerald-600 text-darkBg px-4 rounded-xl text-sm font-bold transition"><i class="fa-solid fa-plus"></i></button>
                 </div>
-                <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5">
-                    <!-- الأزرار قابلة للحذف -->
-                </div>
+                <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5"></div>
             </div>
         </div>
     </div>
@@ -435,7 +453,7 @@
         let customerDisplayCurrency = 'USD';
         let pendingCustomerKey = null;
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v12")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v13")) || {
             accounts: {},
             settings: { 
                 sypRate: 15000, 
@@ -443,7 +461,6 @@
             }
         };
 
-        // تأمين وجود قائمة الأزرار السريعة برمجياً
         if (!allStoreData.settings.quickItems) {
             allStoreData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'];
         }
@@ -558,7 +575,7 @@
             if (pendingCustomerKey && allStoreData.accounts[pendingCustomerKey]) {
                 allStoreData.accounts[pendingCustomerKey].password = p1;
                 allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
-                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -581,7 +598,7 @@
             }
             if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تحديث كلمة مرور الزبون بنجاح من قبل الإدارة!");
             }
@@ -595,7 +612,7 @@
             }
             if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
                 allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
-                localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-limit-input").value = "";
                 document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${allStoreData.accounts[activeManagingAccountKey].phone} | السقف المالي: $${newLimit}`;
                 renderAdminDashboard();
@@ -694,7 +711,6 @@
             }
         }
 
-        // إدراج أزرار الفواتير السريعة في نافذة إضافة دين
         function renderTransactionQuickButtons() {
             const quickItems = allStoreData.settings.quickItems || [];
             const container = document.getElementById("trans-quick-buttons-container");
@@ -788,7 +804,7 @@
                 date: new Date().toISOString()
             };
 
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
@@ -798,7 +814,7 @@
         function deleteTransaction(accKey, txId) {
             if (!confirm("حذف هذه العملية؟")) return;
             delete allStoreData.accounts[accKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             renderModalTransactions(allStoreData.accounts[accKey]);
             renderAdminDashboard();
         }
@@ -808,7 +824,7 @@
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
             let msg = `مرحباً بك ${acc.name} في متجر معاذ.\nكشف الحساب المالي الحالي:\nإجمالي الرصيد: $${bal.toFixed(2)}\nسقف الحساب: $${acc.creditLimit || 50}\nشكراً لتعاملكم معنا.`;
-            window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`[https://wa.me/963$](https://wa.me/963$){acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function openReportModal() {
@@ -864,7 +880,7 @@
                 transactions: { [id]: { type: 'debt', amountUSD: 0, rawAmount: 0, currency: 'USD', note: 'فتح حساب', date: new Date().toISOString() } }
             };
 
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
             alert("تم إنشاء حساب الزبون بنجاح!");
@@ -873,7 +889,7 @@
         function deleteAcc(key) {
             if (!confirm("حذف هذا الحساب نهائياً؟")) return;
             delete allStoreData.accounts[key];
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             renderAdminDashboard();
         }
 
@@ -883,12 +899,11 @@
             for (let k in allStoreData.accounts) {
                 allStoreData.accounts[k].activeAlert = text;
             }
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             closeModal('modal-notification');
             alert("تم إرسال التنبيه الفوري لجميع الحسابات!");
         }
 
-        // إدارة إعدادات الأزرار السريعة
         function renderAdminSettings() {
             document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate || 15000;
             const quickItems = allStoreData.settings.quickItems || [];
@@ -911,13 +926,13 @@
             if (!allStoreData.settings.quickItems) allStoreData.settings.quickItems = [];
             allStoreData.settings.quickItems.push(val);
             input.value = "";
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             renderAdminSettings();
         }
 
         function removeQuickItem(index) {
             allStoreData.settings.quickItems.splice(index, 1);
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             renderAdminSettings();
         }
 
@@ -928,9 +943,93 @@
                 return;
             }
             allStoreData.settings.sypRate = newRate;
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             renderAdminDashboard();
             alert("تم حفظ إعدادات الصرف بنجاح!");
+        }
+
+        // توليد PDF شامل لجميع حسابات المتجر والزبائن
+        function generateAllAccountsPDF() {
+            const btn = document.getElementById("btn-export-pdf");
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري التوليد...`;
+            btn.disabled = true;
+
+            const dateStr = new Date().toLocaleDateString('ar-SY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            document.getElementById("pdf-export-date").textContent = `تاريخ الاستخراج: ${dateStr}`;
+
+            const container = document.getElementById("pdf-export-content");
+            container.innerHTML = "";
+            const accounts = allStoreData.accounts || {};
+
+            for (let key in accounts) {
+                const acc = accounts[key];
+                const bal = calculateAccountBalance(acc);
+                let accHtml = `
+                    <div style="margin-bottom: 25px; page-break-inside: avoid; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
+                        <h3 style="margin: 0; color: #0f172a;">${acc.name} - <span style="font-weight: normal; font-size: 12px; color: #475569;">(${acc.phone})</span></h3>
+                        <p style="margin: 4px 0 8px 0; font-size: 12px; font-weight: bold; color: ${bal > 0 ? '#10b981' : '#0f172a'};">إجمالي الرصيد: $${bal.toFixed(2)}</p>
+                        <table class="pdf-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>النوع</th>
+                                    <th>البيان</th>
+                                    <th>المبلغ ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                const txs = acc.transactions || {};
+                let hasTxs = false;
+                for (let id in txs) {
+                    hasTxs = true;
+                    const tx = txs[id];
+                    accHtml += `
+                        <tr>
+                            <td>${new Date(tx.date).toLocaleDateString('ar-SY')}</td>
+                            <td>${tx.type === 'debt' ? 'دين' : 'دفعة سداد'}</td>
+                            <td>${tx.note}</td>
+                            <td>$${Number(tx.amountUSD).toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+
+                if (!hasTxs) {
+                    accHtml += `<tr><td colspan="4" style="text-align: center;">لا توجد حركات مسجلة لهذا الحساب.</td></tr>`;
+                }
+
+                accHtml += `</tbody></table></div>`;
+                container.innerHTML += accHtml;
+            }
+
+            if (container.innerHTML === "") {
+                container.innerHTML = "<p style='text-align: center;'>لا توجد حسابات أو زبائن مسجلين حالياً.</p>";
+            }
+
+            // إعدادات مكتبة html2pdf
+            const element = document.getElementById('pdf-export-container');
+            const opt = {
+                margin:       10,
+                filename:     `نسخة_ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // إظهار الحاوية مؤقتاً لتوليد الـ PDF ثم إخفائها
+            element.style.display = 'block';
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.display = 'none';
+                btn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> نسخة احتياطية PDF للزبائن`;
+                btn.disabled = false;
+            }).catch(err => {
+                alert("حدث خطأ أثناء توليد ملف PDF: " + err);
+                element.style.display = 'none';
+                btn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> نسخة احتياطية PDF للزبائن`;
+                btn.disabled = false;
+            });
         }
 
         function setCustomerCurrency(curr) {
@@ -1012,7 +1111,7 @@
                         <td class="p-3">${tx.note}</td>
                         <td class="p-3 font-bold">${txDisplayAmt}</td>
                         <td class="p-3 text-center no-print">
-                            <a href="https://wa.me/963965461504?text=${waText}" target="_blank" class="text-emerald-400 hover:text-emerald-300"><i class="fa-brands fa-whatsapp text-base"></i></a>
+                            <a href="[https://wa.me/963965461504?text=$](https://wa.me/963965461504?text=$){waText}" target="_blank" class="text-emerald-400 hover:text-emerald-300"><i class="fa-brands fa-whatsapp text-base"></i></a>
                         </td>
                     </tr>
                 `;
@@ -1023,7 +1122,7 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v12", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v13", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
