@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - النظام المالي الآمن v10</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المتكامل v11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -54,7 +54,7 @@
                 <div>
                     <h1 class="font-extrabold text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
                     <p class="text-[11px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار الآمن v10
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> الإصدار الآمن v11 (إدارة السقف المالي)
                     </p>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                                 <th class="p-3">الاسم والتصنيف</th>
                                 <th class="p-3">الهاتف</th>
                                 <th class="p-3">الرصيد ($)</th>
-                                <th class="p-3 text-center">إدارة العمليات / كلمة المرور</th>
+                                <th class="p-3 text-center">إدارة العمليات / الحساب</th>
                             </tr>
                         </thead>
                         <tbody id="admin-accounts-list" class="divide-y divide-slate-700/50"></tbody>
@@ -243,7 +243,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة الحسابات والعمليات -->
+    <!-- Modal: إدارة الحسابات، تغيير السقف، وتغيير كلمة المرور -->
     <div id="modal-manage-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-xl rounded-3xl p-6 space-y-4 my-8">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -254,12 +254,21 @@
                 <button type="button" onclick="closeModal('modal-manage-account')" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
+            <!-- أداة الإدارة لتغيير سقف الحساب المالي -->
+            <div class="bg-slate-900/80 p-3 rounded-2xl border border-goldAccent/30 flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs text-slate-300"><i class="fa-solid fa-sliders text-goldAccent ml-1"></i> تغيير حد سقف الديون ($):</span>
+                <div class="flex gap-2">
+                    <input type="number" step="any" id="admin-new-limit-input" placeholder="السقف الجديد" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 w-28">
+                    <button type="button" onclick="adminUpdateCreditLimit()" class="bg-goldAccent text-darkBg font-bold px-3 py-1.5 rounded-xl text-xs">تحديث السقف</button>
+                </div>
+            </div>
+
             <!-- أداة الإدارة لتغيير كلمة مرور الزبون حصراً -->
             <div class="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/30 flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xs text-slate-300"><i class="fa-solid fa-key text-goldAccent ml-1"></i> تعديل كلمة مرور الزبون (خاص بالإدارة):</span>
+                <span class="text-xs text-slate-300"><i class="fa-solid fa-key text-goldAccent ml-1"></i> تعديل كلمة مرور الزبون:</span>
                 <div class="flex gap-2">
-                    <input type="text" id="admin-new-cust-pass" placeholder="كلمة المرور الجديدة" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100">
-                    <button type="button" onclick="adminResetCustomerPassword()" class="bg-goldAccent text-darkBg font-bold px-3 py-1.5 rounded-xl text-xs">تغيير</button>
+                    <input type="text" id="admin-new-cust-pass" placeholder="كلمة المرور الجديدة" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 w-32">
+                    <button type="button" onclick="adminResetCustomerPassword()" class="bg-slate-700 hover:bg-slate-600 text-goldAccent font-bold px-3 py-1.5 rounded-xl text-xs">تغيير</button>
                 </div>
             </div>
 
@@ -326,7 +335,7 @@
     <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-3xl p-6 space-y-4">
-            <h3 class="font-bold text-base text-goldAccent">إضافة حساب زبون جديد</h3>
+            <h3 class="font-bold text-base text-goldAccent">إضافة حساب زبون جديد وتصنيف</h3>
             <div class="space-y-3">
                 <input type="text" id="acc-name" placeholder="اسم الزبون الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
                 <input type="tel" id="acc-phone" placeholder="رقم الهاتف (09xxxxxxxx)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-2.5 text-xs text-slate-100">
@@ -409,9 +418,9 @@
         let activeManagingAccountKey = null;
         let adminInputCurrency = 'USD';
         let customerDisplayCurrency = 'USD';
-        let pendingCustomerKey = null; // تخزين مؤقت للزبون الذي يتطلب تعيين كلمة مرور لأول مرة
+        let pendingCustomerKey = null;
 
-        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v10")) || {
+        let allStoreData = JSON.parse(localStorage.getItem("moaath_offline_db_v11")) || {
             accounts: {},
             settings: { sypRate: 15000 }
         };
@@ -496,7 +505,6 @@
             }
 
             if (foundAcc) {
-                // التحقق مما إذا كانت هذه هي المرة الأولى للزبون (isFirstLogin لم يتم تعيينه أو true)
                 if (foundAcc.isFirstLogin === true || foundAcc.isFirstLogin === undefined) {
                     pendingCustomerKey = foundKey;
                     currentUser = { phone, name: foundAcc.name, requiresPasswordSetup: true, dbKey: foundKey };
@@ -511,7 +519,6 @@
             }
         }
 
-        // حفظ كلمة المرور الأولى للزبون وقفل إمكانية تغييرها إلا عبر الإدارة
         function saveFirstTimePassword() {
             const p1 = document.getElementById("new-cust-pass").value.trim();
             const p2 = document.getElementById("new-cust-pass-confirm").value.trim();
@@ -527,8 +534,8 @@
 
             if (pendingCustomerKey && allStoreData.accounts[pendingCustomerKey]) {
                 allStoreData.accounts[pendingCustomerKey].password = p1;
-                allStoreData.accounts[pendingCustomerKey].isFirstLogin = false; // تم تفعيل الحساب ولن تظهر هذه الشاشة مجدداً
-                localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+                allStoreData.accounts[pendingCustomerKey].isFirstLogin = false;
+                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
 
                 currentUser = { 
                     phone: allStoreData.accounts[pendingCustomerKey].phone, 
@@ -543,7 +550,6 @@
             }
         }
 
-        // تعديل كلمة مرور الزبون حصراً من قبل الإدارة
         function adminResetCustomerPassword() {
             const newPass = document.getElementById("admin-new-cust-pass").value.trim();
             if (!newPass) {
@@ -552,9 +558,26 @@
             }
             if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
                 allStoreData.accounts[activeManagingAccountKey].password = newPass;
-                localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
                 document.getElementById("admin-new-cust-pass").value = "";
                 alert("تم تحديث كلمة مرور الزبون بنجاح من قبل الإدارة!");
+            }
+        }
+
+        // تحديث سقف الحساب المالي من قبل الإدارة
+        function adminUpdateCreditLimit() {
+            const newLimit = Number(document.getElementById("admin-new-limit-input").value);
+            if (!newLimit || newLimit <= 0) {
+                alert("يرجى إدخال سقف مالي صحيح");
+                return;
+            }
+            if (activeManagingAccountKey && allStoreData.accounts[activeManagingAccountKey]) {
+                allStoreData.accounts[activeManagingAccountKey].creditLimit = newLimit;
+                localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
+                document.getElementById("admin-new-limit-input").value = "";
+                document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${allStoreData.accounts[activeManagingAccountKey].phone} | السقف المالي: $${newLimit}`;
+                renderAdminDashboard();
+                alert(`تم تحديث سقف الحساب بنجاح إلى $${newLimit}!`);
             }
         }
 
@@ -600,7 +623,7 @@
                     <tr class="hover:bg-slate-700/45">
                         <td class="p-3">
                             <div class="font-bold text-slate-100">${acc.name}</div>
-                            <div class="text-[10px] text-goldAccent">${groupBadge}</div>
+                            <div class="text-[10px] text-goldAccent">${groupBadge} (السقف: $${acc.creditLimit || 50})</div>
                         </td>
                         <td class="p-3 font-mono">${acc.phone}</td>
                         <td class="p-3 font-bold text-successGreen">$${bal.toFixed(2)}</td>
@@ -654,10 +677,11 @@
             const acc = allStoreData.accounts[key];
             if (!acc) return;
             document.getElementById("modal-account-title").textContent = acc.name;
-            document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${acc.phone} | السقف المالي: $${acc.creditLimit}`;
+            document.getElementById("modal-account-subtitle").textContent = `الهاتف: ${acc.phone} | السقف المالي: $${acc.creditLimit || 50}`;
             document.getElementById("trans-target-id").value = key;
             document.getElementById("trans-amount").value = "";
             document.getElementById("admin-new-cust-pass").value = "";
+            document.getElementById("admin-new-limit-input").value = acc.creditLimit || 50;
             document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
             openModal('modal-manage-account');
@@ -716,7 +740,7 @@
                 date: new Date().toISOString()
             };
 
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             document.getElementById("form-add-transaction").reset();
             document.getElementById("live-usd-preview").classList.add("hidden");
             renderModalTransactions(acc);
@@ -726,7 +750,7 @@
         function deleteTransaction(accKey, txId) {
             if (!confirm("حذف هذه العملية؟")) return;
             delete allStoreData.accounts[accKey].transactions[txId];
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             renderModalTransactions(allStoreData.accounts[accKey]);
             renderAdminDashboard();
         }
@@ -788,20 +812,20 @@
             const id = Date.now().toString();
             allStoreData.accounts[id] = {
                 name, phone, password: pass, creditLimit: limit, group, type: 'customer',
-                isFirstLogin: true, // تفعيل شرط إجبار الزبون على تعيين كلمة المرور عند أول دخول
+                isFirstLogin: true,
                 transactions: { [id]: { type: 'debt', amountUSD: 0, rawAmount: 0, currency: 'USD', note: 'فتح حساب', date: new Date().toISOString() } }
             };
 
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             closeModal('modal-add-account');
             renderAdminDashboard();
-            alert("تم إنشاء حساب الزبون بنجاح! (سيُطالب الزبون بإنشاء كلمة مروره الخاصة عند أول تسجيل دخول).");
+            alert("تم إنشاء حساب الزبون بنجاح!");
         }
 
         function deleteAcc(key) {
             if (!confirm("حذف هذا الحساب نهائياً؟")) return;
             delete allStoreData.accounts[key];
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             renderAdminDashboard();
         }
 
@@ -811,7 +835,7 @@
             for (let k in allStoreData.accounts) {
                 allStoreData.accounts[k].activeAlert = text;
             }
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             closeModal('modal-notification');
             alert("تم إرسال التنبيه الفوري لجميع الحسابات!");
         }
@@ -823,7 +847,7 @@
                 return;
             }
             allStoreData.settings.sypRate = newRate;
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             closeModal('modal-settings');
             renderAdminDashboard();
             alert("تم تحديث سعر الصرف المرجعي بنجاح!");
@@ -919,7 +943,7 @@
         function acknowledgeAlert() {
             if (!currentUser?.dbKey) return;
             allStoreData.accounts[currentUser.dbKey].activeAlert = null;
-            localStorage.setItem("moaath_offline_db_v10", JSON.stringify(allStoreData));
+            localStorage.setItem("moaath_offline_db_v11", JSON.stringify(allStoreData));
             document.getElementById("customer-alert-box").classList.add("hidden");
         }
 
