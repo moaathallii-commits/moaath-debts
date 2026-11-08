@@ -38,7 +38,8 @@
         @media print {
             body { background: white !important; color: black !important; }
             .no-print { display: none !important; }
-            .print-area { background: white !important; color: black !important; border: none !important; box-shadow: none !important; }
+            .print-area { background: white !important; color: black !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+            .customer-report-card { border: 1px solid #cbd5e1 !important; break-inside: avoid; margin-bottom: 20px !important; background: #ffffff !important; color: black !important; }
         }
     </style>
 </head>
@@ -154,16 +155,16 @@
                 </div>
             </div>
 
-            <!-- بطاقة السداد عبر شام كاش -->
-            <div id="shamcash-pay-card" class="bg-slate-800 p-5 rounded-3xl border border-goldAccent/40 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- بطاقة إرسال إشعار السداد عبر واتساب للإدارة -->
+            <div id="whatsapp-pay-card" class="bg-slate-800 p-5 rounded-3xl border border-emerald-500/40 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-goldAccent/10 text-goldAccent rounded-2xl flex items-center justify-center text-2xl"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center text-2xl"><i class="fa-brands fa-whatsapp"></i></div>
                     <div>
-                        <h4 class="font-bold text-sm text-white">السداد السريع عبر "شام كاش"</h4>
-                        <p class="text-xs text-slate-400 mt-0.5">انسخ المعرف وحول المبلغ المطلوب فوراً</p>
+                        <h4 class="font-bold text-sm text-white">إرسال إشعار الدفع للإدارة عبر واتساب</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">أرسل رسالة فورية لرقم الإدارة لتأكيد تسديد الدفعة</p>
                     </div>
                 </div>
-                <button type="button" onclick="copyAndOpenShamCash()" class="bg-goldAccent hover:bg-amber-400 text-darkBg font-black px-4 py-2.5 rounded-xl text-xs transition shadow flex items-center gap-2"><i class="fa-solid fa-copy"></i> انسخ وحوّل الآن</button>
+                <button type="button" onclick="sendPaymentWhatsAppToAdmin()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-2.5 rounded-xl text-xs transition shadow flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> مراسلة الإدارة بالدفعة</button>
             </div>
 
             <!-- تفاصيل رصيد الزبون -->
@@ -197,6 +198,9 @@
             </div>
         </section>
     </main>
+
+    <!-- منطقة تقرير الطباعة الشامل (Hidden by default, shown on print) -->
+    <div id="print-backup-container" class="hidden"></div>
 
     <!-- Modal: أول دخول وتعيين كلمة المرور -->
     <div id="modal-first-password" class="modal-overlay">
@@ -343,8 +347,8 @@
                     <input type="number" id="setting-syp-rate" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">معرف شَام كاش (ShamCash ID):</label>
-                    <input type="text" id="setting-shamcash-id" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
+                    <label class="block text-xs font-bold text-slate-300 mb-1">رقم هاتف الإدارة (الواتساب):</label>
+                    <input type="text" id="setting-admin-phone" placeholder="0965461504" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white focus:outline-none">
                 </div>
             </div>
             <button type="button" onclick="saveGeneralSettings()" class="w-full bg-goldAccent text-darkBg font-bold py-3 rounded-xl text-sm transition shadow mt-2">حفظ الإعدادات</button>
@@ -389,7 +393,7 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <button type="button" onclick="exportAdminPDFReport()" class="flex-1 bg-goldAccent text-darkBg font-bold py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-file-pdf ml-1"></i> تحميل نسخة PDF شاملة</button>
+                <button type="button" onclick="exportAdminComprehensivePDFReport()" class="flex-1 bg-goldAccent text-darkBg font-bold py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-file-pdf ml-1"></i> تحميل نسخة PDF شاملة لإحصائيات الزبائن</button>
                 <button type="button" onclick="closeModal('modal-reports')" class="bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold">إغلاق</button>
             </div>
         </div>
@@ -399,9 +403,9 @@
     <button class="fab hidden no-print" onclick="openModal('modal-add-account')" id="admin-fab-main"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const DB_KEY = "moaath_offline_db_pro_v23";
+        const DB_KEY = "moaath_offline_db_pro_v25";
         let allStoreData = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            settings: { sypRate: 15000, shamcashId: "da3e13cd8a2ef2af282445e148df9599", quickItems: ["سكر", "رز", "متة", "زيت", "معلبات", "موالـح"] },
+            settings: { sypRate: 15000, adminPhone: "0965461504", quickItems: ["سكر", "رز", "متة", "زيت", "معلبات", "موالـح"] },
             accounts: {
                 "admin": { name: "معاذ العلي", phone: "0965461504", password: "MHA@1997//MOAATHS", group: "admin", creditLimit: 0, transactions: {} },
                 "cust1": { name: "أحمد محمد", phone: "0922222222", password: "123", group: "regular", creditLimit: 50, requiresPasswordSetup: true, transactions: {
@@ -627,7 +631,6 @@
             document.getElementById("modal-account-subtitle").textContent = `رقم الهاتف: ${acc.phone} | السقف الحالي: $${acc.creditLimit || 50}`;
             document.getElementById("admin-new-limit-input").value = acc.creditLimit || 50;
             
-            // Render quick items buttons
             renderQuickItemsButtons();
             setTxType('debt');
             openModal('modal-manage-account');
@@ -671,7 +674,6 @@
             } else if (currency === 'syp_new') {
                 usdVal = rawVal / rate;
             } else if (currency === 'syp_old') {
-                // الليرة القديمة = الجديدة ضرب 100
                 usdVal = (rawVal / 100) / rate;
             }
 
@@ -741,12 +743,16 @@
             openModal('modal-receipt');
         }
 
-        function copyAndOpenShamCash() {
-            const shamId = allStoreData.settings.shamcashId || "da3e13cd8a2ef2af282445e148df9599";
-            navigator.clipboard.writeText(shamId).then(() => {
-                alert(`تم نسخ معرف شام كاش (${shamId}) إلى الحافظة بنجاح. سيتم فتح المحفظة الآن.`);
-                window.open("https://shamcash.app", "_blank");
-            });
+        function sendPaymentWhatsAppToAdmin() {
+            const adminPhone = allStoreData.settings.adminPhone || "0965461504";
+            const cleanPhone = adminPhone.replace(/^0/, '');
+            const bal = calculateAccountBalance(allStoreData.accounts[currentUser.key]);
+            const sypRate = allStoreData.settings.sypRate || 15000;
+            const balSyp = bal * sypRate;
+
+            let msg = `مرحباً إدارة متجر معاذ،\n\nأنا الزبون: ${currentUser.name} (${currentUser.phone})\nأود إعلامكم بأنني قمت بتسديد الدفعة المالية المستحقة لحسابي.\n\nرصيدي الحالي المطلوب: $${bal.toFixed(2)} (ما يعادل ${balSyp.toLocaleString()} ل.س).\nيرجى التحقق وتحديث الحساب. شكراً لكم!`;
+            
+            window.open(`https://wa.me/963${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function adminUpdateCreditLimit() {
@@ -775,13 +781,7 @@
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
-            let msg = `مرحباً بك ${acc.name} في متجر معاذ.
-
-كشف الحساب المالي الحالي:
-الرصيد: $${bal.toFixed(2)}
-السقف المسموح: $${acc.creditLimit || 50}
-
-شكراً لتعاونكم.`;
+            let msg = `مرحباً بك ${acc.name} في متجر معاذ.\n\nكشف الحساب المالي الحالي:\nالرصيد: $${bal.toFixed(2)}\nالسقف المسموح: $${acc.creditLimit || 50}\n\nشكراً لتعاونكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
@@ -807,10 +807,10 @@
 
         function saveGeneralSettings() {
             const rate = Number(document.getElementById("setting-syp-rate").value);
-            const shamId = document.getElementById("setting-shamcash-id").value.trim();
+            const adminPhone = document.getElementById("setting-admin-phone").value.trim();
             if (rate > 0) {
                 allStoreData.settings.sypRate = rate;
-                allStoreData.settings.shamcashId = shamId;
+                if (adminPhone) allStoreData.settings.adminPhone = adminPhone;
                 localStorage.setItem(DB_KEY, JSON.stringify(allStoreData));
                 closeModal('modal-settings');
                 renderAdminDashboard();
@@ -850,13 +850,115 @@
             window.print();
         }
 
-        function exportAdminPDFReport() {
+        function exportAdminComprehensivePDFReport() {
+            const accounts = allStoreData.accounts || {};
+            const sypRate = allStoreData.settings.sypRate || 15000;
+            const nowStr = new Date().toLocaleString('ar-SY');
+
+            let totalReceivables = 0;
+            let customersCount = 0;
+
+            let customersHtml = '';
+
+            for (let key in accounts) {
+                if (key === 'admin') continue;
+                customersCount++;
+                const acc = accounts[key];
+                const bal = calculateAccountBalance(acc);
+                if (bal > 0) totalReceivables += bal;
+                const balSyp = bal * sypRate;
+
+                let groupLabel = "دائم";
+                if (acc.group === 'neighbor') groupLabel = "جار";
+                else if (acc.group === 'supplier') groupLabel = "مورد";
+
+                let txRows = '';
+                const txs = acc.transactions || {};
+                const txKeys = Object.keys(txs);
+
+                if (txKeys.length === 0) {
+                    txRows = `<tr><td colspan="4" style="text-align:center; padding:8px; color:#64748b;">لا توجد معاملات مسجلة بعد</td></tr>`;
+                } else {
+                    txKeys.forEach(txId => {
+                        const tx = txs[txId];
+                        const isDebt = tx.type === 'debt';
+                        txRows += `
+                            <tr>
+                                <td style="padding:6px; border-bottom:1px solid #e2e8f0;">${new Date(tx.date).toLocaleDateString('ar-SY')}</td>
+                                <td style="padding:6px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${isDebt ? '#dc2626' : '#16a34a'};">${isDebt ? 'مشتريات / دين' : 'سداد / دفعة'}</td>
+                                <td style="padding:6px; border-bottom:1px solid #e2e8f0;">${tx.note || '-'}</td>
+                                <td style="padding:6px; border-bottom:1px solid #e2e8f0; font-weight:bold; text-align:left; color:${isDebt ? '#dc2626' : '#16a34a'};">${isDebt ? '+' : '-'}$${Number(tx.amountUSD).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                customersHtml += `
+                    <div class="customer-report-card" style="background: #ffffff; color: #000000; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f59e0b; padding-bottom: 8px; margin-bottom: 12px;">
+                            <div>
+                                <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; margin: 0;">${acc.name}</h3>
+                                <p style="font-size: 11px; color: #475569; margin: 2px 0 0 0;">هاتف: ${acc.phone} | المجموعة: ${groupLabel} | السقف المالي: $${acc.creditLimit || 50}</p>
+                            </div>
+                            <div style="text-align: left;">
+                                <span style="font-size: 12px; color: #64748b; display: block;">الرصيد الصافي:</span>
+                                <span style="font-size: 16px; font-weight: 900; color: ${bal > 0 ? '#16a34a' : '#0f172a'};">$${bal.toFixed(2)}</span>
+                                <span style="font-size: 10px; color: #64748b; display: block;">(${balSyp.toLocaleString()} ل.س)</span>
+                            </div>
+                        </div>
+                        <h4 style="font-size: 12px; font-weight: bold; color: #334155; margin-bottom: 6px;">سجل الحركات التفصيلي:</h4>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                            <thead>
+                                <tr style="background-color: #f1f5f9; color: #334155;">
+                                    <th style="padding: 6px; text-align: right; border-bottom: 2px solid #cbd5e1;">التاريخ</th>
+                                    <th style="padding: 6px; text-align: right; border-bottom: 2px solid #cbd5e1;">النوع</th>
+                                    <th style="padding: 6px; text-align: right; border-bottom: 2px solid #cbd5e1;">البيان</th>
+                                    <th style="padding: 6px; text-align: left; border-bottom: 2px solid #cbd5e1;">المبلغ ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${txRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            const comprehensiveHtml = `
+                <div style="font-family: 'Cairo', sans-serif; padding: 20px; background: white; color: black; direction: rtl;">
+                    <div style="text-align: center; border-bottom: 3px solid #f59e0b; padding-bottom: 15px; margin-bottom: 20px;">
+                        <h1 style="font-size: 22px; font-weight: 900; color: #0f172a; margin: 0;">متجر معاذ - النسخة الاحتياطية الشاملة لإحصائيات الزبائن</h1>
+                        <p style="font-size: 12px; color: #64748b; margin: 5px 0 0 0;">تاريخ التقرير: ${nowStr} | سعر الصرف: ${sypRate.toLocaleString()} ل.س</p>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div style="flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; text-align: center;">
+                            <span style="font-size: 11px; color: #64748b; display: block;">إجمالي عدد الزبائن</span>
+                            <span style="font-size: 18px; font-weight: 900; color: #0f172a;">${customersCount}</span>
+                        </div>
+                        <div style="flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; text-align: center;">
+                            <span style="font-size: 11px; color: #64748b; display: block;">إجمالي الذمم المطلوبة</span>
+                            <span style="font-size: 18px; font-weight: 900; color: #16a34a;">$${totalReceivables.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 16px; font-weight: 900; color: #0f172a; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 15px;">كشوفات وأرصدة الزبائن التفصيلية</h2>
+                    
+                    ${customersHtml}
+                </div>
+            `;
+
+            document.getElementById("print-backup-container").innerHTML = comprehensiveHtml;
+            document.getElementById("print-backup-container").classList.remove("hidden");
             window.print();
+            setTimeout(() => {
+                document.getElementById("print-backup-container").classList.add("hidden");
+            }, 1000);
         }
 
         // Initialize Settings Inputs
         document.getElementById("setting-syp-rate").value = allStoreData.settings.sypRate;
-        document.getElementById("setting-shamcash-id").value = allStoreData.settings.shamcashId;
+        document.getElementById("setting-admin-phone").value = allStoreData.settings.adminPhone || "0965461504";
 
         updateUIState();
     </script>
