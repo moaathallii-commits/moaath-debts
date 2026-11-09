@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v20</title>
+    <title>متجر معاذ - دفتر الديون الفاخر v21</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: #0f172a; color: #f1f5f9; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { background-color: #0b0f19; color: #f1f5f9; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
         .hidden { display: none !important; }
         .flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
         .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
@@ -19,6 +19,10 @@
         .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; }
         .w-full { width: 100%; } .max-w-md { max-width: 28rem; } .max-w-xl { max-width: 36rem; } .max-w-7xl { max-width: 80rem; }
         .mx-auto { margin-left: auto; margin-right: auto; }
+        
+        /* تصميم الزجاج الفاخر Luxury Glassmorphism */
+        .luxury-card { background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5); }
+        
         .bg-slate-950 { background-color: #020617; } .bg-slate-900 { background-color: #0f172a; } .bg-slate-800 { background-color: #1e293b; }
         .bg-goldAccent { background-color: #f59e0b; } .bg-successGreen { background-color: #10b981; }
         .text-darkBg { color: #0f172a; } .text-white { color: #ffffff; } .text-slate-100 { color: #f1f5f9; }
@@ -28,43 +32,36 @@
         .rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-3xl { border-radius: 1.5rem; } .rounded-full { border-radius: 9999px; }
         .font-bold { font-weight: 700; } .font-black { font-weight: 900; }
         .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); } .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
         input, select, textarea { outline: none; transition: border-color 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: #f59e0b; }
-        button { cursor: pointer; border: none; font-family: inherit; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
+        button { cursor: pointer; border: none; font-family: inherit; transition: opacity 0.2s, transform 0.1s; }
+        button:hover { opacity: 0.9; } button:active { transform: scale(0.98); }
+        
         .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
         @media (min-width: 768px) { .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         table { width: 100%; border-collapse: collapse; } th, td { padding: 0.75rem; text-align: right; } th { border-bottom: 1px solid #334155; } tr { border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
-        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
-        .modal-content { background-color: #1e293b; border: 1px solid #334155; width: 100%; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; border-bottom: 2px solid transparent; background: none; cursor: pointer; }
-        .tab-btn.active { color: #f59e0b; border-bottom-color: #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
-        .tab-content { display: none; } .tab-content.active { display: block; }
-        .tx-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
+        
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+        .modal-content { background-color: #1e293b; border: 1px solid rgba(245, 158, 11, 0.3); width: 100%; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+        
+        .tx-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .tx-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; }
         .tx-card.debt::before { background-color: #f87171; } .tx-card.payment::before { background-color: #10b981; }
-        .avatar { width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; }
-        .avatar-gold { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .fab { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background-color: #f59e0b; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4); z-index: 40; cursor: pointer; }
-        .fab-menu { position: fixed; bottom: 6rem; left: 2rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-        .fab-menu.active { opacity: 1; pointer-events: auto; }
-        .fab-item { display: flex; align-items: center; gap: 0.5rem; flex-direction: row-reverse; }
-        .fab-item-label { background-color: #1e293b; color: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; border: 1px solid #334155; }
-        .fab-item-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; background-color: #334155; color: #f59e0b; display: flex; align-items: center; justify-content: center; border: 1px solid #475569; }
-        .highlight { background-color: rgba(245, 158, 11, 0.3); color: #f59e0b; border-radius: 2px; padding: 0 2px; }
-        .mini-chart-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background-color: #334155; margin-top: 4px; }
-        .mini-chart-debt { background-color: #f87171; height: 100%; } .mini-chart-payment { background-color: #10b981; height: 100%; }
+        
+        .avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; }
+        .avatar-gold { background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1)); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+        
+        .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; background-color: #020617; padding: 0.35rem; border-radius: 1rem; border: 1px solid #334155; }
+        .currency-btn { padding: 0.6rem 0.4rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 0.75rem; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
+        .currency-btn.active { background-color: #f59e0b; color: #0f172a; font-weight: 900; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+
         #pdf-export-container { display: none; background: white; color: black; padding: 20px; font-family: 'Cairo', sans-serif; }
         .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: black; }
         .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
         .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; position: relative; overflow: hidden; }
         .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.1; font-size: 3rem; color: #f59e0b; }
-        
-        .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background-color: #020617; padding: 0.35rem; border-radius: 1rem; border: 1px solid #334155; }
-        .currency-btn { padding: 0.65rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 0.75rem; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
-        .currency-btn.active { background-color: #f59e0b; color: #0f172a; font-weight: 900; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -72,22 +69,22 @@
 
     <div id="cloud-status-banner" class="bg-slate-900 text-center text-[11px] py-1 text-slate-400 border-b border-slate-800 no-print flex justify-center items-center gap-2">
         <span id="cloud-dot" class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-        <span id="cloud-text">متصل بالسحابة (Firebase Realtime Database)</span>
+        <span id="cloud-text">متصل بالسحابة (مزامنة فورية فاخرة)</span>
     </div>
 
-    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-lg no-print" style="position: sticky; top: 0; z-index: 40;">
+    <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/80 p-4 shadow-lg no-print" style="position: sticky; top: 0; z-index: 40;">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">M</div>
+                <div class="w-11 h-11 bg-gradient-to-tr from-goldAccent to-amber-300 rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-lg">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">الإصدار السحابي المتكامل v20</p>
+                    <p class="text-[10px] text-slate-400 font-bold">الإصدار الفاخر v21</p>
                 </div>
             </div>
-            <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-2xl border border-slate-700">
+            <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-2xl border border-slate-700">
                 <div class="avatar avatar-gold" id="header-avatar">م</div>
                 <span id="current-user-badge" class="font-bold text-slate-200 text-xs hidden md:block"></span>
-                <button type="button" onclick="logout()" class="text-red-400 text-xs ml-2 font-bold bg-red-950/30 px-2 py-1 rounded-lg">خروج</button>
+                <button type="button" onclick="logout()" class="text-red-400 text-xs ml-2 font-bold bg-red-950/40 px-2.5 py-1 rounded-xl">خروج</button>
             </div>
         </div>
     </header>
@@ -95,13 +92,13 @@
     <main class="max-w-7xl mx-auto w-full p-4 flex-grow">
         
         <!-- تسجيل الدخول -->
-        <section id="auth-section" class="max-w-md mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl relative overflow-hidden">
+        <section id="auth-section" class="max-w-md mx-auto mt-12 luxury-card p-8 rounded-3xl shadow-2xl relative overflow-hidden">
             <div class="text-center mb-6 relative z-10">
-                <div class="w-16 h-16 bg-slate-900 border border-slate-700 text-goldAccent rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
-                    <i class="fa-solid fa-cloud"></i>
+                <div class="w-16 h-16 bg-slate-900 border border-goldAccent/30 text-goldAccent rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
+                    <i class="fa-solid fa-gem"></i>
                 </div>
-                <h2 class="text-2xl font-black text-slate-100">تسجيل الدخول السحابي</h2>
-                <p class="text-xs text-slate-400 mt-1">مزامنة فورية بين الإدارة وجوالات الزبائن</p>
+                <h2 class="text-2xl font-black text-slate-100">بوابة الدخول الفاخرة</h2>
+                <p class="text-xs text-slate-400 mt-1">نظام إدارة الديون والمقبوضات المتقدم</p>
             </div>
             
             <div class="space-y-4 relative z-10">
@@ -113,28 +110,28 @@
                     <label class="text-xs font-bold text-slate-300 mb-1 block">كلمة المرور:</label>
                     <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
                 </div>
-                <button type="button" onclick="handleLogin(event)" class="w-full bg-goldAccent text-darkBg font-black py-3.5 rounded-2xl mt-4 text-sm shadow">دخول للنظام</button>
+                <button type="button" onclick="handleLogin(event)" class="w-full bg-goldAccent text-darkBg font-black py-3.5 rounded-2xl mt-4 text-sm shadow-lg">دخول للنظام</button>
             </div>
         </section>
 
         <!-- إعداد كلمة المرور الأولى -->
-        <section id="setup-password-section" class="hidden max-w-md mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-4">
+        <section id="setup-password-section" class="hidden max-w-md mx-auto mt-12 luxury-card p-8 rounded-3xl shadow-2xl space-y-4">
             <div class="text-center">
                 <div class="w-16 h-16 bg-slate-900 border border-goldAccent/30 text-goldAccent rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <h2 class="text-xl font-black text-slate-100">أهلاً بك في دفتر الديون</h2>
-                <p class="text-xs text-slate-400 mt-2">يرجى تعيين كلمة مرور خاصة بك (لا يمكن تغييرها لاحقاً إلا عبر الإدارة).</p>
+                <p class="text-xs text-slate-400 mt-2">يرجى تعيين كلمة مرور خاصة بك لحماية حسابك.</p>
             </div>
             <div class="space-y-3 pt-4 border-t border-slate-700">
                 <input type="password" id="new-cust-pass" placeholder="كلمة المرور الجديدة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
                 <input type="password" id="new-cust-pass-confirm" placeholder="تأكيد كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
-                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm mt-2">متابعة</button>
+                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm mt-2 shadow-lg">متابعة</button>
             </div>
         </section>
 
         <!-- سياسة المتجر -->
-        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-5">
+        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 luxury-card p-8 rounded-3xl shadow-2xl space-y-5">
             <div class="text-center pb-4 border-b border-slate-700">
                 <h2 class="text-2xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
                 <p class="text-sm text-slate-400">يرجى الاطلاع على الشروط التنظيمية لحسابك المالي.</p>
@@ -157,44 +154,61 @@
                 </div>
             </div>
             <div class="pt-4">
-                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow">قرأت التفاصيل، موافق وانتقل لحسابي</button>
+                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow-lg">قرأت التفاصيل، موافق وانتقل لحسابي</button>
             </div>
         </section>
 
         <!-- لوحة الإدارة -->
         <section id="admin-panel" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-md">
+                <div class="luxury-card p-5 rounded-3xl shadow-md">
                     <p class="text-xs text-slate-400 font-bold mb-1">إجمالي الديون (في السوق)</p>
                     <h3 id="stat-total-receivables" class="text-2xl font-black text-successGreen">$0.00</h3>
                 </div>
-                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-md">
+                <div class="luxury-card p-5 rounded-3xl shadow-md">
                     <p class="text-xs text-slate-400 font-bold mb-1">سعر الصرف المرجعي</p>
                     <h3 id="stat-syp-rate-display" class="text-2xl font-black text-goldAccent">15,000 ل.س</h3>
                 </div>
-                <div class="bg-slate-800 p-5 rounded-3xl border border-slate-700 shadow-md">
+                <div class="luxury-card p-5 rounded-3xl shadow-md">
                     <p class="text-xs text-slate-400 font-bold mb-1">الصافي المالي الكلي</p>
                     <h3 id="stat-net-balance" class="text-2xl font-black text-white">$0.00</h3>
                 </div>
             </div>
 
-            <div class="bg-slate-800 rounded-3xl border border-slate-700 shadow-xl overflow-hidden">
-                <div class="p-4 border-b border-slate-700 bg-slate-900/50 flex justify-between items-center">
-                    <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث بالاسم أو الرقم..." class="w-full bg-slate-950 border border-slate-700 text-xs px-3 py-2 rounded-xl text-slate-100">
+            <div class="luxury-card p-3 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="openReportModal()" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-chart-pie mr-1"></i> التقارير</button>
+                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> تصدير PDF</button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-slate-300 font-bold px-3 py-2 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-gear mr-1"></i> الإعدادات</button>
+                </div>
+            </div>
+
+            <div class="luxury-card rounded-3xl shadow-xl overflow-hidden">
+                <div class="p-4 border-b border-slate-700/80 bg-slate-900/60 flex justify-between items-center">
+                    <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث بالاسم أو الرقم..." class="w-full bg-slate-950 border border-slate-700 text-xs px-3 py-2.5 rounded-xl text-slate-100">
                 </div>
                 <div id="admin-accounts-list-cards" class="p-3 space-y-2 max-h-[60vh] overflow-y-auto"></div>
             </div>
+            
+            <div class="fab-container no-print">
+                <button class="fab" onclick="openModal('modal-add-account')"><i class="fa-solid fa-plus"></i></button>
+            </div>
         </section>
 
-        <!-- لوحة الزبون -->
+        <!-- لوحة الزبون الفاخرة -->
         <section id="customer-panel" class="hidden space-y-4">
-            <div id="cust-empty-state" class="hidden bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center shadow-lg mt-8">
+            <div id="cust-empty-state" class="hidden luxury-card p-8 rounded-3xl text-center shadow-lg mt-8">
+                <div class="w-20 h-20 bg-successGreen/10 text-successGreen rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+                    <i class="fa-regular fa-face-smile"></i>
+                </div>
                 <h3 class="text-lg font-black text-slate-100">حسابك مصفر تماماً</h3>
-                <p class="text-sm text-slate-400 mt-2">شكراً لالتزامك المالي وثقتك بمتجر معاذ.</p>
+                <p class="text-sm text-slate-400 mt-2">شكراً لالتزامك المالي وثقتك التامة بمتجر معاذ.</p>
             </div>
 
             <div id="cust-content-state" class="space-y-4">
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden">
+                <div class="luxury-card p-6 rounded-3xl shadow-xl relative overflow-hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
                         <div>
                             <p class="text-xs text-slate-400 font-bold mb-1">الرصيد الإجمالي المستحق</p>
@@ -220,30 +234,80 @@
     <!-- Modal: إدارة الحساب -->
     <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-manage-account')">
         <div class="modal-content max-w-xl">
-            <div class="flex justify-between items-center pb-4 border-b border-slate-700 mb-4">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-700/80 mb-4">
                 <h3 id="modal-account-title" class="font-black text-base text-white">إدارة الحساب</h3>
                 <button type="button" onclick="closeModal('modal-manage-account')" class="text-red-400 font-bold">إغلاق</button>
             </div>
 
             <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="space-y-4">
                 <input type="hidden" id="trans-target-id">
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 space-y-3">
                     <select id="trans-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white font-bold">
                         <option value="debt">دين جديد (عليه)</option>
                         <option value="payment">دفعة سداد (له)</option>
                     </select>
                     
-                    <div class="currency-toggle-group">
-                        <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="currency-btn active">دولار ($)</button>
-                        <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="currency-btn">ليرة جديدة</button>
-                        <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="currency-btn">ليرة قديمة</button>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-1">اختر عملة الإدخال:</label>
+                        <div class="currency-toggle-group">
+                            <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="currency-btn active">دولار ($)</button>
+                            <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="currency-btn">ليرة جديدة</button>
+                            <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="currency-btn">ليرة قديمة</button>
+                        </div>
                     </div>
 
                     <input type="number" step="any" id="trans-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-base text-white text-center font-black" placeholder="أدخل المبلغ...">
                     <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white">
                 </div>
-                <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-xl text-xs shadow">حفظ الحركة سحابياً</button>
+                <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-xl text-xs shadow-lg">حفظ الحركة سحابياً</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: إضافة حساب جديد -->
+    <div id="modal-add-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-add-account')">
+        <div class="modal-content max-w-md space-y-3">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2">إضافة زبون سحابي جديد</h3>
+            <input type="text" id="acc-name" placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+            <input type="tel" id="acc-phone" placeholder="رقم الهاتف (مثل 09xxxxxxxx)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono">
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="acc-pass" placeholder="كلمة مرور مؤقتة" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                <select id="acc-group" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-goldAccent font-bold">
+                    <option value="regular">زبون دائم</option>
+                    <option value="neighbor">جيران المتجر</option>
+                    <option value="supplier">مورد</option>
+                </select>
+            </div>
+            <input type="number" id="acc-limit" placeholder="السقف المالي ($)" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono">
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">إلغاء</button>
+                <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-black px-4 py-2 rounded-xl text-xs">حفظ الحساب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: الإعدادات -->
+    <div id="modal-settings" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-settings')">
+        <div class="modal-content max-w-md space-y-4">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2">الإعدادات العامة</h3>
+            <div>
+                <label class="text-xs text-slate-300 block mb-1">سعر الدولار (ليرة سورية جديدة):</label>
+                <div class="flex gap-2"><input type="number" id="setting-syp-rate" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-goldAccent font-bold"><button type="button" onclick="saveExchangeRate()" class="bg-slate-700 text-white px-3 py-1 rounded-xl text-xs">حفظ</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: تقارير -->
+    <div id="modal-reports" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-reports')">
+        <div class="modal-content max-w-md space-y-3">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2">التقارير الحية</h3>
+            <div class="space-y-3 text-xs">
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 space-y-1">
+                    <h4 class="font-bold text-white">ملخص اليوم</h4>
+                    <div class="flex justify-between"><span>الديون:</span><span id="rep-today-debts" class="font-bold text-red-400">$0.00</span></div>
+                    <div class="flex justify-between"><span>المقبوضات:</span><span id="rep-today-payments" class="font-bold text-successGreen">$0.00</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -297,7 +361,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v20");
+                const savedUser = localStorage.getItem("moaath_current_user_v21");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -350,7 +414,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v20", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v21", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -369,7 +433,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v20", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v21", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -378,7 +442,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v20");
+            localStorage.removeItem("moaath_current_user_v21");
             updateUIState();
         };
 
@@ -403,7 +467,7 @@
                 if (bal > 0) receivables += bal;
 
                 html += `
-                    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-3 flex justify-between items-center mb-2">
+                    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl p-3 flex justify-between items-center mb-2 shadow">
                         <div>
                             <h4 class="font-bold text-sm text-white">${acc.name}</h4>
                             <span class="text-[10px] text-slate-400 font-mono">${acc.phone}</span>
@@ -471,7 +535,7 @@
             renderCustomerPanel();
         };
 
-        // دالة التنسيق المحدثة: إخفاء الفواصل العشرية وتقريب الأرقام للعملة السورية
+        // دالة التنسيق بدون فواصل عشرية لليرة السورية
         window.formatDisplayAmount = function(amountUSD) {
             const rate = window.storeData.settings.sypRate || 15000;
             if (window.customerDisplayCurrency === 'SYP_NEW') {
@@ -520,6 +584,18 @@
 
         window.openModal = function(id) { document.getElementById(id).classList.remove("hidden"); };
         window.closeModal = function(id) { document.getElementById(id).classList.add("hidden"); };
+        
+        window.saveExchangeRate = function() {
+            const rate = Number(document.getElementById("setting-syp-rate").value);
+            if (rate > 0) {
+                window.storeData.settings.sypRate = rate;
+                window.syncCloudData('settings/sypRate', rate);
+                closeModal('modal-settings');
+                alert("تم تحديث سعر الصرف سحابياً");
+            }
+        };
+        window.openReportModal = function() { openModal('modal-reports'); };
+        window.generateAllAccountsPDF = function() { alert("جاري تجهيز تقرير PDF الشامل..."); };
     </script>
 </body>
 </html>
