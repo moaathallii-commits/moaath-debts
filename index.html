@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v24</title>
+    <title>متجر معاذ - دفتر الديون السحابي v25</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -145,9 +145,13 @@
                 </div>
             </div>
 
+            <!-- أزرار الإدارة المحدثة مع زر الإعدادات وسعر الصرف -->
             <div class="luxury-card p-3 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> تحميل السجل الشامل (PDF)</button>
+                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> السجل الشامل (PDF)</button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-goldAccent font-bold px-4 py-2 rounded-xl text-xs border border-goldAccent/40 hover:bg-slate-800"><i class="fa-solid fa-gear mr-1"></i> إعدادات سعر الصرف</button>
                 </div>
             </div>
 
@@ -246,7 +250,7 @@
         </div>
     </div>
 
-    <!-- Modal: إضافة حساب جديد مع إرسال رسالة واتساب تلقائية -->
+    <!-- Modal: إضافة حساب جديد -->
     <div id="modal-add-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-add-account')">
         <div class="modal-content max-w-md space-y-4">
             <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3">إضافة زبون سحابي جديد</h3>
@@ -264,6 +268,24 @@
             <div class="flex justify-end gap-2 pt-2">
                 <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-800 text-slate-300 px-4 py-2.5 rounded-xl text-xs">إلغاء</button>
                 <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">حفظ وإرسال واتساب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: إعدادات سعر الصرف -->
+    <div id="modal-settings" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-settings')">
+        <div class="modal-content max-w-md space-y-4">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-gear mr-1"></i> إعدادات سعر الصرف المرجعي</h3>
+            <div>
+                <label class="text-xs text-slate-300 block mb-1">سعر الدولار مقابل (الليرة السورية الجديدة):</label>
+                <div class="flex gap-2">
+                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-goldAccent font-black">
+                    <button type="button" onclick="saveExchangeRate()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">حفظ السعر</button>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-2">ملاحظة: السعر الأساسي للديون هو الدولار، وهذا السعر يستخدم للتحويل للعملة المحلية فقط.</p>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">إغلاق</button>
             </div>
         </div>
     </div>
@@ -327,18 +349,17 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v24");
+                const savedUser = localStorage.getItem("moaath_current_user_v25");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
 
-            // نظام النسخ الاحتياطي التلقائي (كل 3 ساعات)
+            // النسخ الاحتياطي التلقائي (كل 3 ساعات)
             setInterval(() => {
                 autoBackupJSON();
             }, 3 * 60 * 60 * 1000);
         });
 
-        // دالة إنشاء النسخة الاحتياطية التلقائية JSON
         function autoBackupJSON() {
             try {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.storeData, null, 2));
@@ -392,7 +413,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v24", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v25", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -411,7 +432,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v24", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v25", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -420,7 +441,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v24");
+            localStorage.removeItem("moaath_current_user_v25");
             updateUIState();
         };
 
@@ -437,7 +458,8 @@
         window.renderAdminDashboard = function() {
             const accounts = window.storeData.accounts || {};
             let receivables = 0, html = "";
-            document.getElementById("stat-syp-rate-display").textContent = `${Number(window.storeData.settings.sypRate).toLocaleString()} ل.س`;
+            const currentRate = window.storeData.settings.sypRate || 15000;
+            document.getElementById("stat-syp-rate-display").textContent = `${Number(currentRate).toLocaleString()} ل.س`;
 
             for (let key in accounts) {
                 const acc = accounts[key];
@@ -518,7 +540,6 @@
             }
         };
 
-        // إنشاء زبون جديد وإرسال رسالة واتساب تلقائية تتضمن الشروط ورقم الهاتف وكلمة المرور
         window.handleCreateAccount = function() {
             const name = document.getElementById("acc-name").value.trim();
             const phone = document.getElementById("acc-phone").value.trim();
@@ -536,7 +557,6 @@
             window.syncCloudData(`accounts/${id}`, newAcc);
             closeModal('modal-add-account');
 
-            // تجهيز وإرسال رسالة الواتساب التلقائية
             const policyText = `مرحباً بك ${name} في متجر معاذ.\nتم إنشاء حسابك المالي بنجاح.\nبيانات الدخول:\nرقم الهاتف: ${phone}\nكلمة المرور المؤقتة: ${pass}\n\nشروط وسياسة التعامل:\n1. تُسجل كافة المسحوبات والديون بالدولار الأمريكي.\n2. يُخصص سقف مالي وتصلك تنبيهات عند تجاوز 75%.\n3. عند تجاوز السقف، يعلق النظام السحب مؤقتاً حتى السداد.\nشكراً لتعاملكم معنا.`;
             
             const cleanPhone = phone.replace(/^0/, '');
@@ -546,7 +566,17 @@
             alert("تم حفظ الحساب سحابياً وفتح واتساب لإرسال بيانات الحساب والشروط للزبون!");
         };
 
-        // دالة توليد وتحميل السجل الشامل PDF
+        window.saveExchangeRate = function() {
+            const rate = Number(document.getElementById("setting-syp-rate").value);
+            if (rate > 0) {
+                window.storeData.settings.sypRate = rate;
+                window.syncCloudData('settings/sypRate', rate);
+                closeModal('modal-settings');
+                renderAdminDashboard();
+                alert("تم تحديث سعر الصرف المرجعي سحابياً بنجاح!");
+            }
+        };
+
         window.generateAllAccountsPDF = function() {
             const btn = document.getElementById("btn-export-pdf");
             const originalText = btn.innerHTML;
@@ -659,7 +689,12 @@
             document.getElementById("customer-transactions-cards").innerHTML = html;
         };
 
-        window.openModal = function(id) { document.getElementById(id).classList.remove("hidden"); };
+        window.openModal = function(id) { 
+            if(id === 'modal-settings') {
+                document.getElementById("setting-syp-rate").value = window.storeData.settings.sypRate || 15000;
+            }
+            document.getElementById(id).classList.remove("hidden"); 
+        };
         window.closeModal = function(id) { document.getElementById(id).classList.add("hidden"); };
         window.switchTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
