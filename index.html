@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v16</title>
+    <title>متجر معاذ - دفتر الديون السحابي v17</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -53,8 +53,12 @@
         .fab-item-label { background-color: #1e293b; color: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; border: 1px solid #334155; }
         .fab-item-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; background-color: #334155; color: #f59e0b; display: flex; align-items: center; justify-content: center; border: 1px solid #475569; }
         .highlight { background-color: rgba(245, 158, 11, 0.3); color: #f59e0b; border-radius: 2px; padding: 0 2px; }
-        .mini-chart-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background-color: #334155; margin-top: 4px; }
-        .mini-chart-debt { background-color: #f87171; height: 100%; } .mini-chart-payment { background-color: #10b981; height: 100%; }
+        
+        /* أزرار العملات الاحترافية الجديدة */
+        .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background-color: #020617; padding: 0.35rem; border-radius: 1rem; border: 1px solid #334155; }
+        .currency-btn { padding: 0.65rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 0.75rem; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
+        .currency-btn.active { background-color: #f59e0b; color: #0f172a; font-weight: 900; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+
         #pdf-export-container { display: none; background: white; color: black; padding: 20px; font-family: 'Cairo', sans-serif; }
         .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: black; }
@@ -77,7 +81,7 @@
                 <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">الإصدار السحابي المتكامل v16</p>
+                    <p class="text-[10px] text-slate-400 font-bold">الإصدار السحابي المتكامل v17</p>
                 </div>
             </div>
             <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-2xl border border-slate-700">
@@ -212,7 +216,7 @@
             </div>
         </section>
 
-        <!-- لوحة الزبون (تعرض حسابه الشخصي فقط من السحابة) -->
+        <!-- لوحة الزبون -->
         <section id="customer-panel" class="hidden space-y-4">
             <div id="cust-empty-state" class="hidden bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center shadow-lg mt-8">
                 <div class="w-20 h-20 bg-successGreen/10 text-successGreen rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
@@ -237,10 +241,10 @@
                             <p class="text-xs text-slate-400 font-bold mb-1">الرصيد الإجمالي المستحق</p>
                             <h2 class="text-4xl font-black text-white" id="cust-display-balance">$0.00</h2>
                         </div>
-                        <div class="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-800 gap-1 shadow-inner">
-                            <button type="button" onclick="setCustomerCurrency('USD')" id="btn-curr-usd" class="px-3 py-1.5 rounded-xl text-xs font-black transition bg-goldAccent text-darkBg">دولار ($)</button>
-                            <button type="button" onclick="setCustomerCurrency('SYP_NEW')" id="btn-curr-new" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400">الجديدة</button>
-                            <button type="button" onclick="setCustomerCurrency('SYP_OLD')" id="btn-curr-old" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400">القديمة</button>
+                        <div class="currency-toggle-group">
+                            <button type="button" onclick="setCustomerCurrency('USD')" id="btn-curr-usd" class="currency-btn active">دولار ($)</button>
+                            <button type="button" onclick="setCustomerCurrency('SYP_NEW')" id="btn-curr-new" class="currency-btn">ليرة جديدة</button>
+                            <button type="button" onclick="setCustomerCurrency('SYP_OLD')" id="btn-curr-old" class="currency-btn">ليرة قديمة</button>
                         </div>
                     </div>
 
@@ -299,23 +303,32 @@
                     <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="space-y-4">
                         <input type="hidden" id="trans-target-id">
                         <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-3">
-                            <div class="grid grid-cols-2 gap-2">
-                                <select id="trans-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold">
+                            <div class="grid grid-cols-1 gap-3">
+                                <select id="trans-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white font-bold">
                                     <option value="debt">دين جديد (عليه)</option>
                                     <option value="payment">دفعة سداد (له)</option>
                                 </select>
-                                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-700 gap-1">
-                                    <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="flex-1 rounded-lg text-xs font-bold bg-goldAccent text-darkBg">$</button>
-                                    <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="flex-1 rounded-lg text-xs text-slate-400">جديدة</button>
-                                    <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="flex-1 rounded-lg text-[10px] text-slate-400">قديمة</button>
+                                
+                                <!-- أزرار العملات الاحترافية الجديدة في لوحة الإدارة -->
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">اختر عملة الإدخال:</label>
+                                    <div class="currency-toggle-group">
+                                        <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="currency-btn active">دولار ($)</button>
+                                        <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="currency-btn">ليرة جديدة</button>
+                                        <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="currency-btn">ليرة قديمة</button>
+                                    </div>
                                 </div>
                             </div>
-                            <input type="number" step="any" id="trans-amount" oninput="updateLiveUsdPreview()" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-base text-white text-center font-black" placeholder="المبلغ">
-                            <div id="live-usd-preview" class="text-xs font-bold text-successGreen hidden">= <span id="live-usd-value">$0.00</span></div>
-                            <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5"></div>
-                            <input type="text" id="trans-note" required placeholder="البيان..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                            
+                            <div class="relative mt-2">
+                                <input type="number" step="any" id="trans-amount" oninput="updateLiveUsdPreview()" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-base text-white text-center font-black" placeholder="أدخل المبلغ هنا...">
+                                <div id="live-usd-preview" class="text-xs font-bold text-successGreen hidden mt-1.5 text-center bg-emerald-950/40 py-1 rounded border border-emerald-900">= يعادل بالدولار: <span id="live-usd-value">$0.00</span></div>
+                            </div>
+
+                            <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5 pt-1"></div>
+                            <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white">
                         </div>
-                        <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-3 rounded-xl text-xs">حفظ الحركة سحابياً</button>
+                        <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-xl text-xs shadow">حفظ الحركة سحابياً</button>
                     </form>
                 </div>
 
@@ -438,7 +451,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // متغيرات النظام العامة
         const ADMIN_PHONE = "0965461504";
         const ADMIN_SECRET_PASS = "MHA@1997//MOAATHS";
         window.currentUser = null;
@@ -452,7 +464,6 @@
             settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] }
         };
 
-        // الاتصال السحابي اللحظي (Realtime Synchronization)
         const rootRef = ref(db);
         onValue(rootRef, (snapshot) => {
             const data = snapshot.val();
@@ -463,7 +474,6 @@
             document.getElementById("cloud-dot").className = "w-2 h-2 rounded-full bg-emerald-400 inline-block";
             document.getElementById("cloud-text").textContent = "متصل بالسحابة (مزامنة فورية)";
             
-            // تحديث الواجهة حسب المستخدم الحالي
             if (window.currentUser) {
                 if (window.currentUser.isAdmin) {
                     renderAdminDashboard();
@@ -473,25 +483,18 @@
             }
         }, (error) => {
             document.getElementById("cloud-dot").className = "w-2 h-2 rounded-full bg-amber-400 inline-block";
-            document.getElementById("cloud-text").textContent = "وضع عدم الاتصال (يتم استخدام الذاكرة المؤقتة)";
+            document.getElementById("cloud-text").textContent = "وضع عدم الاتصال";
         });
 
-        // دالة حفظ وتحديث السحاب
         window.syncCloudData = function(path, value) {
             set(child(ref(db), path), value).catch(err => {
                 alert("خطأ في المزامنة السحابية: " + err.message);
             });
         };
 
-        window.deleteCloudData = function(path) {
-            remove(child(ref(db), path)).catch(err => {
-                alert("خطأ في الحذف من السحابة: " + err.message);
-            });
-        };
-
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v16");
+                const savedUser = localStorage.getItem("moaath_current_user_v17");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -549,7 +552,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v16", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v17", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -574,7 +577,7 @@
                     window.currentUser = { phone, name: foundAcc.name, isAdmin: false, requiresPolicyAcceptance: true, dbKey: foundKey };
                 } else {
                     window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                    localStorage.setItem("moaath_current_user_v16", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v17", JSON.stringify(window.currentUser));
                 }
                 updateUIState();
             } else {
@@ -612,14 +615,14 @@
                 window.syncCloudData(`accounts/${window.currentUser.dbKey}/policyAccepted`, true);
                 
                 window.currentUser.requiresPolicyAcceptance = false;
-                localStorage.setItem("moaath_current_user_v16", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v17", JSON.stringify(window.currentUser));
                 updateUIState();
             }
         };
 
         window.logout = function() {
             window.currentUser = null; window.pendingCustomerKey = null;
-            localStorage.removeItem("moaath_current_user_v16");
+            localStorage.removeItem("moaath_current_user_v17");
             updateUIState();
         };
 
@@ -687,12 +690,9 @@
 
         window.setAdminInputCurrency = function(curr) {
             window.adminInputCurrency = curr;
-            document.getElementById("adm-curr-usd").style.backgroundColor = curr === 'USD' ? "#f59e0b" : "transparent";
-            document.getElementById("adm-curr-usd").style.color = curr === 'USD' ? "#0f172a" : "#cbd5e1";
-            document.getElementById("adm-curr-new").style.backgroundColor = curr === 'SYP_NEW' ? "#f59e0b" : "transparent";
-            document.getElementById("adm-curr-new").style.color = curr === 'SYP_NEW' ? "#0f172a" : "#cbd5e1";
-            document.getElementById("adm-curr-old").style.backgroundColor = curr === 'SYP_OLD' ? "#f59e0b" : "transparent";
-            document.getElementById("adm-curr-old").style.color = curr === 'SYP_OLD' ? "#0f172a" : "#cbd5e1";
+            document.getElementById("adm-curr-usd").className = curr === 'USD' ? "currency-btn active" : "currency-btn";
+            document.getElementById("adm-curr-new").className = curr === 'SYP_NEW' ? "currency-btn active" : "currency-btn";
+            document.getElementById("adm-curr-old").className = curr === 'SYP_OLD' ? "currency-btn active" : "currency-btn";
             window.updateLiveUsdPreview();
         };
 
@@ -792,7 +792,7 @@
             if (!acc.transactions) acc.transactions = {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
             
-            // مزامنة سحابية فورية للحركة
+            // مزامنة سحابية فورية للحركة والتأكد من حفظها تماماً
             window.syncCloudData(`accounts/${key}`, acc);
             
             document.getElementById("form-add-transaction").reset();
@@ -852,9 +852,9 @@
 
         window.setCustomerCurrency = function(curr) {
             window.customerDisplayCurrency = curr;
-            document.getElementById("btn-curr-usd").className = curr === 'USD' ? "px-3 py-1.5 rounded-xl text-xs font-black bg-goldAccent text-darkBg shadow" : "px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400";
-            document.getElementById("btn-curr-new").className = curr === 'SYP_NEW' ? "px-3 py-1.5 rounded-xl text-xs font-black bg-goldAccent text-darkBg shadow" : "px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400";
-            document.getElementById("btn-curr-old").className = curr === 'SYP_OLD' ? "px-3 py-1.5 rounded-xl text-xs font-black bg-goldAccent text-darkBg shadow" : "px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400";
+            document.getElementById("btn-curr-usd").className = curr === 'USD' ? "currency-btn active" : "currency-btn";
+            document.getElementById("btn-curr-new").className = curr === 'SYP_NEW' ? "currency-btn active" : "currency-btn";
+            document.getElementById("btn-curr-old").className = curr === 'SYP_OLD' ? "currency-btn active" : "currency-btn";
             renderCustomerPanel();
         };
 
