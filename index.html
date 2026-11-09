@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v23</title>
+    <title>متجر معاذ - دفتر الديون السحابي v24</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -45,10 +45,6 @@
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
         .modal-content { background-color: #1e293b; border: 1px solid rgba(245, 158, 11, 0.35); width: 100%; border-radius: 2rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); }
         
-        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; border-bottom: 2px solid transparent; background: none; cursor: pointer; }
-        .tab-btn.active { color: #f59e0b; border-bottom-color: #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
-        .tab-content { display: none; } .tab-content.active { display: block; }
-        
         .tx-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 1.25rem; padding: 1.1rem; margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 8px 20px -4px rgba(0,0,0,0.3); }
         .tx-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 5px; }
         .tx-card.debt::before { background: linear-gradient(to bottom, #f87171, #dc2626); } 
@@ -62,6 +58,11 @@
         .currency-btn.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; box-shadow: 0 4px 15px rgba(245,158,11,0.4); }
 
         .fab { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background-color: #f59e0b; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4); z-index: 40; cursor: pointer; }
+
+        #pdf-export-container { display: none; background: white; color: black; padding: 25px; font-family: 'Cairo', sans-serif; direction: rtl; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 8px; text-align: right; color: black; }
+        .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -144,6 +145,12 @@
                 </div>
             </div>
 
+            <div class="luxury-card p-3 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> تحميل السجل الشامل (PDF)</button>
+                </div>
+            </div>
+
             <div class="luxury-card rounded-3xl shadow-2xl overflow-hidden">
                 <div class="p-4 border-b border-slate-700/80 bg-slate-900/70 flex justify-between items-center">
                     <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث بالاسم أو الرقم..." class="w-full bg-slate-950 border border-slate-700 text-xs px-4 py-3 rounded-2xl text-slate-100">
@@ -187,7 +194,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة الحساب مع صلاحية مسح السجل -->
+    <!-- Modal: إدارة الحساب -->
     <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-manage-account')">
         <div class="modal-content max-w-xl">
             <div class="flex justify-between items-center pb-4 border-b border-slate-700/80 mb-4">
@@ -226,7 +233,6 @@
                     </form>
                 </div>
 
-                <!-- تبويب الإعدادات والصلاحيات (يتضمن زر مسح السجل) -->
                 <div id="tab-settings" class="tab-content space-y-4">
                     <div class="bg-slate-900 p-4 rounded-2xl border border-red-500/30 space-y-3">
                         <h4 class="text-xs font-black text-red-400"><i class="fa-solid fa-triangle-exclamation ml-1"></i> صلاحيات الإدارة المتقدمة</h4>
@@ -240,7 +246,7 @@
         </div>
     </div>
 
-    <!-- Modal: إضافة حساب جديد -->
+    <!-- Modal: إضافة حساب جديد مع إرسال رسالة واتساب تلقائية -->
     <div id="modal-add-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-add-account')">
         <div class="modal-content max-w-md space-y-4">
             <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3">إضافة زبون سحابي جديد</h3>
@@ -257,9 +263,18 @@
             <input type="number" id="acc-limit" placeholder="السقف المالي بالدولار ($)" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-white font-mono">
             <div class="flex justify-end gap-2 pt-2">
                 <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-800 text-slate-300 px-4 py-2.5 rounded-xl text-xs">إلغاء</button>
-                <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">حفظ الحساب</button>
+                <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">حفظ وإرسال واتساب</button>
             </div>
         </div>
+    </div>
+
+    <!-- حاوية PDF الشامل -->
+    <div id="pdf-export-container">
+        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:15px;">
+            <h2>متجر معاذ - السجل الشامل لدفتر الديون</h2>
+            <p id="pdf-export-date"></p>
+        </div>
+        <div id="pdf-export-content"></div>
     </div>
 
     <!-- Firebase SDKs -->
@@ -312,11 +327,29 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v23");
+                const savedUser = localStorage.getItem("moaath_current_user_v24");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
+
+            // نظام النسخ الاحتياطي التلقائي (كل 3 ساعات)
+            setInterval(() => {
+                autoBackupJSON();
+            }, 3 * 60 * 60 * 1000);
         });
+
+        // دالة إنشاء النسخة الاحتياطية التلقائية JSON
+        function autoBackupJSON() {
+            try {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.storeData, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `backup_moaath_store_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            } catch(e) {}
+        }
 
         window.updateUIState = function() {
             document.getElementById("auth-section").classList.add("hidden");
@@ -359,7 +392,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v23", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v24", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -378,7 +411,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v23", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v24", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -387,7 +420,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v23");
+            localStorage.removeItem("moaath_current_user_v24");
             updateUIState();
         };
 
@@ -473,17 +506,103 @@
             alert("تم حفظ الحركة بالدولار ومزامنتها سحابياً بنجاح!");
         };
 
-        // صلاحية مسح سجل الزبون
         window.adminClearCustomerHistory = function() {
             if (!window.activeManagingAccountKey) return;
             const acc = window.storeData.accounts[window.activeManagingAccountKey];
-            if (confirm(`⚠️ تحذير شديد:\nهل أنت متأكد من مسح كافة سجل الحركات والسداد للزبون (${acc.name}) نهائياً وتصفير رصيده؟`)) {
+            if (confirm(`⚠️ تحذير شديد:\nهل أنت متأكد من مسح كافة سجل الحركات لهذا الزبون (${acc.name}) نهائياً؟`)) {
                 acc.transactions = {};
                 window.syncCloudData(`accounts/${window.activeManagingAccountKey}/transactions`, null);
                 closeModal('modal-manage-account');
                 renderAdminDashboard();
-                alert("تم مسح وتصفير سجل الحركات لهذا الزبون بنجاح.");
+                alert("تم مسح وتصفير سجل الحركات بنجاح.");
             }
+        };
+
+        // إنشاء زبون جديد وإرسال رسالة واتساب تلقائية تتضمن الشروط ورقم الهاتف وكلمة المرور
+        window.handleCreateAccount = function() {
+            const name = document.getElementById("acc-name").value.trim();
+            const phone = document.getElementById("acc-phone").value.trim();
+            const pass = document.getElementById("acc-pass").value.trim();
+            const limit = Number(document.getElementById("acc-limit").value) || 100;
+            if (!name || !phone || !pass) { alert("أكمل البيانات"); return; }
+            
+            const id = Date.now().toString();
+            const newAcc = { 
+                name, phone, password: pass, creditLimit: limit, 
+                group: document.getElementById("acc-group").value, 
+                type: 'customer', isFirstLogin: true, transactions: {} 
+            };
+            
+            window.syncCloudData(`accounts/${id}`, newAcc);
+            closeModal('modal-add-account');
+
+            // تجهيز وإرسال رسالة الواتساب التلقائية
+            const policyText = `مرحباً بك ${name} في متجر معاذ.\nتم إنشاء حسابك المالي بنجاح.\nبيانات الدخول:\nرقم الهاتف: ${phone}\nكلمة المرور المؤقتة: ${pass}\n\nشروط وسياسة التعامل:\n1. تُسجل كافة المسحوبات والديون بالدولار الأمريكي.\n2. يُخصص سقف مالي وتصلك تنبيهات عند تجاوز 75%.\n3. عند تجاوز السقف، يعلق النظام السحب مؤقتاً حتى السداد.\nشكراً لتعاملكم معنا.`;
+            
+            const cleanPhone = phone.replace(/^0/, '');
+            const waUrl = `https://wa.me/963${cleanPhone}?text=${encodeURIComponent(policyText)}`;
+            window.open(waUrl, '_blank');
+
+            alert("تم حفظ الحساب سحابياً وفتح واتساب لإرسال بيانات الحساب والشروط للزبون!");
+        };
+
+        // دالة توليد وتحميل السجل الشامل PDF
+        window.generateAllAccountsPDF = function() {
+            const btn = document.getElementById("btn-export-pdf");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري التوليد...`; 
+            btn.disabled = true;
+            
+            document.getElementById("pdf-export-date").textContent = `تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+            const container = document.getElementById("pdf-export-content");
+            container.innerHTML = "";
+            
+            let hasData = false;
+            const accounts = window.storeData.accounts || {};
+            for (let key in accounts) {
+                hasData = true;
+                const acc = accounts[key];
+                const bal = window.calculateAccountBalance(acc);
+                let html = `<div style="margin-bottom:20px; page-break-inside: avoid; border:1px solid #cbd5e1; border-radius: 8px; padding:15px; background: #fff;">
+                    <h3 style="margin:0 0 5px 0; color: #0f172a;">${acc.name} <span style="font-weight:normal; font-size:12px; color:#475569;">(${acc.phone})</span></h3>
+                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:13px; color: ${bal > 0 ? '#10b981' : '#0f172a'}">إجمالي الرصيد: $${bal.toFixed(2)}</p>
+                    <table class="pdf-table"><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th>المبلغ ($)</th></tr></thead><tbody>`;
+                
+                let hasTxs = false;
+                const txs = acc.transactions || {};
+                for (let id in txs) {
+                    hasTxs = true;
+                    const tx = txs[id];
+                    html += `<tr><td>${new Date(tx.date).toLocaleDateString('ar-SY')}</td><td>${tx.type==='debt'?'دين':'سداد'}</td><td>${tx.note}</td><td style="font-weight:bold;">$${Number(tx.amountUSD).toFixed(2)}</td></tr>`;
+                }
+                if (!hasTxs) html += `<tr><td colspan="4" style="text-align:center;">لا توجد حركات</td></tr>`;
+                html += `</tbody></table></div>`;
+                container.innerHTML += html;
+            }
+
+            if (!hasData) container.innerHTML = "<p style='text-align:center;'>لا توجد حسابات مسجلة.</p>";
+
+            const element = document.getElementById('pdf-export-container');
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                html2pdf().set({ 
+                    margin: 10, 
+                    filename: `سجل_ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`, 
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                }).from(element).save().then(() => {
+                    element.style.display = 'none'; 
+                    btn.innerHTML = originalText; 
+                    btn.disabled = false;
+                }).catch(err => {
+                    alert("خطأ في توليد PDF: " + err);
+                    element.style.display = 'none';
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            }, 500);
         };
 
         window.setCustomerCurrency = function(curr) {
@@ -547,24 +666,6 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
-        };
-        window.handleCreateAccount = function() {
-            const name = document.getElementById("acc-name").value.trim();
-            const phone = document.getElementById("acc-phone").value.trim();
-            const pass = document.getElementById("acc-pass").value.trim();
-            const limit = Number(document.getElementById("acc-limit").value) || 100;
-            if (!name || !phone || !pass) return alert("أكمل البيانات");
-            
-            const id = Date.now().toString();
-            const newAcc = { 
-                name, phone, password: pass, creditLimit: limit, 
-                group: document.getElementById("acc-group").value, 
-                type: 'customer', isFirstLogin: true, transactions: {} 
-            };
-            
-            window.syncCloudData(`accounts/${id}`, newAcc);
-            closeModal('modal-add-account');
-            alert("تم إضافة الحساب سحابياً بنجاح!");
         };
     </script>
 </body>
