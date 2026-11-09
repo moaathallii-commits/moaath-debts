@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر ديون متجر معاذ - v20 (شأم كاش واستعادة البيانات)</title>
+    <title>دفتر ديون متجر معاذ - النظام المالي المحدث والمُحسّن (v20)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -387,7 +387,7 @@
                     </div>
                 </div>
 
-                <!-- التنبيه اليدوي من الإدارة -->
+                <!-- التبويب أو الإشعار اليدوي من الإدارة -->
                 <div id="customer-alert-box" class="hidden bg-slate-800 border border-goldAccent/30 text-goldAccent p-4 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                     <div class="flex items-center gap-3">
                         <i class="fa-solid fa-bell text-xl"></i>
@@ -705,7 +705,7 @@
         let allStoreData = JSON.parse(localStorage.getItem(DB_KEY));
         
         if (!allStoreData) {
-            const oldKeys = ["moaath_offline_db_v19", "moaath_offline_db_v18", "moaath_offline_db_v17", "moaath_offline_db_v16", "moaath_offline_db_v15", "moaath_offline_db_v14", "moaath_offline_db_final"];
+            const oldKeys = ["moaath_offline_db_v20", "moaath_offline_db_v19", "moaath_offline_db_v18", "moaath_offline_db_v17", "moaath_offline_db_v16", "moaath_offline_db_v15", "moaath_offline_db_v14", "moaath_offline_db_final"];
             for (let k of oldKeys) {
                 let oldData = localStorage.getItem(k);
                 if (oldData) {
@@ -1455,14 +1455,7 @@ ${id}
             const acc = allStoreData.accounts[activeManagingAccountKey];
             if (!acc) return;
             const bal = calculateAccountBalance(acc);
-            let msg = `مرحباً بك ${acc.name} في متجر معاذ.
-
-كشف الحساب المالي الحالي:
-حسابك الحالي : $${bal.toFixed(2)}
------------
-سقف الحساب المسموح: $${acc.creditLimit || 50}
-
-شكراً لالتزامكم.`;
+            let msg = `مرحباً بك ${acc.name} في متجر معاذ.\n\nكشف الحساب المالي الحالي:\nحسابك الحالي : $${bal.toFixed(2)}\n-----------\nسقف الحساب المسموح: $${acc.creditLimit || 50}\n\nشكراً لالتزامكم.`;
             window.open(`https://wa.me/963${acc.phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`, '_blank');
         }
         
