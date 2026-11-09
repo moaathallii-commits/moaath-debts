@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v19</title>
+    <title>متجر معاذ - دفتر الديون السحابي v20</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -52,6 +52,15 @@
         .fab-item { display: flex; align-items: center; gap: 0.5rem; flex-direction: row-reverse; }
         .fab-item-label { background-color: #1e293b; color: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; border: 1px solid #334155; }
         .fab-item-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; background-color: #334155; color: #f59e0b; display: flex; align-items: center; justify-content: center; border: 1px solid #475569; }
+        .highlight { background-color: rgba(245, 158, 11, 0.3); color: #f59e0b; border-radius: 2px; padding: 0 2px; }
+        .mini-chart-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background-color: #334155; margin-top: 4px; }
+        .mini-chart-debt { background-color: #f87171; height: 100%; } .mini-chart-payment { background-color: #10b981; height: 100%; }
+        #pdf-export-container { display: none; background: white; color: black; padding: 20px; font-family: 'Cairo', sans-serif; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: black; }
+        .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
+        .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1rem; padding: 1rem; position: relative; overflow: hidden; }
+        .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.1; font-size: 3rem; color: #f59e0b; }
         
         .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background-color: #020617; padding: 0.35rem; border-radius: 1rem; border: 1px solid #334155; }
         .currency-btn { padding: 0.65rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 0.75rem; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
@@ -72,7 +81,7 @@
                 <div class="w-11 h-11 bg-goldAccent rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-md">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">الإصدار السحابي المتكامل v19</p>
+                    <p class="text-[10px] text-slate-400 font-bold">الإصدار السحابي المتكامل v20</p>
                 </div>
             </div>
             <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-2xl border border-slate-700">
@@ -115,7 +124,7 @@
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <h2 class="text-xl font-black text-slate-100">أهلاً بك في دفتر الديون</h2>
-                <p class="text-xs text-slate-400 mt-2">يرجى تعيين كلمة مرور خاصة بك.</p>
+                <p class="text-xs text-slate-400 mt-2">يرجى تعيين كلمة مرور خاصة بك (لا يمكن تغييرها لاحقاً إلا عبر الإدارة).</p>
             </div>
             <div class="space-y-3 pt-4 border-t border-slate-700">
                 <input type="password" id="new-cust-pass" placeholder="كلمة المرور الجديدة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
@@ -128,14 +137,27 @@
         <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 bg-slate-800 p-8 rounded-3xl border border-goldAccent shadow-2xl space-y-5">
             <div class="text-center pb-4 border-b border-slate-700">
                 <h2 class="text-2xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
+                <p class="text-sm text-slate-400">يرجى الاطلاع على الشروط التنظيمية لحسابك المالي.</p>
             </div>
-            <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-                <p>1. تُسجل كافة المسحوبات والديون في النظام بناءً على قيمتها بالدولار الأمريكي لضمان استقرار الحقوق.</p>
-                <p>2. يُخصص سقف مالي لكل حساب، ويرسل النظام تنبيهات تلقائية عند الاقتراب من السقف.</p>
-                <p>3. عند تجاوز السقف المحدد، يعلق النظام إمكانية سحب مواد جديدة مؤقتاً حتى إتمام السداد.</p>
+            <div class="space-y-3">
+                <div class="policy-card">
+                    <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">1. آلية التقييد وحفظ الحقوق</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">تُسجل كافة المسحوبات والديون في النظام بناءً على قيمتها بالدولار الأمريكي لضمان استقرار الحقوق.</p>
+                </div>
+                <div class="policy-card">
+                    <i class="fa-solid fa-scale-unbalanced"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">2. سقف الحساب والتنبيهات</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">يُخصص سقف مالي لكل حساب. يرجى السداد عند الاقتراب من السقف؛ حيث يرسل النظام تنبيهات تلقائية عند تجاوز 75%.</p>
+                </div>
+                <div class="policy-card">
+                    <i class="fa-solid fa-lock"></i>
+                    <h4 class="font-bold text-sm text-white mb-1">3. سياسة عدم الالتزام (إيقاف الخدمة)</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">عند تجاوز السقف المالي المحدد وتأخر السداد، يعلق النظام إمكانية سحب مواد جديدة مؤقتاً حتى إتمام السداد.</p>
+                </div>
             </div>
             <div class="pt-4">
-                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow">موافق وانتقل لحسابي</button>
+                <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-4 rounded-2xl text-sm shadow">قرأت التفاصيل، موافق وانتقل لحسابي</button>
             </div>
         </section>
 
@@ -162,13 +184,9 @@
                 </div>
                 <div id="admin-accounts-list-cards" class="p-3 space-y-2 max-h-[60vh] overflow-y-auto"></div>
             </div>
-            
-            <div class="fab-container no-print">
-                <button class="fab" onclick="openModal('modal-add-account')"><i class="fa-solid fa-plus"></i></button>
-            </div>
         </section>
 
-        <!-- لوحة الزبون المصلحة -->
+        <!-- لوحة الزبون -->
         <section id="customer-panel" class="hidden space-y-4">
             <div id="cust-empty-state" class="hidden bg-slate-800 p-8 rounded-3xl border border-slate-700 text-center shadow-lg mt-8">
                 <h3 class="text-lg font-black text-slate-100">حسابك مصفر تماماً</h3>
@@ -279,7 +297,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v19");
+                const savedUser = localStorage.getItem("moaath_current_user_v20");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -332,7 +350,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v19", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v20", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -351,7 +369,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v19", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v20", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -360,7 +378,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v19");
+            localStorage.removeItem("moaath_current_user_v20");
             updateUIState();
         };
 
@@ -437,7 +455,6 @@
             if (!acc.transactions) acc.transactions = {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
             
-            // إصلاح مزامنة الحركات بشكل مباشر وسلس
             window.syncCloudData(`accounts/${key}/transactions`, acc.transactions);
             
             document.getElementById("form-add-transaction").reset();
@@ -454,10 +471,17 @@
             renderCustomerPanel();
         };
 
+        // دالة التنسيق المحدثة: إخفاء الفواصل العشرية وتقريب الأرقام للعملة السورية
         window.formatDisplayAmount = function(amountUSD) {
             const rate = window.storeData.settings.sypRate || 15000;
-            if (window.customerDisplayCurrency === 'SYP_NEW') return `${(amountUSD * rate).toLocaleString()} ل.س`;
-            if (window.customerDisplayCurrency === 'SYP_OLD') return `${(amountUSD * rate * 100).toLocaleString()} ل.س`;
+            if (window.customerDisplayCurrency === 'SYP_NEW') {
+                const sypNew = Math.round(amountUSD * rate);
+                return `${sypNew.toLocaleString()} ل.س`;
+            }
+            if (window.customerDisplayCurrency === 'SYP_OLD') {
+                const sypOld = Math.round(amountUSD * rate * 100);
+                return `${sypOld.toLocaleString()} ل.س`;
+            }
             return `$${amountUSD.toFixed(2)}`;
         };
 
