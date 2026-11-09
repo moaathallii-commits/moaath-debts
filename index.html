@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v28</title>
+    <title>متجر معاذ - دفتر الديون السحابي v30</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -63,12 +63,12 @@
 
         .fab { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background-color: #f59e0b; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4); z-index: 40; cursor: pointer; }
 
-        /* تنسيق أزرار الحاسبة المصغرة */
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-top: 0.5rem; }
-        .calc-btn { background-color: #334155; color: #fff; font-weight: bold; padding: 0.75rem; border-radius: 0.75rem; font-size: 0.9rem; transition: background 0.2s; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+        .calc-btn { background-color: #334155; color: #fff; font-weight: 900; padding: 14px 0; border-radius: 12px; font-size: 1rem; transition: background 0.2s, transform 0.1s; text-align: center; }
         .calc-btn:hover { background-color: #475569; }
+        .calc-btn:active { transform: scale(0.95); }
         .calc-btn.operator { background-color: #f59e0b; color: #0f172a; }
-        .calc-btn.equals { background-color: #10b981; color: #0f172a; grid-column: span 2; }
+        .calc-btn.equals { background-color: #10b981; color: #0f172a; }
         .calc-btn.clear { background-color: #ef4444; color: #fff; }
 
         #pdf-export-container { display: none; background: white; color: black; padding: 25px; font-family: 'Cairo', sans-serif; direction: rtl; }
@@ -162,7 +162,7 @@
                     <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> السجل الشامل (PDF)</button>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-goldAccent font-bold px-4 py-2 rounded-xl text-xs border border-goldAccent/40 hover:bg-slate-800"><i class="fa-solid fa-gear mr-1"></i> إعدادات سعر الصرف</button>
+                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-goldAccent font-bold px-4 py-2 rounded-xl text-xs border border-goldAccent/40 hover:bg-slate-800"><i class="fa-solid fa-gear mr-1"></i> إعدادات المتجر والأصناف</button>
                 </div>
             </div>
 
@@ -209,7 +209,7 @@
         </section>
     </main>
 
-    <!-- Modal: إدارة الحساب مع الحاسبة الفورية -->
+    <!-- Modal: إدارة الحساب مع أزرار الأصناف السريعة والحاسبة -->
     <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-manage-account')">
         <div class="modal-content max-w-xl">
             <div class="flex justify-between items-center pb-4 border-b border-slate-700/80 mb-4">
@@ -224,7 +224,6 @@
             </div>
 
             <div class="max-h-[60vh] overflow-y-auto pr-1">
-                <!-- تبويب تسجيل حركة مع زر الحاسبة بجوار المبلغ -->
                 <div id="tab-add-tx" class="tab-content active space-y-4">
                     <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="space-y-4">
                         <input type="hidden" id="trans-target-id">
@@ -246,7 +245,6 @@
                             <div>
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="text-[10px] font-bold text-slate-400">المبلغ:</label>
-                                    <!-- زر الحاسبة الفورية -->
                                     <button type="button" onclick="openCalculator()" class="bg-goldAccent/20 hover:bg-goldAccent/30 text-goldAccent px-2.5 py-1 rounded-lg text-xs font-bold border border-goldAccent/40 flex items-center gap-1 transition">
                                         <i class="fa-solid fa-calculator"></i> حاسبة فورية
                                     </button>
@@ -257,26 +255,25 @@
                                 </div>
                             </div>
 
-                            <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-xs text-white">
+                            <!-- أزرار الأصناف السريعة البارزة للبيان -->
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 mb-1.5">الأصناف والبيانات السريعة (انقر للإضافة):</label>
+                                <div id="quick-items-buttons-container" class="flex flex-wrap gap-1.5">
+                                    <!-- توليد الأزرار هنا ديناميكياً -->
+                                </div>
+                            </div>
+
+                            <input type="text" id="trans-note" required placeholder="أو اكتب البيان يدوياً..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-xs text-white">
                         </div>
                         <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-4 rounded-2xl text-sm shadow-xl">حفظ الحركة سحابياً</button>
                     </form>
                 </div>
 
-                <!-- تبويب سجل الحركات -->
                 <div id="tab-history" class="tab-content space-y-2">
                     <div id="admin-modal-transactions-cards" class="space-y-2"></div>
                 </div>
 
-                <!-- تبويب الإعدادات والصلاحيات -->
                 <div id="tab-settings" class="tab-content space-y-4">
-                    <div id="admin-whatsapp-limit-alert-box" class="hidden bg-amber-950/40 p-4 rounded-2xl border border-amber-500/40 space-y-2">
-                        <h4 class="text-xs font-black text-goldAccent"><i class="fa-solid fa-triangle-exclamation mr-1"></i> تنبيه: الزبون وصل لسقف الحساب!</h4>
-                        <button type="button" onclick="sendAdminLimitWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
-                            <i class="fa-brands fa-whatsapp mr-1"></i> إرسال رسالة السقف تلقائياً (واتساب)
-                        </button>
-                    </div>
-
                     <div class="bg-slate-900 p-4 rounded-2xl border border-red-500/30 space-y-3">
                         <h4 class="text-xs font-black text-red-400"><i class="fa-solid fa-triangle-exclamation ml-1"></i> صلاحيات الإدارة المتقدمة</h4>
                         <button type="button" onclick="adminClearCustomerHistory()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-3 rounded-xl text-xs shadow transition">
@@ -291,21 +288,21 @@
         </div>
     </div>
 
-    <!-- Modal: نافذة الحاسبة الفورية -->
+    <!-- Modal: نافذة الحاسبة -->
     <div id="modal-calculator" class="modal-overlay hidden" onclick="if(event.target===this) closeCalculator()">
-        <div class="modal-content max-w-xs space-y-3 bg-slate-900 border border-goldAccent/50 p-5">
+        <div class="modal-content max-w-xs space-y-3 bg-slate-900 border border-goldAccent/50 p-5 rounded-3xl shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <h4 class="font-black text-sm text-goldAccent"><i class="fa-solid fa-calculator ml-1"></i> الحاسبة الفورية</h4>
-                <button type="button" onclick="closeCalculator()" class="text-red-400 font-bold text-xs">إغلاق</button>
+                <button type="button" onclick="closeCalculator()" class="text-red-400 font-bold text-xs bg-red-950/40 px-2 py-1 rounded-lg">إغلاق</button>
             </div>
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-left">
-                <div id="calc-display" class="text-2xl font-black text-white font-mono overflow-x-auto">0</div>
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 text-left">
+                <div id="calc-display" class="text-2xl font-black text-white font-mono overflow-x-auto tracking-wider">0</div>
             </div>
             <div class="calc-grid">
                 <button type="button" onclick="calcClear()" class="calc-btn clear">C</button>
+                <button type="button" onclick="calcBack()" class="calc-btn operator"><i class="fa-solid fa-delete-left"></i></button>
                 <button type="button" onclick="calcAppend('/')" class="calc-btn operator">÷</button>
                 <button type="button" onclick="calcAppend('*')" class="calc-btn operator">×</button>
-                <button type="button" onclick="calcBack()" class="calc-btn operator">⌫</button>
                 
                 <button type="button" onclick="calcAppend('7')" class="calc-btn">7</button>
                 <button type="button" onclick="calcAppend('8')" class="calc-btn">8</button>
@@ -320,12 +317,12 @@
                 <button type="button" onclick="calcAppend('1')" class="calc-btn">1</button>
                 <button type="button" onclick="calcAppend('2')" class="calc-btn">2</button>
                 <button type="button" onclick="calcAppend('3')" class="calc-btn">3</button>
-                <button type="button" onclick="calcEvaluate()" class="calc-btn equals" style="grid-row: span 2; height: 100%;">=</button>
+                <button type="button" onclick="calcEvaluate()" class="calc-btn equals" style="grid-row: span 2; height: 100%; display: flex; align-items: center; justify-content: center;">=</button>
                 
                 <button type="button" onclick="calcAppend('0')" class="calc-btn" style="grid-column: span 2;">0</button>
                 <button type="button" onclick="calcAppend('.')" class="calc-btn">.</button>
             </div>
-            <button type="button" onclick="calcApply()" class="w-full bg-successGreen text-darkBg font-black py-3 rounded-xl text-xs shadow mt-2">إدراج الناتج في خانة المبلغ</button>
+            <button type="button" onclick="calcApply()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-xl text-xs shadow-lg mt-2"><i class="fa-solid fa-check mr-1"></i> إدراج الناتج في خانة المبلغ</button>
         </div>
     </div>
 
@@ -351,17 +348,28 @@
         </div>
     </div>
 
-    <!-- Modal: إعدادات سعر الصرف -->
+    <!-- Modal: إعدادات المتجر والأصناف السريعة -->
     <div id="modal-settings" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-settings')">
-        <div class="modal-content max-w-md space-y-4">
-            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-gear mr-1"></i> إعدادات سعر الصرف المرجعي</h3>
-            <div>
-                <label class="text-xs text-slate-300 block mb-1">سعر الدولار مقابل (الليرة السورية الجديدة):</label>
+        <div class="modal-content max-w-md space-y-5">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3"><i class="fa-solid fa-gear mr-1"></i> إعدادات المتجر والأصناف</h3>
+            
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-2">
+                <label class="text-xs text-slate-300 block font-bold">سعر الدولار مقابل (الليرة السورية الجديدة):</label>
                 <div class="flex gap-2">
-                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-goldAccent font-black">
-                    <button type="button" onclick="saveExchangeRate()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">حفظ السعر</button>
+                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-goldAccent font-black">
+                    <button type="button" onclick="saveExchangeRate()" class="bg-goldAccent text-darkBg font-black px-4 py-2 rounded-xl text-xs">حفظ</button>
                 </div>
             </div>
+
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <label class="text-xs text-successGreen block font-bold">إدارة أزرار الأصناف السريعة للبيان:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="new-quick-item-input" placeholder="اسم صنف جديد (مثل: نقرشات)..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <button type="button" onclick="addNewQuickItem()" class="bg-successGreen text-darkBg font-black px-4 rounded-xl text-xs">إضافة</button>
+                </div>
+                <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5 pt-2"></div>
+            </div>
+
             <div class="flex justify-end pt-2">
                 <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">إغلاق</button>
             </div>
@@ -400,7 +408,7 @@
 
         window.storeData = {
             accounts: {},
-            settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت'] }
+            settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'نقرشات', 'سكر', 'متة', 'زيت'] }
         };
 
         const rootRef = ref(db);
@@ -428,7 +436,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v28");
+                const savedUser = localStorage.getItem("moaath_current_user_v30");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -475,7 +483,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v28", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v30", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -494,7 +502,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v28", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v30", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -503,7 +511,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v28");
+            localStorage.removeItem("moaath_current_user_v30");
             updateUIState();
         };
 
@@ -573,7 +581,61 @@
             }
         };
 
-        // دوال الحاسبة الفورية
+        // توليد ورسم أزرار الأصناف السريعة في نموذج تسجيل الحركة
+        window.renderQuickItemsButtons = function() {
+            const items = window.storeData.settings.quickItems || ['مواد غذائية', 'معلبات', 'نقرشات', 'سكر', 'متة', 'زيت'];
+            const container = document.getElementById("quick-items-buttons-container");
+            if (!container) return;
+            let html = "";
+            items.forEach(item => {
+                html += `<button type="button" onclick="appendQuickItem('${item}')" class="bg-slate-800 hover:bg-slate-700 text-goldAccent text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm transition"><i class="fa-solid fa-plus mr-1"></i>${item}</button>`;
+            });
+            container.innerHTML = html;
+        };
+
+        window.appendQuickItem = function(item) {
+            const noteInput = document.getElementById("trans-note");
+            noteInput.value = noteInput.value ? `${noteInput.value} + ${item}` : item;
+        };
+
+        // إدارة الأصناف السريعة من نافذة الإعدادات
+        window.renderSettingsQuickItemsList = function() {
+            const items = window.storeData.settings.quickItems || [];
+            const container = document.getElementById("settings-quick-items-list");
+            if (!container) return;
+            let html = "";
+            items.forEach((item, index) => {
+                html += `
+                    <span class="bg-slate-950 text-slate-200 px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 border border-slate-800 shadow-sm">
+                        ${item} 
+                        <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-white bg-red-950/40 w-5 h-5 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                    </span>
+                `;
+            });
+            container.innerHTML = html;
+        };
+
+        window.addNewQuickItem = function() {
+            const input = document.getElementById("new-quick-item-input");
+            const val = input.value.trim();
+            if (val) {
+                if (!window.storeData.settings.quickItems) window.storeData.settings.quickItems = [];
+                window.storeData.settings.quickItems.push(val);
+                window.syncCloudData(`settings/quickItems`, window.storeData.settings.quickItems);
+                input.value = "";
+                renderSettingsQuickItemsList();
+            }
+        };
+
+        window.removeQuickItem = function(index) {
+            if (window.storeData.settings.quickItems) {
+                window.storeData.settings.quickItems.splice(index, 1);
+                window.syncCloudData(`settings/quickItems`, window.storeData.settings.quickItems);
+                renderSettingsQuickItemsList();
+            }
+        };
+
+        // دوال الحاسبة
         window.openCalculator = function() {
             calcExpression = "0";
             document.getElementById("calc-display").textContent = calcExpression;
@@ -633,6 +695,7 @@
                 box.classList.add("hidden");
             }
 
+            renderQuickItemsButtons();
             renderAdminModalTransactions(acc);
             switchTab('tab-add-tx', document.querySelector('.tab-btn'));
             openModal('modal-manage-account');
@@ -751,7 +814,7 @@
                 window.syncCloudData('settings/sypRate', rate);
                 closeModal('modal-settings');
                 renderAdminDashboard();
-                alert("تم تحديث سعر الصرف المرجعي سحابياً بنجاح!");
+                alert("تم تحديث سعر الصرف والمواصفات سحابياً بنجاح!");
             }
         };
 
@@ -870,6 +933,7 @@
         window.openModal = function(id) { 
             if(id === 'modal-settings') {
                 document.getElementById("setting-syp-rate").value = window.storeData.settings.sypRate || 15000;
+                renderSettingsQuickItemsList();
             }
             document.getElementById(id).classList.remove("hidden"); 
         };
