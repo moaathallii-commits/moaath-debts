@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون السحابي v31</title>
+    <title>متجر معاذ - دفتر الديون السحابي v32</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -71,7 +71,6 @@
         .calc-btn.equals { background-color: #10b981; color: #0f172a; }
         .calc-btn.clear { background-color: #ef4444; color: #fff; }
 
-        /* تأثير النابض الأحمر عند 90% */
         .pulse-red-glow { background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%); border: 2px solid #ef4444; animation: pulseRed 1.2s infinite; box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
         @keyframes pulseRed { 0% { transform: scale(1); opacity: 0.95; } 50% { transform: scale(1.02); opacity: 1; } 100% { transform: scale(1); opacity: 0.95; } }
 
@@ -86,7 +85,7 @@
 
     <div id="cloud-status-banner" class="bg-slate-900 text-center text-[11px] py-1.5 text-slate-400 border-b border-slate-800 no-print flex justify-center items-center gap-2">
         <span id="cloud-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-        <span id="cloud-text">متصل بالسحابة (مزامنة فورية)</span>
+        <span id="cloud-text">متصل بالسحابة (مزامنة فورية v32)</span>
     </div>
 
     <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 p-4 shadow-xl no-print" style="position: sticky; top: 0; z-index: 40;">
@@ -161,9 +160,11 @@
                 </div>
             </div>
 
-            <div class="luxury-card p-3 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
+            <!-- أزرار الإدارة تتضمن زر إرسال رسالة جماعية وعرض الإحصائيات -->
+            <div class="luxury-card p-3.5 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> السجل الشامل (PDF)</button>
+                    <button type="button" onclick="openModal('modal-broadcast')" class="bg-slate-900 text-goldAccent font-bold px-4 py-2 rounded-xl text-xs border border-goldAccent/40 hover:bg-slate-800"><i class="fa-solid fa-bullhorn mr-1"></i> رسالة جماعية والإحصائيات</button>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-goldAccent font-bold px-4 py-2 rounded-xl text-xs border border-goldAccent/40 hover:bg-slate-800"><i class="fa-solid fa-gear mr-1"></i> إعدادات سعر الصرف</button>
@@ -182,7 +183,7 @@
             </div>
         </section>
 
-        <!-- لوحة الزبون مع شريط الحالة الملون والنابض -->
+        <!-- لوحة الزبون -->
         <section id="customer-panel" class="hidden space-y-4">
             <div id="cust-empty-state" class="hidden luxury-card p-10 rounded-3xl text-center shadow-lg mt-8">
                 <h3 class="text-xl font-black text-slate-100">حسابك مصفر تماماً</h3>
@@ -203,7 +204,6 @@
                         </div>
                     </div>
 
-                    <!-- شريط الحالة الملون حسب نسبة الاستهلاك -->
                     <div class="pt-3 border-t border-slate-700/60 space-y-2">
                         <div class="flex justify-between items-center text-xs font-bold">
                             <span class="text-slate-300">نسبة استهلاك السقف المالي:</span>
@@ -219,7 +219,6 @@
                     </div>
                 </div>
 
-                <!-- حاوية التنبيهات الذكية (بما فيها الأحمر النابض عند 90%) -->
                 <div id="cust-dynamic-alert-box"></div>
 
                 <div class="flex justify-between items-center px-1 pt-2">
@@ -230,6 +229,45 @@
             </div>
         </section>
     </main>
+
+    <!-- Modal: نافذة الرسالة الجماعية المنبثقة للزبون -->
+    <div id="modal-customer-broadcast" class="modal-overlay hidden" style="z-index: 9999;">
+        <div class="modal-content max-w-md bg-slate-900 border-2 border-goldAccent p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 bg-goldAccent/20 text-goldAccent rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3 class="font-black text-lg text-goldAccent">تنبيه هام من إدارة المتجر</h3>
+            <div id="customer-broadcast-msg-text" class="text-sm text-slate-100 bg-slate-950 p-4 rounded-2xl border border-slate-800 leading-relaxed text-right"></div>
+            <button type="button" onclick="acknowledgeBroadcastMessage()" class="w-full bg-goldAccent text-darkBg font-black py-3.5 rounded-xl text-xs shadow-lg">تم الاطلاع وفهم الرسالة</button>
+        </div>
+    </div>
+
+    <!-- Modal: رسالة الإدارة والإحصائيات -->
+    <div id="modal-broadcast" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-broadcast')">
+        <div class="modal-content max-w-lg space-y-4 bg-slate-900">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-black text-base text-goldAccent"><i class="fa-solid fa-bullhorn mr-1"></i> إرسال رسالة جماعية وإحصائيات الاستلام</h3>
+                <button type="button" onclick="closeModal('modal-broadcast')" class="text-red-400 font-bold text-xs">إغلاق</button>
+            </div>
+            <div class="space-y-3">
+                <textarea id="broadcast-input-text" rows="3" placeholder="اكتب نص الرسالة الجماعية هنا..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-xs text-white"></textarea>
+                <button type="button" onclick="sendBroadcastMessageAction()" class="w-full bg-goldAccent text-darkBg font-black py-3 rounded-xl text-xs shadow">إرسال لجميع الزبائن</button>
+            </div>
+            <div class="border-t border-slate-800 pt-3 space-y-2">
+                <h4 class="font-bold text-xs text-slate-300">إحصائيات الرسالة الحالية:</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block text-[10px]">إجمالي الزبائن:</span>
+                        <span id="stat-bc-total" class="font-black text-base text-white">0</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block text-[10px]">قرأوا الرسالة:</span>
+                        <span id="stat-bc-read" class="font-black text-base text-successGreen">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: إدارة الحساب -->
     <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-manage-account')">
@@ -294,7 +332,7 @@
 
                 <div id="tab-settings" class="tab-content space-y-4">
                     <div id="admin-whatsapp-limit-alert-box" class="hidden bg-amber-950/40 p-4 rounded-2xl border border-amber-500/40 space-y-2">
-                        <h4 class="text-xs font-black text-goldAccent"><i class="fa-solid fa-triangle-exclamation mr-1"></i> تنبيه: الزبون اقترب أو بلغ السقف!</h4>
+                        <h4 class="text-xs font-black text-goldAccent"><i class="fa-solid fa-triangle-exclamation mr-1"></i> تنبيه: الزبون وصل لسقف الحساب!</h4>
                         <button type="button" onclick="sendAdminLimitWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
                             <i class="fa-brands fa-whatsapp mr-1"></i> إرسال رسالة السقف تلقائياً (واتساب)
                         </button>
@@ -394,7 +432,7 @@
                 <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5 pt-2"></div>
             </div>
             <div class="flex justify-end pt-2">
-                <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">إغلاق</button>
+                <button type="button" onclick="closeModal('modal-settings')" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs">إلغاء</button>
             </div>
         </div>
     </div>
@@ -431,7 +469,7 @@
 
         window.storeData = {
             accounts: {},
-            settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'نقرشات', 'سكر', 'متة', 'زيت'] }
+            settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'نقرشات', 'سكر', 'متة', 'زيت'], broadcast: { message: "", timestamp: 0, reads: {} } }
         };
 
         const rootRef = ref(db);
@@ -447,6 +485,7 @@
                     renderAdminDashboard();
                 } else if (window.currentUser.dbKey) {
                     renderCustomerPanel();
+                    checkCustomerBroadcast(window.currentUser.dbKey);
                 }
             }
         });
@@ -459,7 +498,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v31");
+                const savedUser = localStorage.getItem("moaath_current_user_v32");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -482,7 +521,7 @@
                 return;
             }
 
-            document.getElementById("user-status-display").classList.add("hidden");
+            document.getElementById("user-status-display").classList.remove("hidden");
             document.getElementById("user-status-display").style.display = "flex";
 
             if (window.currentUser.isAdmin) {
@@ -493,6 +532,7 @@
                 document.getElementById("customer-panel").classList.remove("hidden");
                 document.getElementById("current-user-badge").textContent = window.currentUser.name.split(' ')[0];
                 renderCustomerPanel();
+                checkCustomerBroadcast(window.currentUser.dbKey);
             }
         };
 
@@ -506,7 +546,7 @@
             if (phone === ADMIN_PHONE) {
                 if (pass === ADMIN_SECRET_PASS) {
                     window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                    localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v32", JSON.stringify(window.currentUser));
                     updateUIState();
                     return;
                 } else {
@@ -525,7 +565,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v32", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة أو غير مسجلة في السحابة!");
@@ -534,7 +574,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v31");
+            localStorage.removeItem("moaath_current_user_v32");
             updateUIState();
         };
 
@@ -548,6 +588,7 @@
             return bal;
         };
 
+        // لوحة الإدارة مع عرض كلمة المرور لكل زبون لاستعادتها
         window.renderAdminDashboard = function() {
             const accounts = window.storeData.accounts || {};
             let receivables = 0, html = "";
@@ -563,7 +604,10 @@
                     <div class="luxury-card rounded-2xl p-3.5 flex justify-between items-center mb-2.5 shadow-sm">
                         <div>
                             <h4 class="font-bold text-sm text-white">${acc.name}</h4>
-                            <span class="text-[10px] text-slate-400 font-mono">${acc.phone}</span>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-[10px] text-slate-400 font-mono">${acc.phone}</span>
+                                <span class="text-[10px] text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-900/30 font-mono" title="كلمة المرور لاستعادة الحساب">كلمة المرور: ${acc.password || 'غير محددة'}</span>
+                            </div>
                         </div>
                         <div class="flex flex-col items-end gap-1">
                             <span class="font-black text-sm text-successGreen">$${bal.toFixed(2)}</span>
@@ -575,6 +619,60 @@
             document.getElementById("stat-total-receivables").textContent = `$${receivables.toFixed(2)}`;
             document.getElementById("stat-net-balance").textContent = `$${receivables.toFixed(2)}`;
             document.getElementById("admin-accounts-list-cards").innerHTML = html || `<div class="text-center py-8 opacity-50 text-xs">لا توجد حسابات</div>`;
+            
+            // تحديث إحصائيات الرسالة الجماعية
+            updateBroadcastStats();
+        };
+
+        // دالة إرسال رسالة جماعية من الإدارة
+        window.sendBroadcastMessageAction = function() {
+            const txt = document.getElementById("broadcast-input-text").value.trim();
+            if (!txt) { alert("أدخل نص الرسالة أولاً"); return; }
+            
+            const bcData = {
+                message: txt,
+                timestamp: Date.now(),
+                reads: {}
+            };
+            window.storeData.settings.broadcast = bcData;
+            window.syncCloudData(`settings/broadcast`, bcData);
+            document.getElementById("broadcast-input-text").value = "";
+            alert("تم إرسال الرسالة الجماعية بنجاح لكافة الزبائن!");
+            updateBroadcastStats();
+        };
+
+        window.updateBroadcastStats = function() {
+            const accounts = window.storeData.accounts || {};
+            const totalAccounts = Object.keys(accounts).length;
+            const bc = window.storeData.settings.broadcast || {};
+            const reads = bc.reads || {};
+            let readCount = 0;
+            for (let k in reads) {
+                if (reads[k] === true) readCount++;
+            }
+            document.getElementById("stat-bc-total").textContent = totalAccounts;
+            document.getElementById("stat-bc-read").textContent = readCount;
+        };
+
+        // التحقق من الرسالة الجماعية لدى الزبون وعرضها كمنبثقة إذا لم يقرأها
+        window.checkCustomerBroadcast = function(custKey) {
+            const bc = window.storeData.settings.broadcast || {};
+            if (!bc.message || !bc.timestamp) return;
+
+            const reads = bc.reads || {};
+            // إذا لم يقرأ هذه النسخة من الرسالة بعد
+            if (!reads[custKey]) {
+                document.getElementById("customer-broadcast-msg-text").textContent = bc.message;
+                openModal('modal-customer-broadcast');
+            }
+        };
+
+        window.acknowledgeBroadcastMessage = function() {
+            if (window.currentUser && window.currentUser.dbKey) {
+                const custKey = window.currentUser.dbKey;
+                window.syncCloudData(`settings/broadcast/reads/${custKey}`, true);
+                closeModal('modal-customer-broadcast');
+            }
         };
 
         window.setAdminInputCurrency = function(curr) {
@@ -917,7 +1015,6 @@
             return `$${amountUSD.toFixed(2)}`;
         };
 
-        // دالة عرض لوحة الزبون مع شريط الحالة الملون والنابض عند 90%
         window.renderCustomerPanel = function() {
             let cust = window.storeData.accounts[window.currentUser.dbKey];
             if (!cust) return;
@@ -938,12 +1035,10 @@
 
             document.getElementById("cust-display-balance").textContent = window.formatDisplayAmount(balUSD);
             
-            // تحديث شريط الحالة الملون حسب نسبة الاستهلاك
             document.getElementById("cust-limit-percentage").textContent = `${ratio.toFixed(0)}%`;
             const statusBar = document.getElementById("cust-status-bar");
             statusBar.style.width = `${Math.min(ratio, 100)}%`;
             
-            // تلوين الشريط والبطاقة التنبيهية حسب النسبة
             const alertBox = document.getElementById("cust-dynamic-alert-box");
             let alertHtml = "";
 
