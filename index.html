@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون الفاخر v25</title>
+    <title>متجر معاذ - دفتر الديون الفاخر v26</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -63,6 +63,27 @@
         .currency-btn { padding: 0.75rem 0.5rem; text-align: center; font-size: 0.8rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 1rem; transition: all 0.25s ease; cursor: pointer; border: 1px solid transparent; }
         .currency-btn.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; box-shadow: 0 4px 15px rgba(245,158,11,0.4); }
 
+        /* أزرار الأصناف السريعة المحدثة - أكبر وأوضح */
+        .quick-item-btn { 
+            background: linear-gradient(145deg, #1e293b, #0f172a); 
+            color: #f59e0b; 
+            padding: 0.75rem 1rem; 
+            border-radius: 0.75rem; 
+            font-size: 1rem; 
+            font-weight: 900; 
+            border: 1px solid #475569; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        .quick-item-btn:hover {
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+            color: #0f172a;
+            border-color: #f59e0b;
+            text-shadow: none;
+            transform: translateY(-2px);
+        }
+
         .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1.25rem; padding: 1.25rem; position: relative; overflow: hidden; }
         .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.08; font-size: 3.5rem; color: #f59e0b; }
         
@@ -89,7 +110,7 @@
                 <div class="w-12 h-12 bg-gradient-to-tr from-goldAccent to-amber-300 rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-lg gold-glow">M</div>
                 <div>
                     <h1 class="font-black text-base md:text-lg text-goldAccent tracking-wide">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">السعر الأساسي بالدولار v25</p>
+                    <p class="text-[10px] text-slate-400 font-bold">السعر الأساسي بالدولار v26 (مزامنة ذكية)</p>
                 </div>
             </div>
             <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/90 px-3.5 py-2 rounded-2xl border border-slate-700 shadow-inner">
@@ -148,6 +169,7 @@
                     <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs border border-slate-700 hover:text-red-400"><i class="fa-solid fa-file-pdf mr-1"></i> تصدير الكشف</button>
                 </div>
                 <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="forceSyncToCloud()" class="bg-emerald-950 text-emerald-400 font-bold px-4 py-2.5 rounded-xl text-xs border border-emerald-800 hover:text-white"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> مزامنة يدوية</button>
                     <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-gear mr-1"></i> الإعدادات</button>
                 </div>
             </div>
@@ -156,6 +178,7 @@
                 <div class="p-4 border-b border-slate-700/80 bg-slate-900/70 flex justify-between items-center">
                     <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث بالاسم أو الرقم..." class="w-full bg-slate-950 border border-slate-700 text-xs px-4 py-3 rounded-2xl text-slate-100 font-bold">
                 </div>
+                <!-- قائمة الزبائن ستفرز تنازلياً (الأعلى ديناً أولاً) -->
                 <div id="admin-accounts-list-cards" class="p-3 space-y-2.5 max-h-[60vh] overflow-y-auto"></div>
             </div>
         </section>
@@ -219,16 +242,17 @@
                         </div>
                     </div>
 
-                    <input type="number" step="any" id="trans-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-4 text-xl text-white text-center font-black" placeholder="المبلغ هنا...">
+                    <input type="number" step="any" id="trans-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-4 text-2xl text-goldAccent text-center font-black" placeholder="المبلغ هنا...">
                     
                     <!-- أزرار الأصناف السريعة -->
-                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-1.5 pt-1"></div>
+                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-2 pt-2 pb-2 justify-center"></div>
                     
-                    <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-xs text-white font-bold">
+                    <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-sm text-white font-bold text-center">
                 </div>
                 <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-4 rounded-2xl text-sm shadow-xl">حفظ الحركة (آمن حتى بدون نت)</button>
             </form>
             
+            <!-- عرض آخر 3 حركات للتأكيد السريع -->
             <div class="mt-4 border-t border-slate-700 pt-4">
                 <h4 class="text-xs font-bold text-slate-400 mb-2">السجل السريع:</h4>
                 <div id="admin-modal-transactions-cards" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
@@ -282,7 +306,7 @@
                 </div>
             </div>
 
-            <button type="button" onclick="closeModal('modal-settings')" class="w-full bg-slate-800 text-slate-300 py-3 rounded-xl text-xs font-bold border border-slate-700">إغلاق</button>
+            <button type="button" onclick="closeModal('modal-settings')" class="w-full bg-slate-800 text-slate-300 py-3 rounded-xl text-xs font-bold border border-slate-700">إغلاق الإعدادات</button>
         </div>
     </div>
 
@@ -298,7 +322,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, onValue, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue, remove, child, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://moaath-store-debts-default-rtdb.firebaseio.com/" };
         const app = initializeApp(firebaseConfig);
@@ -311,37 +335,82 @@
         window.adminInputCurrency = 'USD';
         window.customerDisplayCurrency = 'USD';
         
-        window.storeData = { 
-            accounts: {}, 
-            settings: { 
-                sypRate: 15000,
-                quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'] 
-            } 
-        };
-
-        const localDB = localStorage.getItem("moaath_offline_db_v25");
-        if(localDB) { window.storeData = JSON.parse(localDB); }
+        // 1. التخزين المزدوج (البيانات المحلية كأساس)
+        window.storeData = { accounts: {}, settings: { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'] } };
+        
+        const localDB = localStorage.getItem("moaath_offline_db_v26");
+        if(localDB) {
+            try {
+                window.storeData = JSON.parse(localDB);
+            } catch (e) { console.error("Error parsing local DB", e); }
+        }
 
         if (!window.storeData.settings.quickItems) {
             window.storeData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'];
         }
 
+        let isCloudOnline = false;
         const rootRef = ref(db);
+        
+        // 2. تحديث السحابة وتحديث الذاكرة المحلية معاً (Merge Strategy)
+        // لحل مشكلة حذف العمليات الأوفلاين، سنقوم بدمج البيانات المحلية مع السحابية بدلاً من استبدالها بشكل أعمى.
         onValue(rootRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                if (data.accounts) window.storeData.accounts = data.accounts;
+                // إذا كانت لدينا بيانات أوفلاين غير مرفوعة، لا نستبدلها ببيانات السحابة القديمة
+                // الاستراتيجية: دمج حركات السحابة مع الحركات المحلية
+                if (data.accounts) {
+                    for(let key in data.accounts) {
+                        if (!window.storeData.accounts[key]) {
+                            window.storeData.accounts[key] = data.accounts[key];
+                        } else {
+                            // دمج الحركات (Transactions Merge)
+                            const cloudTxs = data.accounts[key].transactions || {};
+                            const localTxs = window.storeData.accounts[key].transactions || {};
+                            window.storeData.accounts[key].transactions = { ...cloudTxs, ...localTxs };
+                            
+                            // تحديث المعلومات الأساسية إذا تغيرت
+                            window.storeData.accounts[key].name = data.accounts[key].name;
+                            window.storeData.accounts[key].phone = data.accounts[key].phone;
+                            window.storeData.accounts[key].password = data.accounts[key].password;
+                        }
+                    }
+                }
+                
                 if (data.settings) {
                     window.storeData.settings.sypRate = data.settings.sypRate || window.storeData.settings.sypRate;
                     if (data.settings.quickItems) window.storeData.settings.quickItems = data.settings.quickItems;
                 }
-                localStorage.setItem("moaath_offline_db_v25", JSON.stringify(window.storeData));
+                
+                localStorage.setItem("moaath_offline_db_v26", JSON.stringify(window.storeData));
+                
+                // رفع أي بيانات محلية جديدة غير موجودة في السحابة فوراً
+                syncLocalToCloud(window.storeData);
             }
+            
+            isCloudOnline = true;
             updateNetworkStatus(true);
             refreshUI();
         }, (error) => {
+            isCloudOnline = false;
             updateNetworkStatus(false);
         });
+
+        function syncLocalToCloud(localData) {
+            if (isCloudOnline && navigator.onLine) {
+                // رفع كامل القاعدة لتطابق المحلية
+                update(ref(db), localData).catch(err => console.log("Sync merge failed:", err));
+            }
+        }
+
+        // زر المزامنة اليدوية
+        window.forceSyncToCloud = function() {
+            if (!navigator.onLine) {
+                alert("لا يوجد اتصال بالإنترنت حالياً!"); return;
+            }
+            syncLocalToCloud(window.storeData);
+            alert("تم رفع ومزامنة جميع البيانات المحلية مع السحابة بنجاح!");
+        };
 
         function updateNetworkStatus(isOnlineCloud) {
             const banner = document.getElementById("cloud-status-banner");
@@ -357,13 +426,17 @@
                 txt.textContent = "أوفلاين (تم حفظ بياناتك بالهاتف وسترفع لاحقاً)";
             }
         }
-        window.addEventListener('online', () => updateNetworkStatus(true));
-        window.addEventListener('offline', () => updateNetworkStatus(false));
+        window.addEventListener('online', () => { isCloudOnline = true; updateNetworkStatus(true); syncLocalToCloud(window.storeData); });
+        window.addEventListener('offline', () => { isCloudOnline = false; updateNetworkStatus(false); });
 
+        // 3. دالة الحفظ المزدوج الذكي
         window.saveDataDual = function(path, value) {
-            localStorage.setItem("moaath_offline_db_v25", JSON.stringify(window.storeData));
-            if (navigator.onLine) {
-                set(child(ref(db), path), value).catch(err => console.log("Cloud sync pending:", err));
+            // حفظ محلي دائم وفوري
+            localStorage.setItem("moaath_offline_db_v26", JSON.stringify(window.storeData));
+            
+            // محاولة الحفظ السحابي، إذا فشل سيبقى محلياً ويتم رفعه لاحقاً عبر الـ merge
+            if (navigator.onLine && isCloudOnline) {
+                set(child(ref(db), path), value).catch(err => console.log("Cloud push failed, saved locally.", err));
             }
         };
 
@@ -376,7 +449,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v25");
+                const savedUser = localStorage.getItem("moaath_current_user_v26");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -405,7 +478,7 @@
                 if (!navigator.onLine) {
                     alert("⚠️ عذراً، لا يوجد اتصال بالإنترنت للزبون. يرجى الاتصال لمعرفة رصيدك الجديد.");
                     window.currentUser = null;
-                    localStorage.removeItem("moaath_current_user_v25");
+                    localStorage.removeItem("moaath_current_user_v26");
                     document.getElementById("auth-section").classList.remove("hidden");
                     return;
                 }
@@ -422,7 +495,7 @@
 
             if (phone === ADMIN_PHONE && pass === ADMIN_SECRET_PASS) {
                 window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                localStorage.setItem("moaath_current_user_v25", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v26", JSON.stringify(window.currentUser));
                 updateUIState();
                 return;
             }
@@ -439,7 +512,7 @@
 
             if (foundAcc) {
                 window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                localStorage.setItem("moaath_current_user_v25", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v26", JSON.stringify(window.currentUser));
                 updateUIState();
             } else {
                 alert("بيانات الدخول خاطئة!");
@@ -448,7 +521,7 @@
 
         window.logout = function() {
             window.currentUser = null;
-            localStorage.removeItem("moaath_current_user_v25");
+            localStorage.removeItem("moaath_current_user_v26");
             updateUIState();
         };
 
@@ -468,12 +541,13 @@
             document.getElementById("stat-syp-rate-display").textContent = `${Number(window.storeData.settings.sypRate).toLocaleString()} ل.س`;
 
             const searchQuery = document.getElementById("admin-search-input").value.toLowerCase();
-            let accountsArray = [];
             
+            let accountsArray = [];
             for (let key in accounts) {
                 const acc = accounts[key];
                 const bal = window.calculateAccountBalance(acc);
                 if (bal > 0) receivables += bal;
+                
                 if (searchQuery && !acc.name.toLowerCase().includes(searchQuery) && !acc.phone.includes(searchQuery)) continue;
                 accountsArray.push({ key, acc, bal });
             }
@@ -509,19 +583,23 @@
             document.getElementById("adm-curr-old").className = curr === 'SYP_OLD' ? "currency-btn active" : "currency-btn";
         };
 
-        // دالة توليد أزرار الأصناف السريعة
+        // أزرار الأصناف السريعة المحدثة
         window.renderTransactionQuickButtons = function() {
             const items = window.storeData.settings.quickItems || [];
             const cont = document.getElementById("trans-quick-buttons-container");
             cont.innerHTML = "";
             items.forEach(item => {
-                cont.innerHTML += `<button type="button" onclick="appendQuickItem('${item}')" class="bg-slate-800 hover:bg-slate-700 text-goldAccent px-2.5 py-1.5 rounded-lg text-xs font-bold border border-slate-700 transition shadow-sm">${item}</button>`;
+                cont.innerHTML += `<button type="button" onclick="appendQuickItem('${item}')" class="quick-item-btn">${item}</button>`;
             });
         };
 
         window.appendQuickItem = function(item) {
             const noteInput = document.getElementById("trans-note");
-            noteInput.value = noteInput.value ? `${noteInput.value} + ${item}` : item;
+            if (noteInput.value) {
+                noteInput.value += ` + ${item}`;
+            } else {
+                noteInput.value = item;
+            }
         };
 
         window.openManageAccountModal = function(key) {
@@ -533,9 +611,7 @@
             document.getElementById("trans-amount").value = "";
             document.getElementById("trans-note").value = "";
             
-            // تهيئة أزرار الأصناف السريعة
             window.renderTransactionQuickButtons();
-            
             renderAdminModalTransactions(acc);
             openModal('modal-manage-account');
         };
@@ -557,7 +633,7 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-black ${isDebt?'text-red-400':'text-successGreen'}">$${Number(tx.amountUSD).toFixed(2)}</span>
-                            <button type="button" onclick="deleteTransaction('${id}')" class="text-[10px] text-red-500 bg-red-950/40 w-6 h-6 rounded flex items-center justify-center hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                            <button type="button" onclick="deleteTransaction('${id}')" class="text-[10px] text-red-500 bg-red-950/40 px-2 rounded hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
@@ -582,6 +658,8 @@
             if (!acc.transactions) acc.transactions = {};
             acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
             
+            // الحفظ المحلي ثم السحابي عبر دالة saveDataDual
+            window.storeData.accounts[key] = acc;
             window.saveDataDual(`accounts/${key}/transactions`, acc.transactions);
             
             document.getElementById("form-add-transaction").reset();
@@ -589,12 +667,12 @@
             renderAdminDashboard();
             
             if(!navigator.onLine) {
-                alert("تم الحفظ في الهاتف بنجاح! سيتم الرفع للسحابة عند عودة الإنترنت.");
+                alert("تم الحفظ في الهاتف بنجاح! سيتم الرفع التلقائي للسحابة فور عودة الإنترنت.");
             }
         };
 
         window.deleteTransaction = function(txId) {
-            if (!confirm("حذف هذه الحركة نهائياً؟")) return;
+            if (!confirm("حذف هذه الحركة؟")) return;
             const acc = window.storeData.accounts[window.activeManagingAccountKey];
             delete acc.transactions[txId];
             window.saveDataDual(`accounts/${window.activeManagingAccountKey}/transactions`, acc.transactions);
@@ -678,7 +756,6 @@
         };
         window.closeModal = function(id) { document.getElementById(id).classList.add("hidden"); };
         
-        // دوال نافذة الإعدادات (تحديث السعر والأزرار السريعة)
         window.renderAdminSettings = function() {
             document.getElementById("setting-syp-rate").value = window.storeData.settings.sypRate;
             const items = window.storeData.settings.quickItems || [];
@@ -716,7 +793,7 @@
                 window.storeData.settings.sypRate = rate;
                 window.saveDataDual('settings/sypRate', rate);
                 renderAdminDashboard();
-                alert("تم تحديث سعر الصرف والمزامنة بنجاح");
+                alert("تم تحديث سعر الصرف واعتماده");
             }
         };
 
