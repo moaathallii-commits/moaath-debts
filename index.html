@@ -2,259 +2,486 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر معاذ - دفتر الديون الفاخر v28</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>متجر معاذ - دفتر الديون الفاخر v31</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background: radial-gradient(circle at top, #0f172a 0%, #020617 100%); color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+        :root {
+            --bg-main: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+            --bg-card: linear-gradient(135deg, rgba(30, 41, 59, 0.78) 0%, rgba(15, 23, 42, 0.96) 100%);
+            --bg-surface: #0f172a;
+            --bg-input: #020617;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(245, 158, 11, 0.25);
+            --border-subtle: #334155;
+            --gold: #f59e0b;
+            --gold-dark: #d97706;
+            --green: #10b981;
+            --red: #ef4444;
+        }
+        /* الإصلاح 7: شمول كافة العناصر الفرعية في الوضع النهاري اللؤلؤي الفاخر (Light Luxury Theme) */
+        body.light-theme {
+            --bg-main: linear-gradient(135deg, #fdfbf7 0%, #f1f5f9 100%);
+            --bg-card: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.99) 100%);
+            --bg-surface: #ffffff;
+            --bg-input: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(217, 119, 6, 0.35);
+            --border-subtle: #cbd5e1;
+        }
+        body.light-theme .bg-slate-950, body.light-theme .bg-slate-900, body.light-theme .bg-slate-900\/90, body.light-theme .bg-slate-900\/70 { background-color: #f1f5f9 !important; color: #0f172a !important; }
+        body.light-theme .bg-slate-800, body.light-theme .bg-slate-800\/90 { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+        body.light-theme .text-white, body.light-theme .text-slate-100, body.light-theme .text-slate-200 { color: #0f172a !important; }
+        body.light-theme .text-slate-300, body.light-theme .text-slate-400, body.light-theme .text-slate-500 { color: #475569 !important; }
+        body.light-theme .tx-card, body.light-theme .policy-card { background: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important; color: #0f172a !important; }
+        body.light-theme #cloud-status-banner { background-color: #e2e8f0 !important; color: #334155 !important; border-color: #cbd5e1 !important; }
+        body.light-theme .currency-toggle-group, body.light-theme .numpad-grid { background-color: #e2e8f0 !important; border-color: #cbd5e1 !important; }
+        body.light-theme .numpad-btn, body.light-theme .filter-chip:not(.active) { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+        body.light-theme .quick-item-btn { background: #fffbeb !important; color: #b45309 !important; border-color: #f59e0b !important; text-shadow: none !important; }
+        body.light-theme .bg-red-950, body.light-theme .bg-red-950\/50, body.light-theme .bg-red-950\/40 { background-color: #fee2e2 !important; color: #dc2626 !important; border-color: #fca5a5 !important; }
+        body.light-theme .bg-emerald-950 { background-color: #d1fae5 !important; color: #059669 !important; border-color: #6ee7b7 !important; }
+        body.light-theme .bg-amber-950 { background-color: #fef3c7 !important; color: #d97706 !important; border-color: #fde68a !important; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; padding-bottom: 5rem; transition: background 0.3s, color 0.3s; }
         .hidden { display: none !important; }
         .flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
         .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
-        .gap-1 { gap: 0.25rem; } .gap-1\.5 { gap: 0.375rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
-        .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-3\.5 { padding: 0.875rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-7 { padding: 1.75rem; } .p-8 { padding: 2rem; } .p-10 { padding: 2.5rem; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; } .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; } .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; } .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; } .px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
-        .pt-1 { padding-top: 0.25rem; } .pt-2 { padding-top: 0.5rem; } .pt-3 { padding-top: 0.75rem; } .pt-4 { padding-top: 1rem; }
-        .pb-2 { padding-bottom: 0.5rem; } .pb-3 { padding-bottom: 0.75rem; } .pb-4 { padding-bottom: 1rem; } .pb-6 { padding-bottom: 1.5rem; }
-        .pr-1 { padding-right: 0.25rem; }
-        .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; } .mt-12 { margin-top: 3rem; }
-        .mb-1 { margin-bottom: 0.25rem; } .mb-1\.5 { margin-bottom: 0.375rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; }
-        .ml-1 { margin-left: 0.25rem; } .ml-2 { margin-left: 0.5rem; } .mr-1 { margin-right: 0.25rem; } .mr-2 { margin-right: 0.5rem; }
-        .w-full { width: 100%; } .w-2 { width: 0.5rem; } .w-2\.5 { width: 0.625rem; } .w-5 { width: 1.25rem; } .w-6 { width: 1.5rem; } .w-12 { width: 3rem; } .w-16 { width: 4rem; } .w-18 { width: 4.5rem; } .w-20 { width: 5rem; }
-        .h-2 { height: 0.5rem; } .h-2\.5 { height: 0.625rem; } .h-3 { height: 0.75rem; } .h-5 { height: 1.25rem; } .h-6 { height: 1.5rem; } .h-12 { height: 3rem; } .h-16 { height: 4rem; } .h-18 { height: 4.5rem; } .h-20 { height: 5rem; } .h-full { height: 100%; }
-        .max-w-sm { max-width: 24rem; } .max-w-md { max-width: 28rem; } .max-w-lg { max-width: 32rem; } .max-w-xl { max-width: 36rem; } .max-w-7xl { max-width: 80rem; }
-        .max-h-40 { max-height: 10rem; }
+        .gap-1 { gap: 0.25rem; } .gap-1\.5 { gap: 0.375rem; } .gap-2 { gap: 0.5rem; } .gap-2\.5 { gap: 0.625rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
+        .p-1\.5 { padding: 0.375rem; } .p-2 { padding: 0.5rem; } .p-2\.5 { padding: 0.625rem; } .p-3 { padding: 0.75rem; } .p-3\.5 { padding: 0.875rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+        .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; } .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; } .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; } .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; } .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; } .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; } .px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .pt-1 { padding-top: 0.25rem; } .pt-2 { padding-top: 0.5rem; } .pt-3 { padding-top: 0.75rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; } .pb-2\.5 { padding-bottom: 0.625rem; } .pb-3 { padding-bottom: 0.75rem; } .pb-6 { padding-bottom: 1.5rem; } .pr-1 { padding-right: 0.25rem; }
+        .mt-0\.5 { margin-top: 0.125rem; } .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; }
+        .mb-0\.5 { margin-bottom: 0.125rem; } .mb-1 { margin-bottom: 0.25rem; } .mb-1\.5 { margin-bottom: 0.375rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-2\.5 { margin-bottom: 0.625rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-5 { margin-bottom: 1.25rem; }
+        .ml-1 { margin-left: 0.25rem; } .mr-1 { margin-right: 0.25rem; }
+        .w-4 { width: 1rem; } .h-4 { height: 1rem; } .w-6 { width: 1.5rem; } .h-6 { height: 1.5rem; } .w-9 { width: 2.25rem; } .h-9 { height: 2.25rem; } .w-11 { width: 2.75rem; } .h-11 { height: 2.75rem; } .w-12 { width: 3rem; } .h-12 { height: 3rem; } .w-16 { width: 4rem; } .h-16 { height: 4rem; } .h-1\.5 { height: 0.375rem; } .h-full { height: 100%; }
+        .w-full { width: 100%; } .max-w-sm { max-width: 24rem; } .max-w-md { max-width: 28rem; } .max-w-lg { max-width: 32rem; } .max-w-xl { max-width: 36rem; } .max-w-7xl { max-width: 80rem; }
+        .max-h-56 { max-height: 14rem; } .max-h-\[62vh\] { max-height: 62vh; }
         .mx-auto { margin-left: auto; margin-right: auto; } .flex-1 { flex: 1 1 0%; } .flex-grow { flex-grow: 1; }
-        .text-center { text-align: center; } .text-right { text-align: right; } .block { display: block; } .inline-block { display: inline-block; }
-        .relative { position: relative; } .overflow-hidden { overflow: hidden; } .overflow-y-auto { overflow-y: auto; }
-        .space-y-2 > * + * { margin-top: 0.5rem; } .space-y-2\.5 > * + * { margin-top: 0.625rem; } .space-y-3 > * + * { margin-top: 0.75rem; } .space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; } .space-y-6 > * + * { margin-top: 1.5rem; }
+        .text-center { text-align: center; } .text-right { text-align: right; } .text-left { text-align: left; } .block { display: block; } .inline-block { display: inline-block; } .whitespace-nowrap { white-space: nowrap; }
+        .relative { position: relative; } .overflow-hidden { overflow: hidden; } .overflow-y-auto { overflow-y: auto; } .overflow-x-auto { overflow-x: auto; }
+        .space-y-2 > * + * { margin-top: 0.5rem; } .space-y-2\.5 > * + * { margin-top: 0.625rem; } .space-y-3 > * + * { margin-top: 0.75rem; } .space-y-3\.5 > * + * { margin-top: 0.875rem; } .space-y-4 > * + * { margin-top: 1rem; }
         
-        .luxury-card { background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6); }
-        .gold-glow { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+        .luxury-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-color); box-shadow: 0 18px 35px -12px rgba(0, 0, 0, 0.45); }
+        .gold-glow { box-shadow: 0 0 18px rgba(245, 158, 11, 0.25); }
         
-        .bg-slate-950 { background-color: #020617; } .bg-slate-900 { background-color: #0f172a; } .bg-slate-800 { background-color: #1e293b; } .bg-slate-700 { background-color: #334155; }
+        .bg-slate-950 { background-color: #020617; } .bg-slate-900 { background-color: #0f172a; } .bg-slate-900\/90 { background-color: rgba(15, 23, 42, 0.9); } .bg-slate-800 { background-color: #1e293b; } .bg-slate-800\/90 { background-color: rgba(30, 41, 59, 0.9); } .bg-slate-700 { background-color: #334155; }
         .bg-goldAccent { background-color: #f59e0b; } .bg-successGreen { background-color: #10b981; }
-        .bg-amber-950 { background-color: #451a03; } .bg-red-950 { background-color: #450a0a; } .bg-red-500 { background-color: #ef4444; } .bg-emerald-950 { background-color: #022c22; }
+        .bg-amber-950 { background-color: #451a03; } .bg-red-950 { background-color: #450a0a; } .bg-red-950\/50 { background-color: rgba(69, 10, 10, 0.5); } .bg-red-950\/40 { background-color: rgba(69, 10, 10, 0.4); } .bg-red-500 { background-color: #ef4444; } .bg-emerald-950 { background-color: #022c22; }
         .text-darkBg { color: #0f172a; } .text-white { color: #ffffff; } .text-slate-100 { color: #f1f5f9; } .text-slate-200 { color: #e2e8f0; }
         .text-slate-300 { color: #cbd5e1; } .text-slate-400 { color: #94a3b8; } .text-slate-500 { color: #64748b; } .text-goldAccent { color: #f59e0b; } .text-amber-500 { color: #f59e0b; }
         .text-successGreen { color: #10b981; } .text-red-400 { color: #f87171; } .text-red-500 { color: #ef4444; } .text-emerald-400 { color: #34d399; }
         
         .border { border-width: 1px; border-style: solid; } .border-t { border-top-width: 1px; border-style: solid; } .border-b { border-bottom-width: 1px; border-style: solid; }
         .border-t-4 { border-top-width: 4px; border-style: solid; } .border-l-4 { border-left-width: 4px; border-style: solid; }
-        .border-slate-800 { border-color: #1e293b; } .border-slate-700 { border-color: #334155; } .border-slate-600 { border-color: #475569; }
+        .border-slate-800 { border-color: #1e293b; } .border-slate-700 { border-color: var(--border-subtle); } .border-slate-700\/80 { border-color: rgba(51, 65, 85, 0.8); } .border-slate-700\/70 { border-color: rgba(51, 65, 85, 0.7); } .border-slate-600 { border-color: #475569; }
         .border-amber-900 { border-color: #78350f; } .border-red-900 { border-color: #7f1d1d; } .border-emerald-800 { border-color: #065f46; }
-        .border-red-500 { border-color: #ef4444; } .border-successGreen { border-color: #10b981; } .border-goldAccent { border-color: #f59e0b; }
+        .border-red-500 { border-color: #ef4444; } .border-successGreen { border-color: #10b981; } .border-goldAccent { border-color: #f59e0b; } .border-goldAccent\/40 { border-color: rgba(245, 158, 11, 0.4); }
         
-        .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-3xl { border-radius: 1.75rem; } .rounded-full { border-radius: 9999px; }
+        .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-3xl { border-radius: 1.5rem; } .rounded-full { border-radius: 9999px; }
         .font-bold { font-weight: 700; } .font-black { font-weight: 900; } .font-mono { font-family: monospace; }
-        .text-\[8px\] { font-size: 8px; } .text-\[10px\] { font-size: 10px; } .text-\[11px\] { font-size: 11px; }
-        .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; } .text-5xl { font-size: 3rem; }
+        .text-\[9px\] { font-size: 9px; } .text-\[10px\] { font-size: 10px; } .text-\[11px\] { font-size: 11px; }
+        .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; }
         
-        input, select, textarea { outline: none; transition: all 0.3s ease; font-family: inherit; }
+        input, select, textarea { outline: none; transition: all 0.25s ease; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
         button { cursor: pointer; border: none; font-family: inherit; transition: all 0.2s ease; }
-        button:hover { opacity: 0.95; transform: translateY(-1px); } button:active { transform: scale(0.97); }
+        button:hover { opacity: 0.95; } button:active { transform: scale(0.97); }
         
-        .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); } .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); } .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         @media (min-width: 768px) { 
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .md\:flex-row { flex-direction: row; }
             .md\:items-center { align-items: center; }
-            .md\:text-lg { font-size: 1.125rem; }
+            .md\:w-auto { width: auto; }
+            .md\:text-base { font-size: 1rem; }
             .md\:block { display: block; }
         }
-        table { width: 100%; border-collapse: collapse; } th, td { padding: 0.75rem; text-align: right; } th { border-bottom: 1px solid #334155; } tr { border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
+
+        /* الإصلاح 1: تفعيل تقسيم الشاشة الحقيقي لوضع شاشة الصندوق POS Split Mode */
+        body.pos-mode #admin-main-layout { display: grid; grid-template-columns: 1fr 1.15fr; gap: 1rem; align-items: start; }
+        body.pos-mode #modal-manage-account { position: static !important; background: transparent !important; backdrop-filter: none !important; padding: 0 !important; display: block !important; z-index: 1 !important; }
+        body.pos-mode #modal-manage-account.hidden { display: block !important; }
+        body.pos-mode #modal-manage-account .modal-content { max-width: 100% !important; max-height: 75vh !important; box-shadow: 0 18px 35px -12px rgba(0, 0, 0, 0.45) !important; }
+        body.pos-mode #btn-close-manage-modal { display: none !important; }
+        @media (max-width: 767px) {
+            body.pos-mode #admin-main-layout { grid-template-columns: 1fr; }
+        }
         
-        .modal-overlay { position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
-        .modal-content { background-color: #1e293b; border: 1px solid rgba(245, 158, 11, 0.35); width: 100%; border-radius: 2rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); max-height: 95vh; overflow-y: auto; }
-        
-        .tx-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 1.25rem; padding: 1.1rem; margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 8px 20px -4px rgba(0,0,0,0.3); }
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 0.75rem; z-index: 60; }
+        .modal-content { background-color: #1e293b; border: 1px solid rgba(245, 158, 11, 0.35); width: 100%; border-radius: 1.75rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85); max-height: 92vh; overflow-y: auto; }
+        body.light-theme .modal-content { background-color: #ffffff; color: #0f172a; }
+
+        .tx-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 1.15rem; padding: 0.95rem 1.1rem; margin-bottom: 0.65rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 6px 16px -4px rgba(0,0,0,0.25); cursor: pointer; transition: transform 0.15s; }
+        .tx-card:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.4); }
         .tx-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 5px; }
         .tx-card.debt::before { background: linear-gradient(to bottom, #f87171, #dc2626); } 
         .tx-card.payment::before { background: linear-gradient(to bottom, #34d399, #059669); }
         
-        .avatar { width: 2.75rem; height: 2.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; }
-        .avatar-gold { background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1)); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); box-shadow: 0 0 10px rgba(245,158,11,0.2); }
+        .avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; flex-shrink: 0; }
+        .avatar-gold { background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1)); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); }
         
-        .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background-color: #020617; padding: 0.4rem; border-radius: 1.25rem; border: 1px solid #334155; }
-        .currency-btn { padding: 0.75rem 0.5rem; text-align: center; font-size: 0.8rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 1rem; transition: all 0.25s ease; cursor: pointer; border: 1px solid transparent; }
-        .currency-btn.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; box-shadow: 0 4px 15px rgba(245,158,11,0.4); }
+        .currency-toggle-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; background-color: #020617; padding: 0.35rem; border-radius: 1.1rem; border: 1px solid #334155; }
+        .currency-btn { padding: 0.6rem 0.4rem; text-align: center; font-size: 0.75rem; font-weight: bold; color: #94a3b8; background: transparent; border-radius: 0.85rem; transition: all 0.2s ease; cursor: pointer; }
+        .currency-btn.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; box-shadow: 0 3px 12px rgba(245,158,11,0.35); }
 
-        .quick-item-btn { background: linear-gradient(145deg, #1e293b, #0f172a); color: #f59e0b; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 1rem; font-weight: 900; border: 1px solid #475569; transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-        .quick-item-btn:hover { background: linear-gradient(145deg, #f59e0b, #d97706); color: #0f172a; border-color: #f59e0b; text-shadow: none; transform: translateY(-2px); }
+        .quick-items-strip { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0.2rem; scrollbar-width: thin; }
+        .quick-items-strip::-webkit-scrollbar { height: 4px; }
+        .quick-items-strip::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .quick-item-btn { flex-shrink: 0; background: linear-gradient(145deg, #1e293b, #0f172a); color: #f59e0b; padding: 0.6rem 0.95rem; border-radius: 0.85rem; font-size: 0.88rem; font-weight: 900; border: 1px solid #475569; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 3px 6px rgba(0,0,0,0.25); }
+        .quick-item-btn:hover { background: linear-gradient(145deg, #f59e0b, #d97706); color: #0f172a; border-color: #f59e0b; }
 
-        .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1.25rem; padding: 1.25rem; position: relative; overflow: hidden; }
-        .policy-card i { position: absolute; left: 1rem; top: 1rem; opacity: 0.08; font-size: 3.5rem; color: #f59e0b; }
-        
-        /* تنسيقات جدول PDF المصلحة */
+        .filter-chip { padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; background: #0f172a; color: #94a3b8; border: 1px solid #334155; white-space: nowrap; transition: all 0.2s; }
+        .filter-chip.active { background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.2); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border-top: 1px solid rgba(245, 158, 11, 0.3); display: flex; justify-content: space-around; align-items: center; padding: 0.45rem 0.5rem; z-index: 45; box-shadow: 0 -10px 25px rgba(0,0,0,0.5); }
+        body.light-theme .bottom-nav { background: rgba(255, 255, 255, 0.95); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; color: #94a3b8; font-size: 0.65rem; font-weight: 800; background: transparent; padding: 0.3rem 0.6rem; border-radius: 0.75rem; }
+        .nav-item i { font-size: 1.1rem; }
+        .nav-item.active, .nav-item:hover { color: #f59e0b; }
+
+        .numpad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; background: #020617; padding: 0.5rem; border-radius: 1rem; border: 1px solid #334155; margin-top: 0.5rem; }
+        .numpad-btn { background: #1e293b; color: #f8fafc; font-weight: 900; font-size: 1.1rem; padding: 0.65rem 0; border-radius: 0.65rem; text-align: center; border: 1px solid #334155; }
+        .numpad-btn:active { background: #f59e0b; color: #0f172a; }
+
+        .timeline-header { font-size: 0.72rem; font-weight: 900; color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-right: 3px solid #f59e0b; padding: 0.35rem 0.75rem; border-radius: 0.5rem; margin: 0.85rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; }
+
+        .whatsapp-fab { position: fixed; bottom: 1.5rem; left: 1.5rem; background: linear-gradient(135deg, #25D366, #128C7E); color: white; width: 3.4rem; height: 3.4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); z-index: 45; text-decoration: none; }
+
+        .swipe-card { touch-action: pan-y; user-select: none; position: relative; transition: transform 0.2s ease; }
+        .swipe-card.selected-pos { border-color: #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.35) !important; }
+
+        .policy-card { background-color: #0f172a; border: 1px solid #334155; border-radius: 1.15rem; padding: 1rem; position: relative; overflow: hidden; }
         #pdf-export-container { display: none; background: white; color: black; padding: 20px; font-family: 'Cairo', sans-serif; }
         .pdf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .pdf-table th, .pdf-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: black; }
         .pdf-table th { background-color: #f1f5f9; font-weight: bold; }
-        @media print { body { background: white !important; color: black !important; } .no-print { display: none !important; } #pdf-export-container { display: block !important; } }
+        @media print { body { background: white !important; color: black !important; padding: 0 !important; } .no-print { display: none !important; } #pdf-export-container { display: block !important; } }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
+    <!-- شريط حالة الاتصال السحابي -->
     <div id="cloud-status-banner" class="bg-slate-900 text-center text-[11px] py-1.5 text-slate-400 border-b border-slate-800 no-print flex justify-center items-center gap-2 transition-colors duration-500">
-        <span id="cloud-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+        <span id="cloud-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
         <span id="cloud-text" class="font-bold">تهيئة النظام...</span>
     </div>
 
-    <!-- نافذة النسخ الاحتياطي الإجباري -->
+    <!-- نافذة النسخ الاحتياطي الإجباري اليومي -->
     <div id="backup-modal" class="modal-overlay hidden" style="z-index: 9999;">
         <div class="modal-content max-w-sm text-center space-y-4">
-            <i class="fa-solid fa-cloud-arrow-down text-5xl text-goldAccent mb-2 block"></i>
-            <h3 class="font-black text-xl text-white">نسخة احتياطية يومية</h3>
-            <p class="text-xs text-slate-300">لضمان أمان أموالك وحقوقك، يرجى حفظ نسخة احتياطية من بيانات المتجر في جهازك لبدء العمل اليوم.</p>
-            <button type="button" onclick="downloadDailyBackup()" class="w-full bg-successGreen text-darkBg font-black py-4 rounded-2xl text-sm shadow-xl mt-4">تحميل وحفظ النسخة (JSON)</button>
+            <i class="fa-solid fa-cloud-arrow-down text-4xl text-goldAccent mb-2 block"></i>
+            <h3 class="font-black text-lg text-white">نسخة احتياطية يومية إجبارية</h3>
+            <p class="text-xs text-slate-300">لضمان أمان أموالك وحقوقك 100%، يرجى حفظ نسخة احتياطية من بيانات المتجر في جهازك لبدء العمل اليوم.</p>
+            <button type="button" onclick="downloadDailyBackup()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm shadow-xl mt-2">تحميل وحفظ النسخة (JSON)</button>
         </div>
     </div>
 
-    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 p-4 shadow-xl no-print" style="position: sticky; top: 0; z-index: 40;">
+    <!-- الترويسة العلوية الفاخرة -->
+    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 p-3.5 shadow-xl no-print" style="position: sticky; top: 0; z-index: 40;">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-tr from-goldAccent to-amber-300 rounded-2xl flex items-center justify-center text-darkBg font-black text-2xl shadow-lg gold-glow">M</div>
+            <div class="flex items-center gap-2.5">
+                <div class="w-11 h-11 bg-gradient-to-tr from-goldAccent to-amber-300 rounded-2xl flex items-center justify-center text-darkBg font-black text-xl shadow-lg gold-glow">M</div>
                 <div>
-                    <h1 class="font-black text-base md:text-lg text-goldAccent tracking-wide">متجر معاذ - دفتر الديون</h1>
-                    <p class="text-[10px] text-slate-400 font-bold">السعر الأساسي بالدولار v28 | الصرف: <span id="stat-syp-rate-display" class="text-goldAccent">15,000 ل.س</span></p>
+                    <h1 class="font-black text-sm md:text-base text-goldAccent">متجر معاذ - دفتر الديون</h1>
+                    <p class="text-[10px] text-slate-400 font-bold">السعر الأساسي بالدولار v31 | الصرف: <span id="stat-syp-rate-display" class="text-goldAccent">15,000 ل.س</span></p>
                 </div>
             </div>
-            <div id="user-status-display" class="hidden flex items-center gap-2 bg-slate-900/90 px-3.5 py-2 rounded-2xl border border-slate-700 shadow-inner">
-                <div class="avatar avatar-gold" id="header-avatar">م</div>
-                <span id="current-user-badge" class="font-black text-slate-100 text-xs hidden md:block"></span>
-                <button type="button" onclick="logout()" class="text-red-400 text-xs ml-2 font-black bg-red-950/50 px-3 py-1.5 rounded-xl border border-red-900/40">خروج</button>
+            <div class="flex items-center gap-2">
+                <!-- C9: زر الوضع النهاري / الليلي -->
+                <button type="button" onclick="toggleLuxuryTheme()" title="تبديل المظهر النهاري/الليلي" class="bg-slate-900 border border-slate-700 text-goldAccent w-9 h-9 rounded-xl flex items-center justify-center text-sm">
+                    <i id="theme-toggle-icon" class="fa-solid fa-sun"></i>
+                </button>
+                <!-- C8: جرس التنبيهات المدمج للزبون -->
+                <button type="button" id="cust-bell-btn" onclick="openCustomerBellAlert()" class="hidden relative bg-slate-900 border border-slate-700 text-goldAccent w-9 h-9 rounded-xl flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="cust-bell-dot" class="hidden" style="position:absolute; top:4px; right:4px; width:8px; height:8px; background:#ef4444; border-radius:50%;"></span>
+                </button>
+                <!-- C4: شارة المستخدم وزر الإعدادات الشخصية -->
+                <div id="user-status-display" class="hidden flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1.5 rounded-2xl border border-slate-700">
+                    <div onclick="if(!window.currentUser.isAdmin) openModal('modal-cust-profile')" class="avatar avatar-gold" style="width:2rem; height:2rem; font-size:0.85rem; cursor:pointer;" id="header-avatar">م</div>
+                    <span onclick="if(!window.currentUser.isAdmin) openModal('modal-cust-profile')" id="current-user-badge" class="font-black text-slate-100 text-xs hidden md:block" style="cursor:pointer;"></span>
+                    <button type="button" onclick="logout()" class="text-red-400 text-[11px] font-black bg-red-950/50 px-2.5 py-1 rounded-xl border border-red-900/40">خروج</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto w-full p-4 flex-grow">
+    <main class="max-w-7xl mx-auto w-full p-3.5 flex-grow">
         
-        <!-- تسجيل الدخول -->
-        <section id="auth-section" class="max-w-md mx-auto mt-12 luxury-card p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-            <div class="text-center mb-6 relative z-10">
-                <div class="w-18 h-18 bg-slate-900 border border-goldAccent/40 text-goldAccent rounded-3xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg gold-glow">
+        <!-- بوابة تسجيل الدخول + الإصلاح 5: الدخول الحقيقي بالبصمة Biometric WebAuthn -->
+        <section id="auth-section" class="max-w-md mx-auto mt-8 luxury-card p-6 rounded-3xl shadow-2xl relative overflow-hidden">
+            <div class="text-center mb-5 relative z-10">
+                <div class="w-16 h-16 bg-slate-900 border border-goldAccent/40 text-goldAccent rounded-3xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-lg gold-glow">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h2 class="text-2xl font-black text-slate-100">بوابة الدخول</h2>
-                <p class="text-xs text-slate-400 mt-1">يتطلب نت للزبائن (متاح للإدارة أوفلاين)</p>
+                <h2 class="text-xl font-black text-white">بوابة الدخول الذكية</h2>
+                <p class="text-[11px] text-slate-400 mt-1">يتطلب اتصال إنترنت للزبائن (متاح للإدارة أوفلاين)</p>
             </div>
             
-            <form onsubmit="handleLogin(event)" class="space-y-4 relative z-10">
+            <form onsubmit="handleLogin(event)" class="space-y-3.5 relative z-10">
                 <div>
                     <label class="text-xs font-bold text-slate-300 mb-1 block">رقم الهاتف:</label>
-                    <input type="tel" id="login-phone" required placeholder="09xxxxxxxx" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3.5 px-4 text-sm text-slate-100 shadow-inner">
+                    <input type="tel" id="login-phone" required placeholder="09xxxxxxxx" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-300 mb-1 block">كلمة المرور:</label>
-                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3.5 px-4 text-sm text-slate-100 shadow-inner">
+                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-goldAccent to-amber-400 text-darkBg font-black py-4 rounded-2xl mt-4 text-sm shadow-xl gold-glow">دخول للنظام</button>
+                <button type="submit" class="w-full bg-goldAccent text-darkBg font-black py-3.5 rounded-2xl mt-2 text-sm shadow-xl gold-glow">دخول للنظام</button>
+                <!-- الإصلاح 5: زر الدخول السريع ببصمة الإصبع الحقيقية (WebAuthn Hardware Verification) -->
+                <button type="button" id="btn-biometric-login" onclick="triggerBiometricLogin()" class="hidden w-full bg-slate-900 text-goldAccent border border-goldAccent/40 font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fingerprint text-lg"></i> تحقق ببصمة الإصبع / قفل الجهاز للإدارة
+                </button>
             </form>
         </section>
 
-        <!-- إعداد كلمة المرور الأولى للزبون (مستعادة) -->
-        <section id="setup-password-section" class="hidden max-w-md mx-auto mt-12 luxury-card p-8 rounded-3xl shadow-2xl space-y-4">
+        <!-- إعداد كلمة المرور الأولى للزبون -->
+        <section id="setup-password-section" class="hidden max-w-md mx-auto mt-8 luxury-card p-6 rounded-3xl shadow-2xl space-y-4">
             <div class="text-center">
-                <div class="w-16 h-16 bg-slate-900 border border-goldAccent/30 text-goldAccent rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
+                <div class="w-16 h-16 bg-slate-900 border border-goldAccent/30 text-goldAccent rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl">
                     <i class="fa-solid fa-key"></i>
                 </div>
-                <h2 class="text-xl font-black text-slate-100">أهلاً بك في دفتر الديون</h2>
-                <p class="text-xs text-slate-400 mt-2">يرجى تعيين كلمة مرور خاصة بك لحماية حسابك.</p>
+                <h2 class="text-lg font-black text-white">تعيين كلمة المرور الخاصة</h2>
+                <p class="text-xs text-slate-400 mt-1">يرجى اختيار كلمة مرور خاصة بك لحماية حسابك.</p>
             </div>
-            <div class="space-y-3 pt-4 border-t border-slate-700">
-                <input type="password" id="new-cust-pass" placeholder="كلمة المرور الجديدة (4 محارف على الأقل)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3.5 px-4 text-sm text-slate-100">
-                <input type="password" id="new-cust-pass-confirm" placeholder="تأكيد كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3.5 px-4 text-sm text-slate-100">
-                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-4 rounded-2xl text-sm mt-2 shadow-lg">حفظ ومتابعة</button>
+            <div class="space-y-3 pt-3 border-t border-slate-700">
+                <input type="password" id="new-cust-pass" placeholder="كلمة المرور الجديدة (4 محارف على الأقل)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
+                <input type="password" id="new-cust-pass-confirm" placeholder="تأكيد كلمة المرور" class="w-full bg-slate-900 border border-slate-700 rounded-2xl py-3 px-4 text-sm text-slate-100">
+                <button type="button" onclick="saveFirstTimePassword()" class="w-full bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm">حفظ ومتابعة</button>
             </div>
         </section>
 
-        <!-- سياسة المتجر (مستعادة ومتكاملة) -->
-        <section id="policy-section" class="hidden max-w-lg mx-auto mt-8 luxury-card p-8 rounded-3xl shadow-2xl space-y-5">
-            <div class="text-center pb-4 border-b border-slate-700">
-                <h2 class="text-2xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
+        <!-- سياسة المتجر -->
+        <section id="policy-section" class="hidden max-w-lg mx-auto mt-6 luxury-card p-6 rounded-3xl shadow-2xl space-y-4">
+            <div class="text-center pb-3 border-b border-slate-700">
+                <h2 class="text-xl font-black text-goldAccent mb-1">سياسة التعامل مع متجر معاذ</h2>
                 <p class="text-xs text-slate-400">يرجى قراءة القواعد التنظيمية لحسابك المالي قبل البدء.</p>
             </div>
-            <div class="space-y-3">
-                <div class="policy-card">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">1. آلية التقييد وحفظ الحقوق</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">لضمان حقوق الطرفين واستقرار الأسعار، يتم تسجيل كافة المسحوبات والديون بالدولار الأمريكي.</p>
-                </div>
-                <div class="policy-card">
-                    <i class="fa-solid fa-scale-unbalanced"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">2. سقف الحساب والتنبيهات</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">يُخصص سقف مالي لكل حساب، ويرسل النظام تنبيهات تلقائية عند تجاوز 75% من السقف.</p>
-                </div>
-                <div class="policy-card">
-                    <i class="fa-solid fa-lock"></i>
-                    <h4 class="font-bold text-sm text-white mb-1">3. تعليق الخدمة المؤقت</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">في حال تجاوز السقف المالي وتأخر السداد، يعلق النظام سحب مواد جديدة على الحساب مؤقتاً لحين تسديد دفعة.</p>
-                </div>
+            <div class="space-y-2.5">
+                <div class="policy-card"><h4 class="font-bold text-xs text-white mb-1">1. آلية التقييد وحفظ الحقوق</h4><p class="text-[11px] text-slate-400">تُسجل كافة المسحوبات والديون بالدولار الأمريكي لضمان استقرار الحقوق.</p></div>
+                <div class="policy-card"><h4 class="font-bold text-xs text-white mb-1">2. سقف الحساب والتنبيهات</h4><p class="text-[11px] text-slate-400">يُخصص سقف مالي لكل حساب، ويرسل النظام تنبيهات تلقائية عند تجاوز 75% من السقف.</p></div>
+                <div class="policy-card"><h4 class="font-bold text-xs text-white mb-1">3. تعليق الخدمة المؤقت</h4><p class="text-[11px] text-slate-400">عند تجاوز السقف المالي وتأخر السداد، يعلق النظام سحب مواد جديدة مؤقتاً لحين تسديد دفعة.</p></div>
             </div>
-            <div class="pt-4">
-                <button type="button" onclick="acceptPolicy()" class="w-full bg-gradient-to-r from-goldAccent to-amber-400 text-darkBg font-black py-4 rounded-2xl text-sm shadow-xl gold-glow">قرأت التفاصيل، موافق وانتقل لحسابي</button>
-            </div>
+            <button type="button" onclick="acceptPolicy()" class="w-full bg-goldAccent text-darkBg font-black py-3.5 rounded-2xl text-sm shadow-xl">قرأت التفاصيل، موافق وانتقل لحسابي</button>
         </section>
 
-        <!-- لوحة الإدارة (المحاسبة الشاملة) -->
-        <section id="admin-panel" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="luxury-card p-5 rounded-3xl shadow-lg border-t-4 border-red-500">
-                    <p class="text-xs text-slate-400 font-bold mb-1">إجمالي الدين لـي (في السوق)</p>
+        <!-- ==================== لوحة الإدارة الشاملة ==================== -->
+        <section id="admin-panel" class="hidden space-y-4">
+            <!-- بطاقات الإحصائيات الثلاث: الدين لي - الدين علي = الصافي -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                <div class="luxury-card p-4 rounded-3xl shadow-lg border-t-4 border-red-500">
+                    <p class="text-[11px] text-slate-400 font-bold mb-0.5">إجمالي الدين لـي (في السوق)</p>
                     <h3 id="stat-total-receivables" class="text-2xl font-black text-red-400">$0.00</h3>
                 </div>
-                <div class="luxury-card p-5 rounded-3xl shadow-lg border-t-4 border-successGreen">
-                    <p class="text-xs text-slate-400 font-bold mb-1">إجمالي الدين عـلـي (للموردين/دفعات زائدة)</p>
+                <div class="luxury-card p-4 rounded-3xl shadow-lg border-t-4 border-successGreen">
+                    <p class="text-[11px] text-slate-400 font-bold mb-0.5">إجمالي الدين عـلـي (للموردين/دفعات زائدة)</p>
                     <h3 id="stat-total-payables" class="text-2xl font-black text-successGreen">$0.00</h3>
                 </div>
-                <div class="luxury-card p-5 rounded-3xl shadow-lg border-t-4 border-goldAccent">
-                    <p class="text-xs text-slate-400 font-bold mb-1">صافي رأس المال المديون (الدين لي - علي)</p>
+                <div class="luxury-card p-4 rounded-3xl shadow-lg border-t-4 border-goldAccent">
+                    <p class="text-[11px] text-slate-400 font-bold mb-0.5">صافي رأس المال المديون (الدين لي - علي)</p>
                     <h3 id="stat-net-balance" class="text-2xl font-black text-white">$0.00</h3>
                 </div>
             </div>
 
-            <div class="luxury-card p-3.5 rounded-2xl flex flex-wrap gap-2 items-center justify-between shadow-sm">
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="openModal('modal-add-account')" class="bg-goldAccent text-darkBg font-black px-4 py-2.5 rounded-xl text-xs"><i class="fa-solid fa-plus ml-1"></i> زبون جديد</button>
-                    <button type="button" onclick="generateAllAccountsPDF()" id="btn-export-pdf" class="bg-slate-900 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-file-pdf mr-1"></i> تصدير الكشف</button>
-                    <button type="button" onclick="downloadDailyBackup()" class="bg-slate-900 text-goldAccent font-bold px-4 py-2.5 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-download mr-1"></i> نسخ احتياطي</button>
+            <!-- تبويبات التصفية السريعة (Quick Filter Chips) + حقل البحث -->
+            <div class="luxury-card p-3.5 rounded-3xl space-y-3">
+                <div class="flex gap-1.5 overflow-x-auto pb-1">
+                    <button type="button" onclick="setAdminFilter('all', this)" class="filter-chip active">الكل</button>
+                    <button type="button" onclick="setAdminFilter('debtor', this)" class="filter-chip">مديون (عليه)</button>
+                    <button type="button" onclick="setAdminFilter('creditor', this)" class="filter-chip">دائن (له)</button>
+                    <button type="button" onclick="setAdminFilter('zero', this)" class="filter-chip">خالص (0$)</button>
+                    <button type="button" onclick="setAdminFilter('neighbor', this)" class="filter-chip">جيران المتجر</button>
+                    <button type="button" onclick="setAdminFilter('regular', this)" class="filter-chip">زبائن دائمون</button>
+                    <button type="button" onclick="setAdminFilter('supplier', this)" class="filter-chip">موردون</button>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="forceSyncToCloud()" class="bg-emerald-950 text-emerald-400 font-bold px-4 py-2.5 rounded-xl text-xs border border-emerald-800 hover:text-white"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> مزامنة</button>
-                    <button type="button" onclick="openModal('modal-settings')" class="bg-slate-900 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs border border-slate-700 hover:text-white"><i class="fa-solid fa-gear mr-1"></i> الإعدادات</button>
+                <div class="flex justify-between items-center gap-2">
+                    <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث سريع بالاسم أو رقم الهاتف..." class="w-full bg-slate-950 border border-slate-700 text-xs px-4 py-2.5 rounded-2xl text-slate-100 font-bold">
+                </div>
+                <p class="text-[10px] text-slate-400 text-center"><i class="fa-solid fa-hand-pointer text-goldAccent ml-1"></i>تلميح: اسحب بطاقة الزبون يميناً لتسجيل دين، أو يساراً لتسجيل دفعة، أو اضغط لفتح الحساب.</p>
+            </div>
+
+            <!-- الإصلاح 1: حاوية التقسيم الذكي (تجمع قائمة الزبائن على اليمين + لوحة الفاتورة على اليسار في وضع شاشة الصندوق POS) -->
+            <div id="admin-main-layout">
+                <!-- العمود الأول: قائمة الزبائن -->
+                <div class="luxury-card rounded-3xl shadow-2xl overflow-hidden">
+                    <div id="admin-accounts-list-cards" class="p-3 space-y-2 max-h-[62vh] overflow-y-auto"></div>
+                </div>
+
+                <!-- العمود الثاني (أو نافذة منبثقة في الوضع العادي): إدارة حساب الزبون والفاتورة -->
+                <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this && !document.body.classList.contains('pos-mode')) closeModal('modal-manage-account')">
+                    <div class="modal-content max-w-xl">
+                        <div class="flex justify-between items-start pb-3 border-b border-slate-700/80 mb-3">
+                            <div>
+                                <h3 id="modal-account-title" class="font-black text-base text-white">اختر زبوناً من القائمة</h3>
+                                <p id="modal-account-pass-hint" class="text-[10px] text-slate-400 font-mono mt-0.5"></p>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <button type="button" onclick="sendCustomerWhatsAppSummary()" class="bg-successGreen text-darkBg font-black px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 shadow">
+                                    <i class="fa-brands fa-whatsapp"></i> كشف واتساب
+                                </button>
+                                <button type="button" id="btn-close-manage-modal" onclick="closeModal('modal-manage-account')" class="text-red-400 font-bold bg-slate-900 px-3 py-1.5 rounded-lg text-xs">إغلاق</button>
+                            </div>
+                        </div>
+
+                        <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="space-y-3">
+                            <input type="hidden" id="trans-target-id">
+                            <input type="hidden" id="editing-tx-id" value="">
+                            <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <select id="trans-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold">
+                                        <option value="debt">🔴 دين جديد (سحب مواد)</option>
+                                        <option value="payment">🟢 دفعة سداد (قبض)</option>
+                                    </select>
+                                    <button type="button" onclick="toggleNumpad()" class="bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-goldAccent font-bold">
+                                        <i class="fa-solid fa-calculator ml-1"></i>لوحة الأرقام المدمجة
+                                    </button>
+                                </div>
+                                
+                                <div class="currency-toggle-group">
+                                    <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="currency-btn active">دولار ($)</button>
+                                    <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="currency-btn">ليرة جديدة</button>
+                                    <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="currency-btn">ليرة قديمة</button>
+                                </div>
+
+                                <!-- الإصلاح 2: استخدام type="text" مع inputmode="decimal" لقبول النقطة العشرية من اللوحة المدمجة بسلاسة -->
+                                <input type="text" inputmode="decimal" id="trans-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3 text-2xl text-goldAccent text-center font-black" placeholder="0.00">
+                                
+                                <!-- لوحة المفاتيح الرقمية المدمجة In-App Numpad -->
+                                <div id="inapp-numpad" class="numpad-grid hidden">
+                                    <button type="button" onclick="numpadPress('7')" class="numpad-btn">7</button>
+                                    <button type="button" onclick="numpadPress('8')" class="numpad-btn">8</button>
+                                    <button type="button" onclick="numpadPress('9')" class="numpad-btn">9</button>
+                                    <button type="button" onclick="numpadPress('DEL')" class="numpad-btn text-red-400"><i class="fa-solid fa-delete-left"></i></button>
+                                    <button type="button" onclick="numpadPress('4')" class="numpad-btn">4</button>
+                                    <button type="button" onclick="numpadPress('5')" class="numpad-btn">5</button>
+                                    <button type="button" onclick="numpadPress('6')" class="numpad-btn">6</button>
+                                    <button type="button" onclick="numpadPress('CLR')" class="numpad-btn text-goldAccent text-xs">مسح</button>
+                                    <button type="button" onclick="numpadPress('1')" class="numpad-btn">1</button>
+                                    <button type="button" onclick="numpadPress('2')" class="numpad-btn">2</button>
+                                    <button type="button" onclick="numpadPress('3')" class="numpad-btn">3</button>
+                                    <button type="button" onclick="numpadPress('000')" class="numpad-btn text-xs">000</button>
+                                    <button type="button" onclick="numpadPress('0')" class="numpad-btn" style="grid-column: span 2;">0</button>
+                                    <button type="button" onclick="numpadPress('.')" class="numpad-btn">.</button>
+                                    <button type="button" onclick="toggleNumpad()" class="numpad-btn bg-goldAccent text-darkBg text-xs">تم</button>
+                                </div>
+
+                                <!-- شريط الأصناف السريعة الأفقي المصنف بأيقونات -->
+                                <div>
+                                    <label class="text-[10px] text-slate-400 font-bold block mb-1">الأصناف السريعة (اسحب أفقياً أو اضغط للإضافة):</label>
+                                    <div id="trans-quick-buttons-container" class="quick-items-strip"></div>
+                                </div>
+                                
+                                <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3 text-sm text-white font-bold text-center">
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" id="btn-submit-tx" class="flex-1 bg-successGreen text-darkBg font-black py-3.5 rounded-2xl text-sm shadow-xl">حفظ الحركة</button>
+                                <button type="button" id="btn-cancel-edit" onclick="cancelEditTransaction()" class="hidden bg-slate-800 text-slate-300 font-bold px-4 rounded-2xl text-xs">إلغاء التعديل</button>
+                            </div>
+                        </form>
+                        
+                        <div class="mt-4 border-t border-slate-700 pt-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-xs font-bold text-slate-400">السجل الكامل للحركات (اضغط ✏️ للتعديل):</h4>
+                                <span id="admin-modal-tx-count" class="text-[10px] text-goldAccent font-bold">0 حركة</span>
+                            </div>
+                            <div id="admin-modal-transactions-cards" class="space-y-2 max-h-56 overflow-y-auto pr-1 mb-3"></div>
+                            
+                            <!-- إعدادات الزبون السريعة -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-800 mb-3">
+                                <div>
+                                    <label class="text-[10px] text-slate-300 font-bold block mb-1">تعديل سقف الدين ($):</label>
+                                    <div class="flex gap-1.5">
+                                        <input type="number" id="admin-cust-limit-input" placeholder="100" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                                        <button type="button" onclick="adminUpdateCustomerLimit()" class="bg-slate-700 text-goldAccent font-bold px-2.5 py-1.5 rounded-lg text-xs">حفظ</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-300 font-bold block mb-1">تغيير كلمة مرور الزبون:</label>
+                                    <div class="flex gap-1.5">
+                                        <input type="text" id="admin-reset-cust-pass" placeholder="كلمة جديدة..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                                        <button type="button" onclick="adminResetCustomerPassword()" class="bg-slate-700 text-goldAccent font-bold px-2.5 py-1.5 rounded-lg text-xs">تحديث</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mt-2 pt-2 border-t border-slate-800">
+                                <button type="button" onclick="clearCustomerHistory()" class="flex-1 bg-amber-950 text-amber-500 font-bold py-2.5 rounded-xl text-xs border border-amber-900"><i class="fa-solid fa-broom mr-1"></i> تصفير الأرشيف</button>
+                                <button type="button" onclick="deleteCustomerAccount()" class="flex-1 bg-red-950 text-red-400 font-bold py-2.5 rounded-xl text-xs border border-red-900"><i class="fa-solid fa-user-xmark mr-1"></i> حذف الزبون</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="luxury-card rounded-3xl shadow-2xl overflow-hidden">
-                <div class="p-4 border-b border-slate-700/80 bg-slate-900/70 flex justify-between items-center">
-                    <input type="text" id="admin-search-input" oninput="renderAdminDashboard()" placeholder="بحث بالاسم أو الرقم..." class="w-full bg-slate-950 border border-slate-700 text-xs px-4 py-3 rounded-2xl text-slate-100 font-bold">
-                </div>
-                <div id="admin-accounts-list-cards" class="p-3 space-y-2.5 max-h-[60vh] overflow-y-auto"></div>
-            </div>
+            <!-- شريط التنقل السفلي العائم للإدارة -->
+            <nav class="bottom-nav no-print">
+                <button type="button" onclick="openModal('modal-add-account')" class="nav-item active">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>زبون جديد</span>
+                </button>
+                <button type="button" onclick="openModal('modal-pdf-range')" class="nav-item">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>تقرير PDF</span>
+                </button>
+                <button type="button" onclick="togglePosMode()" class="nav-item" id="nav-pos-btn">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>شاشة الصندوق</span>
+                </button>
+                <button type="button" onclick="forceSyncToCloud()" class="nav-item">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>مزامنة</span>
+                </button>
+                <button type="button" onclick="openModal('modal-settings')" class="nav-item">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>الإعدادات</span>
+                </button>
+            </nav>
         </section>
 
-        <!-- لوحة الزبون (مع استعادة شاشة الحساب الفارغ) -->
+        <!-- ==================== لوحة الزبون الفاخرة ==================== -->
         <section id="customer-panel" class="hidden space-y-4">
-            <div id="cust-empty-state" class="hidden luxury-card p-10 rounded-3xl text-center shadow-lg mt-8">
-                <div class="w-20 h-20 bg-successGreen/10 text-successGreen rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
-                    <i class="fa-regular fa-face-smile"></i>
+            <div id="cust-inapp-alert" class="hidden luxury-card p-3.5 rounded-2xl border-l-4 border-goldAccent flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-bell text-goldAccent text-lg"></i>
+                    <div>
+                        <h4 class="text-xs font-black text-white">تنبيه من إدارة متجر معاذ</h4>
+                        <p id="cust-inapp-alert-text" class="text-[11px] text-slate-300 mt-0.5"></p>
+                    </div>
                 </div>
-                <h3 class="text-xl font-black text-slate-100">حسابك مصفر تماماً</h3>
-                <p class="text-sm text-slate-400 mt-2">شكراً لالتزامك المالي وثقتك التامة بمتجر معاذ.</p>
+                <button type="button" onclick="document.getElementById('cust-inapp-alert').classList.add('hidden')" class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg">إخفاء</button>
             </div>
 
-            <div id="cust-content-state" class="space-y-4">
-                <div class="luxury-card p-7 rounded-3xl shadow-xl relative overflow-hidden">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
-                        <div>
-                            <p class="text-xs text-slate-400 font-bold mb-1">الرصيد الأساسي المتبقي</p>
-                            <h2 class="text-4xl font-black text-white" id="cust-display-balance">$0.00</h2>
-                            <p class="text-[10px] text-slate-500 mt-1">الرصيد بالليرة تقريبي حسب الصرف الحالي</p>
+            <div class="luxury-card p-5 rounded-3xl shadow-xl relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="relative flex items-center justify-center" style="width: 78px; height: 78px; flex-shrink: 0;">
+                            <svg width="78" height="78" viewBox="0 0 80 80" style="transform: rotate(-90deg);">
+                                <circle cx="40" cy="40" r="33" stroke="#1e293b" stroke-width="7" fill="transparent"/>
+                                <circle id="cust-limit-ring" cx="40" cy="40" r="33" stroke="#10b981" stroke-width="7" fill="transparent" stroke-dasharray="207.3" stroke-dashoffset="207.3" stroke-linecap="round" style="transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;"/>
+                            </svg>
+                            <div class="text-center" style="position:absolute;">
+                                <span id="cust-limit-ring-pct" class="text-xs font-black text-white block">0%</span>
+                                <span class="text-[9px] text-slate-400 block">من السقف</span>
+                            </div>
                         </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <p class="text-xs text-slate-400 font-bold">الرصيد الأساسي</p>
+                                <span id="cust-balance-badge" class="text-[10px] font-black px-2 py-0.5 rounded-lg bg-red-950 text-red-400 border border-red-900">مستحق عليك</span>
+                            </div>
+                            <h2 class="text-3xl font-black text-white" id="cust-display-balance">$0.00</h2>
+                            <p class="text-[10px] text-slate-400 mt-0.5">السقف المسموح: <span id="cust-credit-limit-val" class="text-goldAccent font-bold">$100</span></p>
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-auto">
                         <div class="currency-toggle-group">
                             <button type="button" onclick="setCustomerCurrency('USD')" id="btn-curr-usd" class="currency-btn active">دولار ($)</button>
                             <button type="button" onclick="setCustomerCurrency('SYP_NEW')" id="btn-curr-new" class="currency-btn">ليرة جديدة</button>
@@ -263,74 +490,123 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-1 pt-2">
-                    <h3 class="font-bold text-sm text-slate-100">سجل حركاتك الشخصية</h3>
+                <div class="mt-4 pt-3 border-t border-slate-700/70">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-[10px] font-bold text-slate-400"><i class="fa-solid fa-chart-column text-goldAccent ml-1"></i>مؤشر مسحوباتك خلال آخر 3 أشهر:</span>
+                        <button type="button" onclick="openModal('modal-cust-profile')" class="text-[10px] text-goldAccent font-bold bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700"><i class="fa-solid fa-user-gear ml-1"></i>إعدادات حسابي</button>
+                    </div>
+                    <div id="cust-mini-analytics" class="grid grid-cols-3 gap-2 pt-1"></div>
                 </div>
-                <div id="customer-transactions-cards" class="space-y-2.5 pb-6"></div>
             </div>
+
+            <div class="flex items-center justify-between gap-2 px-1">
+                <h3 class="font-bold text-xs text-slate-200 whitespace-nowrap">سجل حركاتك الشخصية</h3>
+                <input type="text" id="cust-tx-search" oninput="renderCustomerPanel()" placeholder="ابحث في مشترياتك (مثال: سكر، متة)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100">
+            </div>
+
+            <div id="cust-empty-state" class="hidden luxury-card p-8 rounded-3xl text-center shadow-lg">
+                <div class="w-16 h-16 bg-successGreen/10 text-successGreen rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+                    <i class="fa-regular fa-face-smile"></i>
+                </div>
+                <h3 class="text-base font-black text-white">لا توجد حركات مطابقة أو حسابك مصفر</h3>
+                <p class="text-xs text-slate-400 mt-1">شكراً لالتزامك المالي وثقتك التامة بمتجر معاذ.</p>
+            </div>
+
+            <div id="cust-content-state">
+                <div id="customer-transactions-cards" class="pb-6"></div>
+            </div>
+
+            <a href="https://wa.me/963965461504?text=مرحباً%20متجر%20معاذ،%20لدي%20استفسار%20حول%20حسابي" target="_blank" class="whatsapp-fab no-print" title="تواصل مع متجر معاذ عبر واتساب">
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
         </section>
     </main>
 
-    <!-- Modal: إدارة الحساب للإدارة -->
-    <div id="modal-manage-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-manage-account')">
-        <div class="modal-content max-w-xl">
-            <div class="flex justify-between items-center pb-4 border-b border-slate-700/80 mb-4">
-                <h3 id="modal-account-title" class="font-black text-base text-white">إدارة الحساب</h3>
-                <button type="button" onclick="closeModal('modal-manage-account')" class="text-red-400 font-bold bg-slate-900 px-3 py-1 rounded-lg text-xs">إغلاق</button>
+    <!-- ==================== النوافذ المنبثقة الأخرى ==================== -->
+
+    <!-- نافذة الفاتورة الرقمية المنبثقة -->
+    <div id="modal-digital-receipt" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-digital-receipt')">
+        <div class="modal-content max-w-sm text-center space-y-3" style="border: 2px dashed #f59e0b;">
+            <div class="w-12 h-12 bg-goldAccent text-darkBg rounded-2xl flex items-center justify-center mx-auto font-black text-xl">M</div>
+            <h3 class="font-black text-base text-goldAccent">متجر معاذ - إيصال رقمي</h3>
+            <p id="receipt-customer-name" class="text-xs text-slate-300 font-bold"></p>
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 text-right space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-slate-400">رقم العملية:</span><span id="receipt-id" class="font-mono text-slate-200"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">التاريخ والوقت:</span><span id="receipt-date" class="text-slate-200"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">نوع الحركة:</span><span id="receipt-type" class="font-bold"></span></div>
+                <div class="border-t border-slate-800 pt-2">
+                    <span class="text-slate-400 block mb-1">البيان والتفاصيل:</span>
+                    <p id="receipt-note" class="font-black text-sm text-white"></p>
+                </div>
+                <div class="border-t border-slate-800 pt-2 flex justify-between items-center">
+                    <span class="text-slate-400 font-bold">القيمة الأساسية:</span>
+                    <span id="receipt-amount-usd" class="text-lg font-black text-goldAccent"></span>
+                </div>
+                <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-slate-400">المعادل بالليرة الجديدة:</span>
+                    <span id="receipt-amount-syp" class="font-bold text-slate-300"></span>
+                </div>
             </div>
-
-            <form id="form-add-transaction" onsubmit="handleAddTransaction(event)" class="space-y-4">
-                <input type="hidden" id="trans-target-id">
-                <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-700 space-y-4">
-                    <select id="trans-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3.5 text-xs text-white font-bold">
-                        <option value="debt">دين جديد (تم سحب مواد)</option>
-                        <option value="payment">دفعة سداد (تم قبض مبلغ)</option>
-                    </select>
-                    
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 mb-1.5">عملة الإدخال للفاتورة:</label>
-                        <div class="currency-toggle-group">
-                            <button type="button" onclick="setAdminInputCurrency('USD')" id="adm-curr-usd" class="currency-btn active">دولار ($)</button>
-                            <button type="button" onclick="setAdminInputCurrency('SYP_NEW')" id="adm-curr-new" class="currency-btn">ليرة جديدة</button>
-                            <button type="button" onclick="setAdminInputCurrency('SYP_OLD')" id="adm-curr-old" class="currency-btn">ليرة قديمة</button>
-                        </div>
-                    </div>
-
-                    <input type="number" step="any" id="trans-amount" required class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-4 text-2xl text-goldAccent text-center font-black" placeholder="أدخل المبلغ هنا...">
-                    
-                    <div id="trans-quick-buttons-container" class="flex flex-wrap gap-2 pt-2 pb-2 justify-center"></div>
-                    
-                    <input type="text" id="trans-note" required placeholder="البيان أو التفاصيل..." class="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3.5 text-sm text-white font-bold text-center">
-                </div>
-                <button type="submit" class="w-full bg-successGreen text-darkBg font-black py-4 rounded-2xl text-sm shadow-xl">حفظ الحركة</button>
-            </form>
-            
-            <div class="mt-4 border-t border-slate-700 pt-4">
-                <h4 class="text-xs font-bold text-slate-400 mb-2">السجل السريع:</h4>
-                <div id="admin-modal-transactions-cards" class="space-y-2 max-h-40 overflow-y-auto pr-1 mb-4"></div>
-                
-                <div class="flex gap-2 mt-4 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="clearCustomerHistory()" class="flex-1 bg-amber-950 text-amber-500 font-bold py-2.5 rounded-xl text-xs border border-amber-900"><i class="fa-solid fa-broom mr-1"></i> تصفير الأرشيف</button>
-                    <button type="button" onclick="deleteCustomerAccount()" class="flex-1 bg-red-950 text-red-400 font-bold py-2.5 rounded-xl text-xs border border-red-900"><i class="fa-solid fa-user-xmark mr-1"></i> حذف الزبون</button>
-                </div>
+            <div class="flex gap-2 pt-2">
+                <button type="button" onclick="shareReceiptWhatsApp()" class="flex-1 bg-successGreen text-darkBg font-black py-2.5 rounded-xl text-xs"><i class="fa-brands fa-whatsapp ml-1"></i>مشاركة واتساب</button>
+                <button type="button" onclick="closeModal('modal-digital-receipt')" class="flex-1 bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: إضافة حساب -->
+    <!-- نافذة الملف الشخصي للزبون -->
+    <div id="modal-cust-profile" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-cust-profile')">
+        <div class="modal-content max-w-sm space-y-4">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2">إعدادات حسابي الشخصي</h3>
+            <div>
+                <label class="text-xs text-slate-300 font-bold block mb-1.5">اختر رمزك التعبيري (Avatar):</label>
+                <div class="flex gap-2 justify-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                    <button type="button" onclick="setCustomerAvatar('👤')" class="text-xl p-1.5 rounded-lg bg-slate-800">👤</button>
+                    <button type="button" onclick="setCustomerAvatar('👑')" class="text-xl p-1.5 rounded-lg bg-slate-800">👑</button>
+                    <button type="button" onclick="setCustomerAvatar('🌟')" class="text-xl p-1.5 rounded-lg bg-slate-800">🌟</button>
+                    <button type="button" onclick="setCustomerAvatar('💎')" class="text-xl p-1.5 rounded-lg bg-slate-800">💎</button>
+                    <button type="button" onclick="setCustomerAvatar('🦁')" class="text-xl p-1.5 rounded-lg bg-slate-800">🦁</button>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs text-slate-300 font-bold block">تغيير كلمة المرور الخاصة بي:</label>
+                <input type="password" id="cust-self-new-pass" placeholder="كلمة المرور الجديدة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                <button type="button" onclick="custSelfChangePassword()" class="w-full bg-goldAccent text-darkBg font-black py-2.5 rounded-xl text-xs">حفظ كلمة المرور الجديدة</button>
+            </div>
+            <button type="button" onclick="closeModal('modal-cust-profile')" class="w-full bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-bold">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة تصدير تقرير PDF مخصص بمدد زمنية -->
+    <div id="modal-pdf-range" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-pdf-range')">
+        <div class="modal-content max-w-sm space-y-3 text-center">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2">تصدير كشف حساب PDF مخصص</h3>
+            <p class="text-xs text-slate-400">اختر النطاق الزمني للحركات المراد تضمينها في التقرير:</p>
+            <div class="space-y-2 pt-2">
+                <button type="button" onclick="generateAllAccountsPDF('today')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs border border-slate-700">📅 حركات اليوم فقط</button>
+                <button type="button" onclick="generateAllAccountsPDF('week')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs border border-slate-700">📆 حركات هذا الأسبوع (آخر 7 أيام)</button>
+                <button type="button" onclick="generateAllAccountsPDF('month')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs border border-slate-700">🗓️ حركات هذا الشهر (آخر 30 يوماً)</button>
+                <button type="button" onclick="generateAllAccountsPDF('all')" class="w-full bg-goldAccent text-darkBg font-black py-3 rounded-xl text-xs shadow-lg">📚 السجل الشامل الكامل</button>
+            </div>
+            <button type="button" onclick="closeModal('modal-pdf-range')" class="w-full bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-bold mt-2">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Modal: إضافة حساب زبون جديد -->
     <div id="modal-add-account" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-add-account')">
-        <div class="modal-content max-w-md space-y-4">
-            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3">إضافة زبون جديد</h3>
-            <input type="text" id="acc-name" placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-white">
-            <input type="tel" id="acc-phone" placeholder="رقم الهاتف (مثل 09xxxxxxxx)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-white font-mono">
+        <div class="modal-content max-w-md space-y-3.5">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2.5">إضافة زبون جديد</h3>
+            <input type="text" id="acc-name" placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-xs text-white">
+            <input type="tel" id="acc-phone" placeholder="رقم الهاتف (مثل 09xxxxxxxx)" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-xs text-white font-mono">
             <div class="grid grid-cols-2 gap-2">
-                <input type="text" id="acc-pass" placeholder="كلمة مرور مؤقتة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-white">
-                <select id="acc-group" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3.5 text-xs text-goldAccent font-bold">
+                <input type="text" id="acc-pass" placeholder="كلمة مرور مؤقتة" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-xs text-white">
+                <select id="acc-group" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-xs text-goldAccent font-bold">
                     <option value="regular">زبون دائم</option>
                     <option value="neighbor">جيران المتجر</option>
                     <option value="supplier">مورد</option>
                 </select>
             </div>
+            <input type="number" id="acc-limit" placeholder="سقف الدين بالدولار ($) - افتراضي 100" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-3 text-xs text-white font-mono">
             <div class="flex justify-end gap-2 pt-2">
                 <button type="button" onclick="closeModal('modal-add-account')" class="bg-slate-800 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold">إلغاء</button>
                 <button type="button" onclick="handleCreateAccount()" class="bg-goldAccent text-darkBg font-black px-5 py-2.5 rounded-xl text-xs">إنشاء الحساب</button>
@@ -338,26 +614,44 @@
         </div>
     </div>
 
-    <!-- Modal: الإعدادات وأزرار الأصناف -->
+    <!-- Modal: الإعدادات وأزرار الأصناف والبصمة والنسخ الاحتياطي -->
     <div id="modal-settings" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-settings')">
-        <div class="modal-content max-w-md space-y-4">
-            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-3">الإعدادات العامة</h3>
+        <div class="modal-content max-w-md space-y-3.5">
+            <h3 class="font-black text-base text-goldAccent border-b border-slate-700 pb-2.5">الإعدادات العامة والأمان</h3>
             
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <label class="text-xs text-slate-300 block mb-2">سعر الدولار المرجعي الحالي (بالليرة):</label>
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-700">
+                <label class="text-xs text-slate-300 block mb-1.5 font-bold">سعر الدولار المرجعي الحالي (بالليرة الجديدة):</label>
                 <div class="flex gap-2">
-                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-goldAccent font-black font-mono">
-                    <button type="button" onclick="saveExchangeRate()" class="bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold">اعتماد وتحديث</button>
+                    <input type="number" id="setting-syp-rate" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-goldAccent font-black font-mono">
+                    <button type="button" onclick="saveExchangeRate()" class="bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold">اعتماد</button>
                 </div>
             </div>
 
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <label class="text-xs text-successGreen font-bold block mb-3">أزرار الأصناف السريعة للفواتير:</label>
-                <div class="flex gap-2 mb-3">
-                    <input type="text" id="new-quick-item-input" placeholder="اكتب صنف جديد (مثال: سكر)..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white">
-                    <button type="button" onclick="addNewQuickItem()" class="bg-successGreen text-darkBg px-4 rounded-xl font-black text-lg">+</button>
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-700">
+                <label class="text-xs text-successGreen font-bold block mb-2">أزرار الأصناف السريعة للفواتير:</label>
+                <div class="flex gap-2 mb-2.5">
+                    <input type="text" id="new-quick-item-input" placeholder="اكتب صنف جديد (مثال: قهوة)..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <button type="button" onclick="addNewQuickItem()" class="bg-successGreen text-darkBg px-4 rounded-xl font-black text-base">+</button>
                 </div>
-                <div id="settings-quick-items-list" class="flex flex-wrap gap-2"></div>
+                <div id="settings-quick-items-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- الإصلاح 5: ربط البصمة الحقيقية WebAuthn بحساب الإدارة -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-700 flex justify-between items-center">
+                <div>
+                    <h4 class="text-xs font-bold text-white"><i class="fa-solid fa-fingerprint text-goldAccent ml-1"></i>ربط بصمة الهاتف الحقيقية</h4>
+                    <p class="text-[10px] text-slate-400">يسجل بصمة إصبعك أو قفل الشاشة عبر WebAuthn لمنع أي دخول غير مصرح.</p>
+                </div>
+                <button type="button" onclick="enableBiometricAdmin()" class="bg-goldAccent text-darkBg font-black px-3 py-2 rounded-xl text-xs">تسجيل البصمة</button>
+            </div>
+
+            <!-- استرجاع وتحميل النسخة الاحتياطية JSON -->
+            <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-700 space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="text-xs text-goldAccent font-bold"><i class="fa-solid fa-database ml-1"></i>إدارة النسخ الاحتياطي (JSON):</label>
+                    <button type="button" onclick="downloadDailyBackup()" class="bg-slate-800 text-goldAccent border border-goldAccent/40 px-2.5 py-1 rounded-lg text-[10px] font-bold">تنزيل نسخة الآن</button>
+                </div>
+                <input type="file" id="restore-json-input" accept=".json" onchange="restoreBackupJSON(event)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-slate-300">
             </div>
 
             <button type="button" onclick="closeModal('modal-settings')" class="w-full bg-slate-800 text-slate-300 py-3 rounded-xl text-xs font-bold border border-slate-700">إغلاق</button>
@@ -389,6 +683,9 @@
         window.pendingCustomerKey = null;
         window.adminInputCurrency = 'USD';
         window.customerDisplayCurrency = 'USD';
+        window.adminCurrentFilter = 'all';
+        window.activeReceiptTx = null;
+        window.editingBaseAmountUSD = null;
         
         window.storeData = { 
             accounts: {}, 
@@ -396,79 +693,112 @@
             deletedAccounts: {},
             settings: { 
                 sypRate: 15000, 
-                quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'] 
+                quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات', 'خبز'],
+                updatedAt: 0
             } 
         };
         
-        const localDB = localStorage.getItem("moaath_offline_db_v28") || localStorage.getItem("moaath_offline_db_v27");
+        const localDB = localStorage.getItem("moaath_offline_db_v31") || localStorage.getItem("moaath_offline_db_v30") || localStorage.getItem("moaath_offline_db_v29");
         if(localDB) {
             try { 
                 const parsed = JSON.parse(localDB);
                 window.storeData = { ...window.storeData, ...parsed };
                 if (!window.storeData.deletedTxs) window.storeData.deletedTxs = {};
                 if (!window.storeData.deletedAccounts) window.storeData.deletedAccounts = {};
+                if (!window.storeData.settings) window.storeData.settings = { sypRate: 15000, quickItems: ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'], updatedAt: 0 };
             } catch (e) { console.error("DB Parse error", e); }
         }
 
-        if (!window.storeData.settings.quickItems) {
-            window.storeData.settings.quickItems = ['مواد غذائية', 'معلبات', 'موالح', 'سكر', 'متة', 'زيت', 'خضرة', 'منظفات'];
-        }
+        // الإصلاح 3: تصحيح كلاس fa-solid بأحرف صغيرة لضمان ظهور أيقونة السكر والرز في كافة المتصفحات
+        window.getDynamicIcon = function(text, isDebt = true) {
+            const t = (text || "").toLowerCase();
+            if (t.includes("سكر") || t.includes("طحين") || t.includes("رز")) return "fa-solid fa-bowl-rice";
+            if (t.includes("متة") || t.includes("شاي") || t.includes("قهوة")) return "fa-solid fa-mug-hot";
+            if (t.includes("زيت") || t.includes("سمنة")) return "fa-solid fa-bottle-droplet";
+            if (t.includes("خضرة") || t.includes("بندورة") || t.includes("خيار") || t.includes("فواكه")) return "fa-solid fa-carrot";
+            if (t.includes("منظفات") || t.includes("صابون") || t.includes("غسيل")) return "fa-solid fa-soap";
+            if (t.includes("موالح") || t.includes("بزر") || t.includes("سناكس")) return "fa-solid fa-cookie-bite";
+            if (t.includes("معلبات") || t.includes("تونة") || t.includes("مرتديلا")) return "fa-solid fa-jar";
+            if (t.includes("خبز") || t.includes("معجنات")) return "fa-solid fa-bread-slice";
+            if (t.includes("غاز") || t.includes("مازوت") || t.includes("بنزين")) return "fa-solid fa-fire-flame-simple";
+            if (t.includes("رصيد مدور")) return "fa-solid fa-rotate";
+            return isDebt ? "fa-solid fa-cart-shopping" : "fa-solid fa-hand-holding-dollar";
+        };
 
         let isCloudOnline = false;
-        let hasPendingOfflineChanges = false;
+        let hasPendingOfflineChanges = localStorage.getItem("moaath_pending_offline_v31") === "true";
         const rootRef = ref(db);
         
-        // محرك المزامنة الذكي مع منع عودة الحركات أو الحسابات المحذوفة (Tombstone Anti-Zombie Sync)
+        function setPendingOffline(state) {
+            hasPendingOfflineChanges = state;
+            localStorage.setItem("moaath_pending_offline_v31", state ? "true" : "false");
+        }
+
         onValue(rootRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                if (data.deletedTxs) {
-                    window.storeData.deletedTxs = { ...window.storeData.deletedTxs, ...data.deletedTxs };
-                }
-                if (data.deletedAccounts) {
-                    window.storeData.deletedAccounts = { ...window.storeData.deletedAccounts, ...data.deletedAccounts };
-                }
+                if (data.deletedTxs) window.storeData.deletedTxs = { ...window.storeData.deletedTxs, ...data.deletedTxs };
+                if (data.deletedAccounts) window.storeData.deletedAccounts = { ...window.storeData.deletedAccounts, ...data.deletedAccounts };
 
                 if (data.accounts) {
                     for(let key in data.accounts) {
-                        // تخطي الحسابات المحذوفة نهائياً
                         if (window.storeData.deletedAccounts && window.storeData.deletedAccounts[key]) continue;
 
                         if (!window.storeData.accounts[key]) {
                             window.storeData.accounts[key] = data.accounts[key];
                         } else {
-                            const cloudTxs = data.accounts[key].transactions || {};
-                            const localTxs = window.storeData.accounts[key].transactions || {};
+                            const cloudAcc = data.accounts[key];
+                            const localAcc = window.storeData.accounts[key];
+
+                            const cloudTxs = cloudAcc.transactions || {};
+                            const localTxs = localAcc.transactions || {};
                             const mergedTxs = { ...cloudTxs, ...localTxs };
                             
-                            // إزالة أي حركة تم حذفها أوفلاين أو أونلاين
                             for (let txId in mergedTxs) {
                                 if (window.storeData.deletedTxs && window.storeData.deletedTxs[txId]) {
                                     delete mergedTxs[txId];
+                                } else if (localTxs[txId] && cloudTxs[txId]) {
+                                    const lTime = localTxs[txId].updatedAt || 0;
+                                    const cTime = cloudTxs[txId].updatedAt || 0;
+                                    mergedTxs[txId] = lTime >= cTime ? localTxs[txId] : cloudTxs[txId];
                                 }
                             }
-                            window.storeData.accounts[key].transactions = mergedTxs;
+                            localAcc.transactions = mergedTxs;
                             
-                            window.storeData.accounts[key].name = data.accounts[key].name || window.storeData.accounts[key].name;
-                            window.storeData.accounts[key].phone = data.accounts[key].phone || window.storeData.accounts[key].phone;
-                            window.storeData.accounts[key].password = data.accounts[key].password || window.storeData.accounts[key].password;
-                            if (data.accounts[key].isFirstLogin !== undefined) window.storeData.accounts[key].isFirstLogin = data.accounts[key].isFirstLogin;
-                            if (data.accounts[key].policyAccepted !== undefined) window.storeData.accounts[key].policyAccepted = data.accounts[key].policyAccepted;
+                            const cloudUpdated = cloudAcc.updatedAt || 0;
+                            const localUpdated = localAcc.updatedAt || 0;
+
+                            if (cloudUpdated >= localUpdated) {
+                                localAcc.name = cloudAcc.name || localAcc.name;
+                                localAcc.phone = cloudAcc.phone || localAcc.phone;
+                                localAcc.password = cloudAcc.password || localAcc.password;
+                                localAcc.creditLimit = cloudAcc.creditLimit || localAcc.creditLimit || 100;
+                                localAcc.avatar = cloudAcc.avatar || localAcc.avatar || "";
+                                if (cloudAcc.isFirstLogin !== undefined) localAcc.isFirstLogin = cloudAcc.isFirstLogin;
+                                if (cloudAcc.policyAccepted !== undefined) localAcc.policyAccepted = cloudAcc.policyAccepted;
+                                localAcc.updatedAt = cloudUpdated;
+                            }
                         }
                     }
                 }
+
                 if (data.settings) {
-                    window.storeData.settings.sypRate = data.settings.sypRate || window.storeData.settings.sypRate;
-                    if (data.settings.quickItems) window.storeData.settings.quickItems = data.settings.quickItems;
+                    const cloudSettingsTime = data.settings.updatedAt || 0;
+                    const localSettingsTime = window.storeData.settings.updatedAt || 0;
+                    if (!hasPendingOfflineChanges && cloudSettingsTime >= localSettingsTime) {
+                        window.storeData.settings.sypRate = data.settings.sypRate || window.storeData.settings.sypRate;
+                        if (data.settings.quickItems) window.storeData.settings.quickItems = data.settings.quickItems;
+                        window.storeData.settings.updatedAt = cloudSettingsTime;
+                    }
                 }
-                localStorage.setItem("moaath_offline_db_v28", JSON.stringify(window.storeData));
-                
-                if (hasPendingOfflineChanges) {
-                    syncLocalToCloud(window.storeData);
-                    hasPendingOfflineChanges = false;
-                }
+
+                localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
+                isCloudOnline = true;
+                if (hasPendingOfflineChanges) syncLocalToCloud();
+            } else {
+                isCloudOnline = true;
+                if (hasPendingOfflineChanges) syncLocalToCloud();
             }
-            isCloudOnline = true; 
             updateNetworkStatus(true); 
             refreshUI();
         }, (error) => {
@@ -476,16 +806,33 @@
             updateNetworkStatus(false);
         });
 
-        function syncLocalToCloud(localData) {
-            if (isCloudOnline && navigator.onLine) {
-                set(ref(db), localData).catch(err => console.log("Sync error:", err));
+        function syncLocalToCloud() {
+            if (!navigator.onLine) return;
+            const updates = {};
+            updates['settings'] = window.storeData.settings;
+            updates['deletedTxs'] = window.storeData.deletedTxs || {};
+            updates['deletedAccounts'] = window.storeData.deletedAccounts || {};
+
+            for (let key in window.storeData.accounts) {
+                if (window.storeData.deletedAccounts && window.storeData.deletedAccounts[key]) {
+                    updates[`accounts/${key}`] = null;
+                } else {
+                    updates[`accounts/${key}`] = window.storeData.accounts[key];
+                }
             }
+            for (let delKey in (window.storeData.deletedAccounts || {})) {
+                updates[`accounts/${delKey}`] = null;
+            }
+
+            update(ref(db), updates).then(() => {
+                setPendingOffline(false);
+            }).catch(err => console.log("Sync error:", err));
         }
 
         window.forceSyncToCloud = function() {
             if (!navigator.onLine) { alert("لا يوجد اتصال بالإنترنت حالياً!"); return; }
-            syncLocalToCloud(window.storeData);
-            alert("تم رفع ومزامنة جميع البيانات المحلية مع السحابة بنجاح!");
+            syncLocalToCloud();
+            alert("✅ تم رفع ومزامنة جميع البيانات المحلية مع السحابة بنجاح!");
         };
 
         function updateNetworkStatus(isOnlineCloud) {
@@ -493,27 +840,140 @@
             const dot = document.getElementById("cloud-dot");
             const txt = document.getElementById("cloud-text");
             if (navigator.onLine && isOnlineCloud) {
-                banner.className = "bg-slate-900 text-center text-[11px] py-1.5 text-slate-400 border-b border-slate-800 no-print flex justify-center items-center gap-2 transition-colors duration-500";
-                dot.className = "w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse";
+                banner.className = "bg-slate-900 text-center text-[11px] py-1.5 text-slate-400 border-b border-slate-800 no-print flex justify-center items-center gap-2";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-400 inline-block";
                 txt.textContent = "متصل ومزامن للسحابة";
             } else {
-                banner.className = "bg-amber-950 text-center text-[11px] py-1.5 text-goldAccent border-b border-amber-900 no-print flex justify-center items-center gap-2 transition-colors duration-500";
+                banner.className = "bg-amber-950 text-center text-[11px] py-1.5 text-goldAccent border-b border-amber-900 no-print flex justify-center items-center gap-2";
                 dot.className = "w-2 h-2 rounded-full bg-goldAccent inline-block";
-                txt.textContent = "أوفلاين (تم حفظ بياناتك بالهاتف وسترفع لاحقاً)";
+                txt.textContent = "أوفلاين (تم حفظ بياناتك بالهاتف وسترفع تلقائياً فور توفر الإنترنت)";
             }
         }
-        window.addEventListener('online', () => { isCloudOnline = true; updateNetworkStatus(true); syncLocalToCloud(window.storeData); });
+        
+        window.addEventListener('online', () => { 
+            updateNetworkStatus(isCloudOnline); 
+            if (isCloudOnline && hasPendingOfflineChanges) syncLocalToCloud(); 
+        });
         window.addEventListener('offline', () => { isCloudOnline = false; updateNetworkStatus(false); });
 
         window.saveDataDual = function(path, value) {
-            localStorage.setItem("moaath_offline_db_v28", JSON.stringify(window.storeData));
+            localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
             if (navigator.onLine && isCloudOnline) {
                 set(child(ref(db), path), value).catch(err => {
-                    hasPendingOfflineChanges = true;
-                    console.log("Cloud fail", err);
+                    setPendingOffline(true);
                 });
             } else {
-                hasPendingOfflineChanges = true;
+                setPendingOffline(true);
+            }
+        };
+
+        window.toggleLuxuryTheme = function() {
+            document.body.classList.toggle("light-theme");
+            const isLight = document.body.classList.contains("light-theme");
+            localStorage.setItem("moaath_luxury_theme", isLight ? "light" : "dark");
+            document.getElementById("theme-toggle-icon").className = isLight ? "fa-solid fa-moon" : "fa-solid fa-sun";
+        };
+
+        // الإصلاح 1: تفعيل وضع شاشة الصندوق POS الحقيقي جنباً إلى جنب مع قائمة الزبائن
+        window.togglePosMode = function() {
+            document.body.classList.toggle("pos-mode");
+            const btn = document.getElementById("nav-pos-btn");
+            if (document.body.classList.contains("pos-mode")) {
+                btn.classList.add("active");
+                const keys = Object.keys(window.storeData.accounts || {}).filter(k => !(window.storeData.deletedAccounts && window.storeData.deletedAccounts[k]));
+                if (keys.length > 0 && !window.activeManagingAccountKey) {
+                    openManageAccountModal(keys[0]);
+                } else if (window.activeManagingAccountKey) {
+                    openManageAccountModal(window.activeManagingAccountKey);
+                }
+            } else {
+                btn.classList.remove("active");
+                closeModal('modal-manage-account');
+            }
+            renderAdminDashboard();
+        };
+
+        // الإصلاح 5: مصادقة بيومترية حقيقية عبر حساس البصمة WebAuthn API (navigator.credentials.create & get)
+        function bufferToBase64(buf) {
+            return btoa(String.fromCharCode(...new Uint8Array(buf)));
+        }
+        function base64ToBuffer(b64) {
+            const str = atob(b64);
+            const buf = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
+            return buf.buffer;
+        }
+
+        window.enableBiometricAdmin = async function() {
+            if (!window.PublicKeyCredential || !navigator.credentials) {
+                alert("⚠️ متصفحك الحالي أو البروتوكول لا يدعم واجهة WebAuthn لبصمة الجهاز.");
+                return;
+            }
+            try {
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+                const userId = new Uint8Array(16);
+                window.crypto.getRandomValues(userId);
+
+                const credential = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: challenge,
+                        rp: { name: "متجر معاذ - دفتر الديون" },
+                        user: {
+                            id: userId,
+                            name: ADMIN_PHONE,
+                            displayName: "الإدارة - معاذ العلي"
+                        },
+                        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+                        authenticatorSelection: {
+                            authenticatorAttachment: "platform",
+                            userVerification: "required"
+                        },
+                        timeout: 60000
+                    }
+                });
+
+                if (credential && credential.rawId) {
+                    localStorage.setItem("moaath_biometric_cred_id", bufferToBase64(credential.rawId));
+                    localStorage.setItem("moaath_biometric_enabled", "true");
+                    document.getElementById("btn-biometric-login").classList.remove("hidden");
+                    alert("✅ تم تسجيل بصمة إصبعك الحقيقية بنجاح! لن يتمكن أحد من الدخول بدون التحقق من بصمة الجهاز.");
+                }
+            } catch (e) {
+                alert("❌ لم يتم إكمال تسجيل البصمة الحقيقية (تأكد من فتح التطبيق عبر HTTPS أو localhost وتفعيل قفل الشاشة): " + e.message);
+            }
+        };
+
+        window.triggerBiometricLogin = async function() {
+            const credIdB64 = localStorage.getItem("moaath_biometric_cred_id");
+            if (localStorage.getItem("moaath_biometric_enabled") !== "true" || !credIdB64) {
+                alert("⚠️ يرجى تسجيل البصمة أولاً من داخل الإعدادات بعد الدخول بكلمة المرور.");
+                return;
+            }
+            try {
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+
+                const assertion = await navigator.credentials.get({
+                    publicKey: {
+                        challenge: challenge,
+                        allowCredentials: [{
+                            id: base64ToBuffer(credIdB64),
+                            type: "public-key",
+                            transports: ["internal"]
+                        }],
+                        userVerification: "required",
+                        timeout: 60000
+                    }
+                });
+
+                if (assertion) {
+                    window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
+                    localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
+                    updateUIState();
+                }
+            } catch (e) {
+                alert("❌ فشل التحقق من بصمة الإصبع أو تم إلغاء العملية!");
             }
         };
         
@@ -530,6 +990,38 @@
             document.getElementById("backup-modal").classList.add("hidden");
         };
 
+        window.restoreBackupJSON = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!imported || typeof imported !== 'object' || !imported.accounts) {
+                        alert("❌ الملف غير صالح!"); return;
+                    }
+                    if (!confirm("⚠️ هل أنت متأكد من استرجاع ودمج هذه النسخة الاحتياطية؟")) return;
+
+                    window.storeData.accounts = { ...window.storeData.accounts, ...imported.accounts };
+                    if (imported.settings) window.storeData.settings = { ...window.storeData.settings, ...imported.settings, updatedAt: Date.now() };
+                    if (imported.deletedTxs) window.storeData.deletedTxs = { ...window.storeData.deletedTxs, ...imported.deletedTxs };
+                    if (imported.deletedAccounts) window.storeData.deletedAccounts = { ...window.storeData.deletedAccounts, ...imported.deletedAccounts };
+
+                    localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
+                    setPendingOffline(true);
+                    syncLocalToCloud();
+                    renderAdminDashboard();
+                    renderAdminSettings();
+                    closeModal('modal-settings');
+                    alert("✅ تم استرجاع النسخة الاحتياطية ومزامنتها بنجاح!");
+                } catch (err) {
+                    alert("❌ خطأ في قراءة ملف النسخة الاحتياطية!");
+                }
+                event.target.value = "";
+            };
+            reader.readAsText(file);
+        };
+
         function refreshUI() {
             if (window.currentUser) {
                 if (window.currentUser.isAdmin) renderAdminDashboard();
@@ -538,8 +1030,15 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem("moaath_luxury_theme") === "light") {
+                document.body.classList.add("light-theme");
+                document.getElementById("theme-toggle-icon").className = "fa-solid fa-moon";
+            }
+            if (localStorage.getItem("moaath_biometric_enabled") === "true" && localStorage.getItem("moaath_biometric_cred_id")) {
+                document.getElementById("btn-biometric-login").classList.remove("hidden");
+            }
             try {
-                const savedUser = localStorage.getItem("moaath_current_user_v28");
+                const savedUser = localStorage.getItem("moaath_current_user_v31") || localStorage.getItem("moaath_current_user_v30");
                 if (savedUser) window.currentUser = JSON.parse(savedUser);
             } catch (err) {}
             updateUIState();
@@ -553,17 +1052,17 @@
             document.getElementById("admin-panel").classList.add("hidden");
             document.getElementById("customer-panel").classList.add("hidden");
             document.getElementById("user-status-display").classList.add("hidden");
+            document.getElementById("cust-bell-btn").classList.add("hidden");
 
             if (!window.currentUser) {
+                document.body.classList.remove("pos-mode");
                 document.getElementById("auth-section").classList.remove("hidden");
                 return;
             }
-
             if (window.currentUser.requiresPasswordSetup) {
                 document.getElementById("setup-password-section").classList.remove("hidden");
                 return;
             }
-
             if (window.currentUser.requiresPolicyAcceptance) {
                 document.getElementById("policy-section").classList.remove("hidden");
                 return;
@@ -583,15 +1082,18 @@
                     document.getElementById("backup-modal").classList.remove("hidden");
                 }
             } else {
+                document.body.classList.remove("pos-mode");
                 if (!navigator.onLine) {
                     alert("⚠️ عذراً، لا يوجد اتصال بالإنترنت للزبون. يرجى الاتصال لمعرفة رصيدك الجديد.");
                     window.currentUser = null;
-                    localStorage.removeItem("moaath_current_user_v28");
+                    localStorage.removeItem("moaath_current_user_v31");
                     document.getElementById("auth-section").classList.remove("hidden");
                     return;
                 }
                 document.getElementById("customer-panel").classList.remove("hidden");
-                document.getElementById("header-avatar").textContent = window.currentUser.name.charAt(0);
+                document.getElementById("cust-bell-btn").classList.remove("hidden");
+                const cust = window.storeData.accounts[window.currentUser.dbKey];
+                document.getElementById("header-avatar").textContent = (cust && cust.avatar) ? cust.avatar : window.currentUser.name.charAt(0);
                 document.getElementById("current-user-badge").textContent = window.currentUser.name.split(' ')[0];
                 renderCustomerPanel();
             }
@@ -604,7 +1106,7 @@
 
             if (phone === ADMIN_PHONE && pass === ADMIN_SECRET_PASS) {
                 window.currentUser = { phone: ADMIN_PHONE, name: "الإدارة", isAdmin: true };
-                localStorage.setItem("moaath_current_user_v28", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
                 updateUIState();
                 return;
             }
@@ -614,6 +1116,7 @@
             const accounts = window.storeData.accounts || {};
             let foundKey = null, foundAcc = null;
             for (let key in accounts) {
+                if (window.storeData.deletedAccounts && window.storeData.deletedAccounts[key]) continue;
                 if (accounts[key].phone === phone && accounts[key].password === pass) {
                     foundKey = key; foundAcc = accounts[key]; break;
                 }
@@ -627,7 +1130,7 @@
                     window.currentUser = { phone, name: foundAcc.name, isAdmin: false, requiresPolicyAcceptance: true, dbKey: foundKey };
                 } else {
                     window.currentUser = { phone, name: foundAcc.name, isAdmin: false, dbKey: foundKey };
-                    localStorage.setItem("moaath_current_user_v28", JSON.stringify(window.currentUser));
+                    localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
                 }
                 updateUIState();
             } else {
@@ -639,14 +1142,14 @@
             const p1 = document.getElementById("new-cust-pass").value.trim();
             const p2 = document.getElementById("new-cust-pass-confirm").value.trim();
             if (!p1 || p1.length < 4 || p1 !== p2) {
-                alert("كلمة المرور قصيرة جداً أو غير متطابقة!");
-                return;
+                alert("كلمة المرور قصيرة جداً أو غير متطابقة!"); return;
             }
             const key = window.pendingCustomerKey || (window.currentUser && window.currentUser.dbKey);
             if (key && window.storeData.accounts[key]) {
                 window.storeData.accounts[key].password = p1;
                 window.storeData.accounts[key].isFirstLogin = false;
                 window.storeData.accounts[key].policyAccepted = false;
+                window.storeData.accounts[key].updatedAt = Date.now();
                 window.saveDataDual(`accounts/${key}`, window.storeData.accounts[key]);
 
                 window.currentUser.requiresPasswordSetup = false;
@@ -660,9 +1163,10 @@
             if (window.currentUser && window.currentUser.dbKey && window.storeData.accounts[window.currentUser.dbKey]) {
                 const key = window.currentUser.dbKey;
                 window.storeData.accounts[key].policyAccepted = true;
-                window.saveDataDual(`accounts/${key}/policyAccepted`, true);
+                window.storeData.accounts[key].updatedAt = Date.now();
+                window.saveDataDual(`accounts/${key}`, window.storeData.accounts[key]);
                 window.currentUser.requiresPolicyAcceptance = false;
-                localStorage.setItem("moaath_current_user_v28", JSON.stringify(window.currentUser));
+                localStorage.setItem("moaath_current_user_v31", JSON.stringify(window.currentUser));
                 updateUIState();
             }
         };
@@ -670,7 +1174,7 @@
         window.logout = function() {
             window.currentUser = null;
             window.pendingCustomerKey = null;
-            localStorage.removeItem("moaath_current_user_v28");
+            localStorage.removeItem("moaath_current_user_v31");
             updateUIState();
         };
 
@@ -678,23 +1182,41 @@
             let bal = 0;
             const txs = acc.transactions || {};
             for (let id in txs) {
+                if (window.storeData.deletedTxs && window.storeData.deletedTxs[id]) continue;
                 if (txs[id].type === 'debt') bal += Number(txs[id].amountUSD);
                 else bal -= Number(txs[id].amountUSD);
             }
             return bal;
         };
 
-        // لوحة الإدارة المعدلة بدون أخطاء العناصر المفقودة
+        window.setAdminFilter = function(filterType, btn) {
+            window.adminCurrentFilter = filterType;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderAdminDashboard();
+        };
+
+        let touchStartX = 0;
+        window.handleCardTouchStart = function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        };
+        window.handleCardTouchEnd = function(e, key) {
+            const diffX = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(diffX) > 65) {
+                openManageAccountModal(key);
+                document.getElementById("trans-type").value = diffX > 0 ? "debt" : "payment";
+                document.getElementById("trans-amount").focus();
+            }
+        };
+
         window.renderAdminDashboard = function() {
             const accounts = window.storeData.accounts || {};
-            let receivables = 0; // ديون لي
-            let payables = 0;    // ديون علي
+            let receivables = 0;
+            let payables = 0;
             let html = "";
             
             const rateEl = document.getElementById("stat-syp-rate-display");
-            if (rateEl) {
-                rateEl.textContent = `${Number(window.storeData.settings.sypRate).toLocaleString()} ل.س`;
-            }
+            if (rateEl) rateEl.textContent = `${Number(window.storeData.settings.sypRate).toLocaleString()} ل.س`;
 
             const searchInput = document.getElementById("admin-search-input");
             const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
@@ -708,6 +1230,12 @@
                 if (bal > 0) receivables += bal;
                 else if (bal < 0) payables += Math.abs(bal);
                 
+                const f = window.adminCurrentFilter;
+                if (f === 'debtor' && bal <= 0) continue;
+                if (f === 'creditor' && bal >= 0) continue;
+                if (f === 'zero' && bal !== 0) continue;
+                if ((f === 'neighbor' || f === 'regular' || f === 'supplier') && acc.group !== f) continue;
+
                 if (searchQuery && !acc.name.toLowerCase().includes(searchQuery) && !acc.phone.includes(searchQuery)) continue;
                 accountsArray.push({ key, acc, bal });
             }
@@ -722,15 +1250,27 @@
                 if (bal > 0) { borderClass = 'border-red-500'; textClass = 'text-red-400'; }
                 else if (bal < 0) { borderClass = 'border-successGreen'; textClass = 'text-successGreen'; }
 
+                let groupBadge = "دائم";
+                if (acc.group === 'neighbor') groupBadge = "جار";
+                else if (acc.group === 'supplier') groupBadge = "مورد";
+
+                const isSelectedPos = document.body.classList.contains('pos-mode') && window.activeManagingAccountKey === item.key ? 'selected-pos' : '';
+
                 html += `
-                    <div class="luxury-card rounded-2xl p-3.5 flex justify-between items-center mb-2 shadow-sm border-l-4 ${borderClass}">
-                        <div>
-                            <h4 class="font-bold text-sm text-white">${acc.name}</h4>
-                            <span class="text-[10px] text-slate-400 font-mono">${acc.phone}</span>
+                    <div ontouchstart="handleCardTouchStart(event)" ontouchend="handleCardTouchEnd(event, '${item.key}')" onclick="openManageAccountModal('${item.key}')" class="swipe-card ${isSelectedPos} luxury-card rounded-2xl p-3.5 flex justify-between items-center mb-2 shadow-sm border-l-4 ${borderClass}" style="cursor:pointer;">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar avatar-gold">${acc.avatar || acc.name.charAt(0)}</div>
+                            <div>
+                                <h4 class="font-bold text-sm text-white">${acc.name}</h4>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[9px] bg-slate-800 text-goldAccent px-1.5 py-0.5 rounded font-bold">${groupBadge}</span>
+                                    <span class="text-[10px] text-slate-400 font-mono">${acc.phone}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex flex-col items-end gap-1">
-                            <span class="font-black text-base ${textClass}">${bal < 0 ? '+' : ''}$${Math.abs(bal).toFixed(2)}</span>
-                            <button onclick="openManageAccountModal('${item.key}')" class="bg-slate-800 text-goldAccent text-[10px] font-bold px-3 py-1 rounded-lg border border-slate-600 transition hover:bg-slate-700">فتح الحساب</button>
+                            <span class="font-black text-base ${textClass}">${bal < 0 ? 'له: ' : (bal > 0 ? 'عليه: ' : '')}$${Math.abs(bal).toFixed(2)}</span>
+                            <span class="text-[9px] text-slate-400">اضغط أو اسحب للعمليات</span>
                         </div>
                     </div>
                 `;
@@ -738,18 +1278,46 @@
 
             document.getElementById("stat-total-receivables").textContent = `$${receivables.toFixed(2)}`;
             document.getElementById("stat-total-payables").textContent = `$${payables.toFixed(2)}`;
-            
-            const netBalance = receivables - payables;
-            document.getElementById("stat-net-balance").textContent = `$${netBalance.toFixed(2)}`;
-            
-            document.getElementById("admin-accounts-list-cards").innerHTML = html || `<div class="text-center py-8 opacity-50 text-xs font-bold text-slate-400">لا يوجد حسابات مطابقة</div>`;
+            document.getElementById("stat-net-balance").textContent = `$${(receivables - payables).toFixed(2)}`;
+            document.getElementById("admin-accounts-list-cards").innerHTML = html || `<div class="text-center py-8 opacity-50 text-xs font-bold text-slate-400">لا توجد حسابات مطابقة للفلتر</div>`;
         };
 
+        // الإصلاح 4: تحويل قيمة الحقل تلقائياً عند تغيير عملة الإدخال أثناء تعديل حركة سابقة لمنع القسمة المزدوجة
         window.setAdminInputCurrency = function(curr) {
+            const prevCurr = window.adminInputCurrency;
             window.adminInputCurrency = curr;
             document.getElementById("adm-curr-usd").className = curr === 'USD' ? "currency-btn active" : "currency-btn";
             document.getElementById("adm-curr-new").className = curr === 'SYP_NEW' ? "currency-btn active" : "currency-btn";
             document.getElementById("adm-curr-old").className = curr === 'SYP_OLD' ? "currency-btn active" : "currency-btn";
+
+            const editId = document.getElementById("editing-tx-id").value;
+            const amountInput = document.getElementById("trans-amount");
+            if (editId && window.editingBaseAmountUSD !== null && prevCurr !== curr) {
+                const rate = Number(window.storeData.settings.sypRate) || 15000;
+                if (curr === 'USD') amountInput.value = Number(window.editingBaseAmountUSD).toFixed(2);
+                else if (curr === 'SYP_NEW') amountInput.value = Math.round(window.editingBaseAmountUSD * rate).toString();
+                else if (curr === 'SYP_OLD') amountInput.value = Math.round(window.editingBaseAmountUSD * rate * 100).toString();
+            }
+        };
+
+        // الإصلاح 2: لوحة الأرقام تدعم الفاصلة العشرية بسلاسة وتمنع تكرار النقطة العشرية مرتين
+        window.toggleNumpad = function() {
+            document.getElementById("inapp-numpad").classList.toggle("hidden");
+        };
+        window.numpadPress = function(val) {
+            const input = document.getElementById("trans-amount");
+            let current = input.value.toString();
+            if (val === 'CLR') {
+                input.value = '';
+            } else if (val === 'DEL') {
+                input.value = current.slice(0, -1);
+            } else if (val === '.') {
+                if (!current.includes('.')) {
+                    input.value = current === '' ? '0.' : current + '.';
+                }
+            } else {
+                input.value = current + val;
+            }
         };
 
         window.renderTransactionQuickButtons = function() {
@@ -757,7 +1325,8 @@
             const cont = document.getElementById("trans-quick-buttons-container");
             cont.innerHTML = "";
             items.forEach(item => {
-                cont.innerHTML += `<button type="button" onclick="appendQuickItem('${item}')" class="quick-item-btn">${item}</button>`;
+                const iconClass = window.getDynamicIcon(item, true);
+                cont.innerHTML += `<button type="button" onclick="appendQuickItem('${item}')" class="quick-item-btn"><i class="${iconClass}"></i><span>${item}</span></button>`;
             });
         };
 
@@ -771,47 +1340,134 @@
             window.activeManagingAccountKey = key;
             const acc = window.storeData.accounts[key];
             if (!acc) return;
+            cancelEditTransaction();
             document.getElementById("modal-account-title").textContent = `ملف: ${acc.name}`;
+            document.getElementById("modal-account-pass-hint").textContent = `الهاتف: ${acc.phone} | المرور: ${acc.password} | السقف: $${acc.creditLimit || 100}`;
             document.getElementById("trans-target-id").value = key;
-            document.getElementById("trans-amount").value = "";
-            document.getElementById("trans-note").value = "";
+            document.getElementById("admin-cust-limit-input").value = acc.creditLimit || 100;
+            document.getElementById("admin-reset-cust-pass").value = "";
             
             window.renderTransactionQuickButtons();
             renderAdminModalTransactions(acc);
             openModal('modal-manage-account');
+            if (document.body.classList.contains('pos-mode')) renderAdminDashboard();
+        };
+
+        // الإصلاح 6: تنظيف وتنسيق رقم هاتف واتساب من أية مسافات أو رموز (+ أو 00 أو 0)
+        window.formatSyrianWhatsAppPhone = function(rawPhone) {
+            let digits = (rawPhone || "").replace(/\D/g, '');
+            if (digits.startsWith('00963')) digits = digits.slice(2);
+            else if (digits.startsWith('09')) digits = '963' + digits.slice(1);
+            else if (digits.startsWith('9') && digits.length === 9) digits = '963' + digits;
+            return digits;
+        };
+
+        window.sendCustomerWhatsAppSummary = function() {
+            const acc = window.storeData.accounts[window.activeManagingAccountKey];
+            if (!acc) return;
+            const balUSD = window.calculateAccountBalance(acc);
+            const rate = window.storeData.settings.sypRate || 15000;
+            const balSYP = Math.round(Math.abs(balUSD) * rate).toLocaleString();
+            const statusTxt = balUSD > 0 ? `مستحق عليكم: $${balUSD.toFixed(2)} (تعادل تقريباً ${balSYP} ل.س)` : (balUSD < 0 ? `رصيد لصالحكم: $${Math.abs(balUSD).toFixed(2)}` : `حسابكم مصفر بالكامل`);
+            
+            const phone = window.formatSyrianWhatsAppPhone(acc.phone);
+            const msg = `مرحباً ${acc.name}،%0Aكشف حسابكم لدى *متجر معاذ*:%0A📌 ${statusTxt}%0Aشكراً لثقتكم بنا.`;
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+        };
+
+        window.adminUpdateCustomerLimit = function() {
+            const newLim = Number(document.getElementById("admin-cust-limit-input").value);
+            if (newLim > 0 && window.activeManagingAccountKey) {
+                const acc = window.storeData.accounts[window.activeManagingAccountKey];
+                acc.creditLimit = newLim;
+                acc.updatedAt = Date.now();
+                window.saveDataDual(`accounts/${window.activeManagingAccountKey}`, acc);
+                document.getElementById("modal-account-pass-hint").textContent = `الهاتف: ${acc.phone} | المرور: ${acc.password} | السقف: $${acc.creditLimit}`;
+                alert("✅ تم تحديث سقف الدين للزبون!");
+            }
+        };
+
+        window.adminResetCustomerPassword = function() {
+            const newPass = document.getElementById("admin-reset-cust-pass").value.trim();
+            if (!newPass) { alert("أدخل كلمة المرور الجديدة أولاً!"); return; }
+            const key = window.activeManagingAccountKey;
+            const acc = window.storeData.accounts[key];
+            if (!acc) return;
+
+            acc.password = newPass;
+            acc.updatedAt = Date.now();
+            window.saveDataDual(`accounts/${key}`, acc);
+            document.getElementById("modal-account-pass-hint").textContent = `الهاتف: ${acc.phone} | المرور: ${acc.password} | السقف: $${acc.creditLimit || 100}`;
+            document.getElementById("admin-reset-cust-pass").value = "";
+            alert("✅ تم تحديث كلمة مرور الزبون بنجاح!");
+        };
+
+        // الإصلاح 4: حفظ القيمة المرجعية بالدولار عند بدء تعديل الحركة
+        window.startEditTransaction = function(txId) {
+            const acc = window.storeData.accounts[window.activeManagingAccountKey];
+            if (!acc || !acc.transactions || !acc.transactions[txId]) return;
+            const tx = acc.transactions[txId];
+            window.editingBaseAmountUSD = Number(tx.amountUSD);
+            document.getElementById("editing-tx-id").value = txId;
+            window.adminInputCurrency = 'USD';
+            document.getElementById("adm-curr-usd").className = "currency-btn active";
+            document.getElementById("adm-curr-new").className = "currency-btn";
+            document.getElementById("adm-curr-old").className = "currency-btn";
+            document.getElementById("trans-type").value = tx.type;
+            document.getElementById("trans-amount").value = Number(tx.amountUSD).toFixed(2);
+            document.getElementById("trans-note").value = tx.note;
+            document.getElementById("btn-submit-tx").textContent = "حفظ التعديلات على الحركة";
+            document.getElementById("btn-cancel-edit").classList.remove("hidden");
+        };
+
+        window.cancelEditTransaction = function() {
+            window.editingBaseAmountUSD = null;
+            document.getElementById("editing-tx-id").value = "";
+            document.getElementById("trans-amount").value = "";
+            document.getElementById("trans-note").value = "";
+            document.getElementById("btn-submit-tx").textContent = "حفظ الحركة";
+            document.getElementById("btn-cancel-edit").classList.add("hidden");
         };
 
         window.renderAdminModalTransactions = function(acc) {
             let html = "";
             const txs = acc.transactions || {};
-            const sortedTxIds = Object.keys(txs).sort((a, b) => b - a); 
-            const recentTxIds = sortedTxIds.slice(0, 4);
+            const sortedTxIds = Object.keys(txs).filter(id => !(window.storeData.deletedTxs && window.storeData.deletedTxs[id])).sort((a, b) => Number(b) - Number(a)); 
             
-            recentTxIds.forEach(id => {
+            const countEl = document.getElementById("admin-modal-tx-count");
+            if (countEl) countEl.textContent = `${sortedTxIds.length} حركة`;
+
+            sortedTxIds.forEach(id => {
                 const tx = txs[id];
                 const isDebt = tx.type === 'debt';
+                const iconClass = window.getDynamicIcon(tx.note, isDebt);
                 html += `
-                    <div class="bg-slate-950 p-2 rounded-lg flex justify-between items-center border border-slate-800">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid ${isDebt?'fa-arrow-down text-red-500':'fa-arrow-up text-successGreen'} text-[10px]"></i>
-                            <div><p class="text-xs text-slate-200 font-bold">${tx.note}</p><p class="text-[8px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')}</p></div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl flex justify-between items-center border border-slate-800">
+                        <div class="flex items-center gap-2.5">
+                            <i class="${iconClass} ${isDebt?'text-red-400':'text-successGreen'} text-xs"></i>
+                            <div><p class="text-xs text-slate-200 font-bold">${tx.note}</p><p class="text-[9px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')}</p></div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-black ${isDebt?'text-red-400':'text-successGreen'}">$${Number(tx.amountUSD).toFixed(2)}</span>
-                            <button type="button" onclick="deleteTransaction('${id}')" class="text-[10px] text-red-500 bg-red-950/40 w-6 h-6 rounded flex items-center justify-center hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-black ${isDebt?'text-red-400':'text-successGreen'} ml-1">$${Number(tx.amountUSD).toFixed(2)}</span>
+                            <button type="button" onclick="startEditTransaction('${id}')" title="تعديل الحركة" class="text-[10px] text-goldAccent bg-slate-800 w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" onclick="deleteTransaction('${id}')" title="حذف الحركة" class="text-[10px] text-red-500 bg-red-950/40 w-6 h-6 rounded flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById("admin-modal-transactions-cards").innerHTML = html || "<p class='text-xs text-slate-500 text-center mt-2'>لا يوجد حركات مسجلة</p>";
+            document.getElementById("admin-modal-transactions-cards").innerHTML = html || "<p class='text-xs text-slate-500 text-center mt-2'>لا توجد حركات مسجلة</p>";
         };
 
         window.handleAddTransaction = function(e) {
             e.preventDefault();
             const key = document.getElementById("trans-target-id").value;
+            if (!key || !window.storeData.accounts[key]) { alert("يرجى اختيار زبون أولاً!"); return; }
+            const editId = document.getElementById("editing-tx-id").value;
             const acc = window.storeData.accounts[key];
             const type = document.getElementById("trans-type").value;
-            const rawAmount = Number(document.getElementById("trans-amount").value);
+            const cleanedAmountStr = document.getElementById("trans-amount").value.toString().replace(/[^0-9.]/g, '');
+            const rawAmount = parseFloat(cleanedAmountStr);
+            if (isNaN(rawAmount) || rawAmount <= 0) { alert("يرجى إدخال مبلغ صحيح أكبر من الصفر!"); return; }
             const note = document.getElementById("trans-note").value.trim();
             const rate = Number(window.storeData.settings.sypRate) || 15000;
 
@@ -819,19 +1475,21 @@
             if (window.adminInputCurrency === 'SYP_NEW') usd = rawAmount / rate;
             else if (window.adminInputCurrency === 'SYP_OLD') usd = rawAmount / (rate * 100);
 
-            const txId = Date.now().toString();
             if (!acc.transactions) acc.transactions = {};
-            acc.transactions[txId] = { type, amountUSD: usd, note, date: new Date().toISOString() };
+            const txId = editId ? editId : Date.now().toString();
+            const existingDate = (editId && acc.transactions[editId]) ? acc.transactions[editId].date : new Date().toISOString();
+
+            acc.transactions[txId] = { type, amountUSD: usd, note, date: existingDate, updatedAt: Date.now() };
+            acc.updatedAt = Date.now();
             
             window.storeData.accounts[key] = acc;
-            window.saveDataDual(`accounts/${key}/transactions`, acc.transactions);
+            window.saveDataDual(`accounts/${key}/transactions/${txId}`, acc.transactions[txId]);
             
-            document.getElementById("form-add-transaction").reset();
-            closeModal('modal-manage-account');
+            cancelEditTransaction();
+            renderAdminModalTransactions(acc);
             renderAdminDashboard();
         };
 
-        // حذف الحركة مع تسجيلها في قائمة المحذوفات لمنع عودتها من السحابة
         window.deleteTransaction = function(txId) {
             if (!confirm("هل أنت متأكد من حذف هذه الحركة نهائياً؟")) return;
             const accKey = window.activeManagingAccountKey;
@@ -840,61 +1498,53 @@
             if (!window.storeData.deletedTxs) window.storeData.deletedTxs = {};
             window.storeData.deletedTxs[txId] = true;
             delete acc.transactions[txId];
+            acc.updatedAt = Date.now();
             
-            localStorage.setItem("moaath_offline_db_v28", JSON.stringify(window.storeData));
+            localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
             if (navigator.onLine && isCloudOnline) {
                 set(child(ref(db), `deletedTxs/${txId}`), true);
                 remove(child(ref(db), `accounts/${accKey}/transactions/${txId}`));
             } else {
-                hasPendingOfflineChanges = true;
+                setPendingOffline(true);
             }
             
             renderAdminModalTransactions(acc);
             renderAdminDashboard();
         };
         
-        // مسح سجل الزبون مع تسجيل الحركات القديمة في المحذوفات لمنع عودتها
         window.clearCustomerHistory = function() {
             const accKey = window.activeManagingAccountKey;
             const acc = window.storeData.accounts[accKey];
             const currentBal = window.calculateAccountBalance(acc);
             
             if (currentBal !== 0) {
-                const conf = confirm("⚠️ تنبيه: رصيد الزبون ليس صفراً! إذا قمت بتصفير الأرشيف سيتم حذف كافة الحركات القديمة وإنشاء حركة جديدة تلقائياً باسم (رصيد مدور من حساب سابق) بقيمة ذمته الحالية للحفاظ على مالك. هل توافق؟");
+                const conf = confirm("⚠️ تنبيه: رصيد الزبون ليس صفراً! سيتم مسح الحركات القديمة وإنشاء حركة واحدة باسم (رصيد مدور من حساب سابق) بقيمة ذمته الحالية. هل توافق؟");
                 if(!conf) return;
-                
                 if (!window.storeData.deletedTxs) window.storeData.deletedTxs = {};
-                for (let oldTxId in (acc.transactions || {})) {
-                    window.storeData.deletedTxs[oldTxId] = true;
-                }
+                for (let oldTxId in (acc.transactions || {})) window.storeData.deletedTxs[oldTxId] = true;
                 
                 acc.transactions = {};
                 const txId = Date.now().toString();
                 const type = currentBal > 0 ? 'debt' : 'payment';
-                acc.transactions[txId] = { type: type, amountUSD: Math.abs(currentBal), note: 'رصيد مدور من حساب سابق', date: new Date().toISOString() };
+                acc.transactions[txId] = { type: type, amountUSD: Math.abs(currentBal), note: 'رصيد مدور من حساب سابق', date: new Date().toISOString(), updatedAt: Date.now() };
             } else {
-                const conf = confirm("الرصيد مصفر تماماً. هل أنت متأكد من مسح كافة السجل وتنظيف الحساب نهائياً؟");
+                const conf = confirm("الرصيد مصفر تماماً. هل أنت متأكد من مسح كافة السجل؟");
                 if(!conf) return;
-                
                 if (!window.storeData.deletedTxs) window.storeData.deletedTxs = {};
-                for (let oldTxId in (acc.transactions || {})) {
-                    window.storeData.deletedTxs[oldTxId] = true;
-                }
+                for (let oldTxId in (acc.transactions || {})) window.storeData.deletedTxs[oldTxId] = true;
                 acc.transactions = {};
             }
-            
+            acc.updatedAt = Date.now();
             window.storeData.accounts[accKey] = acc;
-            localStorage.setItem("moaath_offline_db_v28", JSON.stringify(window.storeData));
+            localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
             if (navigator.onLine && isCloudOnline) {
                 set(child(ref(db), `deletedTxs`), window.storeData.deletedTxs);
                 set(child(ref(db), `accounts/${accKey}/transactions`), acc.transactions);
             } else {
-                hasPendingOfflineChanges = true;
+                setPendingOffline(true);
             }
-            
             renderAdminModalTransactions(acc);
             renderAdminDashboard();
-            alert("تم تصفير الأرشيف بنجاح.");
         };
 
         window.deleteCustomerAccount = function() {
@@ -903,27 +1553,21 @@
             const currentBal = window.calculateAccountBalance(acc);
             
             if (currentBal !== 0) {
-                alert("❌ خطأ حماية: لا يمكن حذف زبون ذمته المالية ليست صفراً (سواءً كان مديناً لك أو أنت مدين له). قم بتصفية الحساب أولاً قبل الحذف!");
-                return;
+                alert("❌ خطأ حماية: لا يمكن حذف زبون ذمته المالية ليست صفراً. قم بتصفية الحساب أولاً!"); return;
             }
-            
-            if(confirm(`⚠️ تحذير أخير: هل أنت متأكد تماماً من حذف حساب الزبون (${acc.name}) نهائياً من النظام؟ لا يمكن التراجع عن هذه الخطوة.`)) {
+            if(confirm(`⚠️ هل أنت متأكد تماماً من حذف حساب الزبون (${acc.name}) نهائياً؟`)) {
                 if (!window.storeData.deletedAccounts) window.storeData.deletedAccounts = {};
                 window.storeData.deletedAccounts[accKey] = true;
                 delete window.storeData.accounts[accKey];
-                
-                localStorage.setItem("moaath_offline_db_v28", JSON.stringify(window.storeData));
-                
+                localStorage.setItem("moaath_offline_db_v31", JSON.stringify(window.storeData));
                 if (navigator.onLine && isCloudOnline) {
                     set(child(ref(db), `deletedAccounts/${accKey}`), true);
-                    remove(child(ref(db), `accounts/${accKey}`)).catch(err => console.log("Delete error:", err));
+                    remove(child(ref(db), `accounts/${accKey}`));
                 } else {
-                    hasPendingOfflineChanges = true;
+                    setPendingOffline(true);
                 }
-                
                 closeModal('modal-manage-account');
                 renderAdminDashboard();
-                alert("تم حذف الزبون بنجاح.");
             }
         };
 
@@ -931,14 +1575,14 @@
             const name = document.getElementById("acc-name").value.trim();
             const phone = document.getElementById("acc-phone").value.trim();
             const pass = document.getElementById("acc-pass").value.trim();
-            
+            const limit = Number(document.getElementById("acc-limit").value) || 100;
             if (!name || !phone || !pass) return alert("أكمل البيانات");
             
             const id = Date.now().toString();
             const newAcc = { 
-                name, phone, password: pass, 
+                name, phone, password: pass, creditLimit: limit,
                 group: document.getElementById("acc-group").value, 
-                type: 'customer', isFirstLogin: true, policyAccepted: false, transactions: {} 
+                type: 'customer', isFirstLogin: true, policyAccepted: false, transactions: {}, updatedAt: Date.now() 
             };
             
             window.storeData.accounts[id] = newAcc;
@@ -949,7 +1593,7 @@
             document.getElementById("acc-pass").value = "";
             closeModal('modal-add-account');
             renderAdminDashboard();
-            alert("تم إنشاء حساب الزبون بنجاح!");
+            alert("✅ تم إنشاء حساب الزبون بنجاح!");
         };
 
         window.setCustomerCurrency = function(curr) {
@@ -961,10 +1605,65 @@
         };
 
         window.formatDisplayAmount = function(amountUSD) {
+            const absUSD = Math.abs(amountUSD);
             const rate = window.storeData.settings.sypRate || 15000;
-            if (window.customerDisplayCurrency === 'SYP_NEW') return `${Math.round(amountUSD * rate).toLocaleString()} ل.س`;
-            if (window.customerDisplayCurrency === 'SYP_OLD') return `${Math.round(amountUSD * rate * 100).toLocaleString()} ل.س`;
-            return `$${amountUSD.toFixed(2)}`;
+            if (window.customerDisplayCurrency === 'SYP_NEW') return `${Math.round(absUSD * rate).toLocaleString()} ل.س`;
+            if (window.customerDisplayCurrency === 'SYP_OLD') return `${Math.round(absUSD * rate * 100).toLocaleString()} ل.س`;
+            return `$${absUSD.toFixed(2)}`;
+        };
+
+        window.setCustomerAvatar = function(emoji) {
+            const key = window.currentUser.dbKey;
+            const cust = window.storeData.accounts[key];
+            if (!cust) return;
+            cust.avatar = emoji;
+            cust.updatedAt = Date.now();
+            document.getElementById("header-avatar").textContent = emoji;
+            window.saveDataDual(`accounts/${key}`, cust);
+        };
+
+        window.custSelfChangePassword = function() {
+            const np = document.getElementById("cust-self-new-pass").value.trim();
+            if (!np || np.length < 4) { alert("كلمة المرور يجب أن تكون 4 محارف على الأقل!"); return; }
+            const key = window.currentUser.dbKey;
+            const cust = window.storeData.accounts[key];
+            if (!cust) return;
+            cust.password = np;
+            cust.updatedAt = Date.now();
+            window.saveDataDual(`accounts/${key}`, cust);
+            document.getElementById("cust-self-new-pass").value = "";
+            closeModal('modal-cust-profile');
+            alert("✅ تم تحديث كلمة مرورك بنجاح!");
+        };
+
+        window.openCustomerBellAlert = function() {
+            const alertBox = document.getElementById("cust-inapp-alert");
+            alertBox.classList.toggle("hidden");
+        };
+
+        window.openDigitalReceipt = function(txId) {
+            const cust = window.storeData.accounts[window.currentUser.dbKey];
+            if (!cust || !cust.transactions || !cust.transactions[txId]) return;
+            const tx = cust.transactions[txId];
+            const rate = window.storeData.settings.sypRate || 15000;
+            window.activeReceiptTx = { id: txId, tx, custName: cust.name };
+
+            document.getElementById("receipt-customer-name").textContent = `السيد/ة: ${cust.name}`;
+            document.getElementById("receipt-id").textContent = `#${txId.slice(-6)}`;
+            document.getElementById("receipt-date").textContent = new Date(tx.date).toLocaleString('ar-SY');
+            document.getElementById("receipt-type").textContent = tx.type === 'debt' ? 'مسحوبات (دين)' : 'دفعة سداد مشكورة';
+            document.getElementById("receipt-type").className = tx.type === 'debt' ? 'font-bold text-red-400' : 'font-bold text-successGreen';
+            document.getElementById("receipt-note").textContent = tx.note;
+            document.getElementById("receipt-amount-usd").textContent = `$${Number(tx.amountUSD).toFixed(2)}`;
+            document.getElementById("receipt-amount-syp").textContent = `${Math.round(tx.amountUSD * rate).toLocaleString()} ل.س`;
+            openModal('modal-digital-receipt');
+        };
+
+        window.shareReceiptWhatsApp = function() {
+            if (!window.activeReceiptTx) return;
+            const { id, tx, custName } = window.activeReceiptTx;
+            const msg = `*متجر معاذ - إيصال رقمي*%0Aالزبون: ${custName}%0Aرقم العملية: #${id.slice(-6)}%0Aالتاريخ: ${new Date(tx.date).toLocaleDateString('ar-SY')}%0Aالبيان: ${tx.note}%0Aالمبلغ الأساسي: *$${Number(tx.amountUSD).toFixed(2)}*`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
         };
 
         window.renderCustomerPanel = function() {
@@ -972,33 +1671,136 @@
             if (!cust) return;
             
             const balUSD = window.calculateAccountBalance(cust);
-            document.getElementById("cust-display-balance").textContent = window.formatDisplayAmount(balUSD);
-
-            let html = "";
-            const sortedTxIds = Object.keys(cust.transactions || {}).sort((a, b) => b - a);
+            const limitUSD = cust.creditLimit || 100;
+            const balanceEl = document.getElementById("cust-display-balance");
+            const badgeEl = document.getElementById("cust-balance-badge");
             
+            balanceEl.textContent = window.formatDisplayAmount(balUSD);
+            document.getElementById("cust-credit-limit-val").textContent = `$${limitUSD}`;
+
+            const pct = balUSD > 0 ? Math.min(100, Math.round((balUSD / limitUSD) * 100)) : 0;
+            const circumference = 207.3;
+            const offset = circumference - (pct / 100) * circumference;
+            const ringEl = document.getElementById("cust-limit-ring");
+            if (ringEl) {
+                ringEl.style.strokeDashoffset = offset;
+                ringEl.style.stroke = pct >= 90 ? "#ef4444" : (pct >= 75 ? "#f59e0b" : "#10b981");
+            }
+            document.getElementById("cust-limit-ring-pct").textContent = `${pct}%`;
+
+            const bellDot = document.getElementById("cust-bell-dot");
+            const alertBox = document.getElementById("cust-inapp-alert");
+            const alertTxt = document.getElementById("cust-inapp-alert-text");
+            if (pct >= 75) {
+                bellDot.classList.remove("hidden");
+                alertTxt.textContent = pct >= 100 ? "لقد تجاوزت السقف الائتماني المحدد لحسابك، يرجى تسديد دفعة لتجنب إيقاف السحب." : `لقد استهلكت ${pct}% من سقف حسابك المالي، نرجو المبادرة بالسداد قريباً.`;
+            } else {
+                bellDot.classList.add("hidden");
+                alertBox.classList.add("hidden");
+            }
+
+            if (balUSD > 0) {
+                badgeEl.textContent = "مستحق عليك";
+                badgeEl.className = "text-[10px] font-black px-2 py-0.5 rounded-lg bg-red-950 text-red-400 border border-red-900";
+                balanceEl.className = "text-3xl font-black text-red-400";
+            } else if (balUSD < 0) {
+                badgeEl.textContent = "رصيد لصالحك (دائن)";
+                badgeEl.className = "text-[10px] font-black px-2 py-0.5 rounded-lg bg-emerald-950 text-successGreen border border-emerald-800";
+                balanceEl.className = "text-3xl font-black text-successGreen";
+            } else {
+                badgeEl.textContent = "خالص (صفر)";
+                badgeEl.className = "text-[10px] font-black px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700";
+                balanceEl.className = "text-3xl font-black text-white";
+            }
+
+            const allTxIds = Object.keys(cust.transactions || {}).filter(id => !(window.storeData.deletedTxs && window.storeData.deletedTxs[id])).sort((a, b) => Number(b) - Number(a));
+
+            const monthlyTotals = {};
+            const now = new Date();
+            for (let i = 2; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${d.getFullYear()}-${d.getMonth()}`;
+                const label = d.toLocaleDateString('ar-SY', { month: 'short' });
+                monthlyTotals[key] = { label, total: 0 };
+            }
+            allTxIds.forEach(id => {
+                const tx = cust.transactions[id];
+                if (tx.type === 'debt') {
+                    const d = new Date(tx.date);
+                    const k = `${d.getFullYear()}-${d.getMonth()}`;
+                    if (monthlyTotals[k]) monthlyTotals[k].total += Number(tx.amountUSD);
+                }
+            });
+            const maxMonthVal = Math.max(10, ...Object.values(monthlyTotals).map(m => m.total));
+            let chartHtml = "";
+            Object.values(monthlyTotals).forEach(m => {
+                const barW = Math.min(100, Math.round((m.total / maxMonthVal) * 100));
+                chartHtml += `
+                    <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span class="text-slate-400 font-bold">${m.label}</span>
+                            <span class="text-goldAccent font-black">$${m.total.toFixed(1)}</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-goldAccent h-full rounded-full" style="width:${barW}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById("cust-mini-analytics").innerHTML = chartHtml;
+
+            const searchQ = (document.getElementById("cust-tx-search").value || "").trim().toLowerCase();
+            const filteredTxIds = allTxIds.filter(id => {
+                if (!searchQ) return true;
+                return (cust.transactions[id].note || "").toLowerCase().includes(searchQ);
+            });
+
             const emptyStateEl = document.getElementById("cust-empty-state");
             const contentStateEl = document.getElementById("cust-content-state");
 
-            if (sortedTxIds.length === 0) {
+            if (filteredTxIds.length === 0) {
                 if (emptyStateEl) emptyStateEl.classList.remove("hidden");
                 if (contentStateEl) contentStateEl.classList.add("hidden");
             } else {
                 if (emptyStateEl) emptyStateEl.classList.add("hidden");
                 if (contentStateEl) contentStateEl.classList.remove("hidden");
                 
-                sortedTxIds.forEach(id => {
+                let html = "";
+                let currentGroupLabel = "";
+                const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+                filteredTxIds.forEach(id => {
                     const tx = cust.transactions[id];
+                    const txTime = new Date(tx.date).getTime();
+                    const groupLabel = txTime >= oneWeekAgo ? "هذا الأسبوع" : new Date(tx.date).toLocaleDateString('ar-SY', { month: 'long', year: 'numeric' });
+                    
+                    if (groupLabel !== currentGroupLabel) {
+                        currentGroupLabel = groupLabel;
+                        html += `<div class="timeline-header"><span><i class="fa-regular fa-calendar-days ml-1"></i>${currentGroupLabel}</span><span class="text-[9px] text-slate-400">اضغط على أي فاتورة للتفاصيل</span></div>`;
+                    }
+
                     const isDebt = tx.type === 'debt';
+                    const iconClass = window.getDynamicIcon(tx.note, isDebt);
                     html += `
-                        <div class="tx-card ${isDebt ? 'debt' : 'payment'}">
-                            <div><p class="font-bold text-sm text-slate-100">${tx.note}</p><p class="text-[10px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')}</p></div>
-                            <span class="font-black text-base ${isDebt ? 'text-red-400' : 'text-successGreen'}">${window.formatDisplayAmount(tx.amountUSD)}</span>
+                        <div onclick="openDigitalReceipt('${id}')" class="tx-card ${isDebt ? 'debt' : 'payment'}">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl ${isDebt ? 'bg-red-950 text-red-400' : 'bg-emerald-950 text-successGreen'} flex items-center justify-center text-sm">
+                                    <i class="${iconClass}"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-slate-100">${tx.note}</p>
+                                    <p class="text-[10px] text-slate-500">${new Date(tx.date).toLocaleDateString('ar-SY')}</p>
+                                </div>
+                            </div>
+                            <div class="text-left">
+                                <span class="font-black text-base block ${isDebt ? 'text-red-400' : 'text-successGreen'}">${window.formatDisplayAmount(tx.amountUSD)}</span>
+                                <span class="text-[9px] text-slate-400"><i class="fa-solid fa-receipt ml-1"></i>إيصال</span>
+                            </div>
                         </div>
                     `;
                 });
+                document.getElementById("customer-transactions-cards").innerHTML = html;
             }
-            document.getElementById("customer-transactions-cards").innerHTML = html;
         };
 
         window.openModal = function(id) { 
@@ -1014,9 +1816,9 @@
             cont.innerHTML = "";
             items.forEach((item, index) => {
                 cont.innerHTML += `
-                    <span class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 border border-slate-700 shadow-sm">
+                    <span class="bg-slate-800 text-slate-200 px-3 py-1 rounded-lg text-xs flex items-center gap-2 border border-slate-700">
                         ${item} 
-                        <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-white bg-red-950/50 w-5 h-5 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                        <button type="button" onclick="removeQuickItem(${index})" class="text-red-400 hover:text-white bg-red-950/50 w-4 h-4 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                     </span>`;
             });
         };
@@ -1026,7 +1828,8 @@
             if (val) { 
                 if(!window.storeData.settings.quickItems) window.storeData.settings.quickItems = [];
                 window.storeData.settings.quickItems.push(val); 
-                window.saveDataDual('settings/quickItems', window.storeData.settings.quickItems);
+                window.storeData.settings.updatedAt = Date.now();
+                window.saveDataDual('settings', window.storeData.settings);
                 document.getElementById("new-quick-item-input").value = ""; 
                 renderAdminSettings(); 
             }
@@ -1034,7 +1837,8 @@
 
         window.removeQuickItem = function(i) {
             window.storeData.settings.quickItems.splice(i, 1); 
-            window.saveDataDual('settings/quickItems', window.storeData.settings.quickItems);
+            window.storeData.settings.updatedAt = Date.now();
+            window.saveDataDual('settings', window.storeData.settings);
             renderAdminSettings();
         };
 
@@ -1042,35 +1846,47 @@
             const rate = Number(document.getElementById("setting-syp-rate").value);
             if (rate > 0) {
                 window.storeData.settings.sypRate = rate;
-                window.saveDataDual('settings/sypRate', rate);
+                window.storeData.settings.updatedAt = Date.now();
+                window.saveDataDual('settings', window.storeData.settings);
                 renderAdminDashboard();
-                alert("تم تحديث سعر الصرف واعتماده");
+                alert("✅ تم تحديث سعر الصرف واعتماده");
             }
         };
 
-        window.generateAllAccountsPDF = function() {
-            const btn = document.getElementById("btn-export-pdf");
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `جاري التحضير...`; 
-            btn.disabled = true;
-            
-            document.getElementById("pdf-export-date").textContent = `تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SY')}`;
+        window.generateAllAccountsPDF = function(range = 'all') {
+            closeModal('modal-pdf-range');
+            let cutoffTime = 0;
+            let rangeTitle = "السجل الشامل الكامل";
+            const now = Date.now();
+            if (range === 'today') { cutoffTime = now - (24 * 60 * 60 * 1000); rangeTitle = "تقرير حركات اليوم"; }
+            else if (range === 'week') { cutoffTime = now - (7 * 24 * 60 * 60 * 1000); rangeTitle = "تقرير حركات هذا الأسبوع"; }
+            else if (range === 'month') { cutoffTime = now - (30 * 24 * 60 * 60 * 1000); rangeTitle = "تقرير حركات هذا الشهر"; }
+
+            document.getElementById("pdf-export-date").textContent = `${rangeTitle} | تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SY')}`;
             const container = document.getElementById("pdf-export-content");
             container.innerHTML = "";
             
             for (let key in window.storeData.accounts) {
                 if (window.storeData.deletedAccounts && window.storeData.deletedAccounts[key]) continue;
                 const acc = window.storeData.accounts[key];
+                const sortedTxIds = Object.keys(acc.transactions || {}).filter(id => {
+                    if (window.storeData.deletedTxs && window.storeData.deletedTxs[id]) return false;
+                    const txTime = new Date(acc.transactions[id].date).getTime();
+                    return txTime >= cutoffTime;
+                }).sort((a, b) => Number(b) - Number(a));
+                
                 const bal = window.calculateAccountBalance(acc);
+                if (sortedTxIds.length === 0 && (range !== 'all' || bal === 0)) continue;
+
                 let html = `<div style="margin-bottom:20px; page-break-inside: avoid; border:1px solid #cbd5e1; border-radius: 8px; padding:15px; background: #fff;">
                     <h3 style="margin:0 0 5px 0; color: #0f172a;">${acc.name} <span style="font-weight:normal; font-size:12px; color:#475569;">(${acc.phone})</span></h3>
-                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:13px;">إجمالي الرصيد: $${bal.toFixed(2)}</p>
+                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:13px;">الرصيد الصافي الكلي: ${bal < 0 ? 'له ' : 'عليه '}$${Math.abs(bal).toFixed(2)}</p>
                     <table class="pdf-table"><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th>المبلغ ($)</th></tr></thead><tbody>`;
                 
-                for (let id in acc.transactions) {
+                sortedTxIds.forEach(id => {
                     const tx = acc.transactions[id];
                     html += `<tr><td>${new Date(tx.date).toLocaleDateString('ar-SY')}</td><td>${tx.type==='debt'?'دين':'سداد'}</td><td>${tx.note}</td><td style="font-weight:bold;">$${Number(tx.amountUSD).toFixed(2)}</td></tr>`;
-                }
+                });
                 html += `</tbody></table></div>`;
                 container.innerHTML += html;
             }
@@ -1078,10 +1894,10 @@
             const element = document.getElementById('pdf-export-container');
             element.style.display = 'block';
             setTimeout(() => {
-                html2pdf().set({ margin: 10, filename: `ديون_متجر_معاذ_${new Date().toISOString().split('T')[0]}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => {
-                    element.style.display = 'none'; btn.innerHTML = originalText; btn.disabled = false;
+                html2pdf().set({ margin: 10, filename: `تقرير_متجر_معاذ_${range}_${new Date().toISOString().split('T')[0]}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => {
+                    element.style.display = 'none';
                 });
-            }, 500);
+            }, 400);
         }
     </script>
 </body>
